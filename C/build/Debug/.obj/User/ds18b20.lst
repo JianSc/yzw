@@ -1,15 +1,15 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V3.11.1.207 for STM8                 24/Jan/2024  16:39:12
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 19/Jan/2024  20:42:44
 # Copyright 2010-2019 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
 #
 #    Source file  =  .\User\ds18b20.c
 #    Command line =  
-#        -f "e:\Nas\电路\保温箱\YZW-S803-EE22-
-#        KF7620-分体\C\build\Debug\.obj\User\ds18b20.args.txt" (--silent -lCN
-#        .\build\Debug\.obj\User\ds18b20.lst -I "d:/Program Files (x86)/IAR
-#        Systems/STM8/stm8/lib" -I Lib/H -I Lib/C -I User -D STM8S003
+#        -f "e:\Nas\电路\保温箱\YZW-S805-EE22(Rev1.0) -
+#        KF7620\C\build\Debug\.obj\User\ds18b20.args.txt" (--silent -lCN
+#        .\build\Debug\.obj\User\ds18b20.lst -I d:/IAR/STM8/stm8/inc -I
+#        d:/IAR/STM8/stm8/lib -I Lib/H -I Lib/C -I User -D STM8S005
 #        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
 #        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
 #        --no_tbaa --no_cross_call --debug --dependencies=m + -o
@@ -20,7 +20,7 @@
 #
 ###############################################################################
 
-e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\User\ds18b20.c
+e:\Nas\电路\保温箱\YZW-S805-EE22(Rev1.0) - KF7620\C\User\ds18b20.c
       1          #include "ds18b20.h"
 
    \                                 In section .near.noinit, at 0x500a
@@ -419,4 +419,4 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\User\ds18b20.c
    0 bytes of DATA memory (+ 3 bytes shared)
 
 Errors: none
-Warnings: 258
+Warnings: 280

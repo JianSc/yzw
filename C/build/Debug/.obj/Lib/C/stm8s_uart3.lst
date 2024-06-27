@@ -1,0 +1,763 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 19/Jan/2024  20:40:50
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\Lib\C\stm8s_uart3.c
+#    Command line =  
+#        -f "e:\Nas\电路\保温箱\YZW-S805-EE22(Rev1.0) -
+#        KF7620\C\build\Debug\.obj\Lib\C\stm8s_uart3.args.txt" (--silent -lCN
+#        .\build\Debug\.obj\Lib\C\stm8s_uart3.lst -I d:/IAR/STM8/stm8/inc -I
+#        d:/IAR/STM8/stm8/lib -I Lib/H -I Lib/C -I User -D STM8S005
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\.obj\Lib\C\stm8s_uart3.o .\Lib\C\stm8s_uart3.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\.obj\Lib\C\stm8s_uart3.lst
+#    Object file  =  .\build\Debug\.obj\Lib\C\stm8s_uart3.o
+#
+###############################################################################
+
+e:\Nas\电路\保温箱\YZW-S805-EE22(Rev1.0) - KF7620\C\Lib\C\stm8s_uart3.c
+      1          /**
+      2            ********************************************************************************
+      3            * @file    stm8s_uart3.c
+      4            * @author  MCD Application Team
+      5            * @version V2.3.0
+      6            * @date    16-June-2017
+      7            * @brief   This file contains all the functions for the uart3 peripheral.
+      8             ******************************************************************************
+      9            * @attention
+     10            *
+     11            * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
+     12            *
+     13            * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+     14            * You may not use this file except in compliance with the License.
+     15            * You may obtain a copy of the License at:
+     16            *
+     17            *        http://www.st.com/software_license_agreement_liberty_v2
+     18            *
+     19            * Unless required by applicable law or agreed to in writing, software 
+     20            * distributed under the License is distributed on an "AS IS" BASIS, 
+     21            * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     22            * See the License for the specific language governing permissions and
+     23            * limitations under the License.
+     24            *
+     25            ******************************************************************************
+     26            */
+     27          
+     28          /* Includes ------------------------------------------------------------------*/
+     29          #include "stm8s_uart3.h"
+     30          
+     31          /** @addtogroup STM8S_StdPeriph_Driver
+     32            * @{
+     33            */
+     34          /* Private typedef -----------------------------------------------------------*/
+     35          /* Private define ------------------------------------------------------------*/
+     36          /* Private macro -------------------------------------------------------------*/
+     37          /* Private variables ---------------------------------------------------------*/
+     38          /* Private function prototypes -----------------------------------------------*/
+     39          
+     40          /* Private functions ---------------------------------------------------------*/
+     41          /* Public functions ----------------------------------------------------------*/
+     42          
+     43          /**
+     44            * @addtogroup UART3_Public_Functions
+     45            * @{
+     46            */
+     47          
+     48          /**
+     49            * @brief  Deinitializes the UART peripheral.
+     50            * @param  None
+     51            * @retval None
+     52            */
+     53          
+     54          void UART3_DeInit(void)
+     55          {
+     56            /* Clear the Idle Line Detected bit in the status rerister by a read
+     57            to the UART3_SR register followed by a Read to the UART3_DR register */
+     58            (void) UART3->SR;
+     59            (void) UART3->DR;
+     60            
+     61            UART3->BRR2 = UART3_BRR2_RESET_VALUE; /*Set UART3_BRR2 to reset value 0x00 */
+     62            UART3->BRR1 = UART3_BRR1_RESET_VALUE; /*Set UART3_BRR1 to reset value 0x00 */
+     63            
+     64            UART3->CR1 = UART3_CR1_RESET_VALUE;  /*Set UART3_CR1 to reset value 0x00  */
+     65            UART3->CR2 = UART3_CR2_RESET_VALUE;  /*Set UART3_CR2 to reset value 0x00  */
+     66            UART3->CR3 = UART3_CR3_RESET_VALUE;  /*Set UART3_CR3 to reset value 0x00  */
+     67            UART3->CR4 = UART3_CR4_RESET_VALUE;  /*Set UART3_CR4 to reset value 0x00  */
+     68            UART3->CR6 = UART3_CR6_RESET_VALUE;  /*Set UART3_CR6 to reset value 0x00  */
+     69          }
+     70          
+     71          /**
+     72            * @brief  Initializes the UART3 according to the specified parameters.
+     73            * @param  BaudRate: The baudrate.
+     74            * @param  WordLength : This parameter can be any of 
+     75            *         the @ref UART3_WordLength_TypeDef enumeration.
+     76            * @param  StopBits: This parameter can be any of the 
+     77            *         @ref UART3_StopBits_TypeDef enumeration.
+     78            * @param  Parity: This parameter can be any of the 
+     79            *         @ref UART3_Parity_TypeDef enumeration.
+     80            * @param  Mode: This parameter can be any of the @ref UART3_Mode_TypeDef values
+     81            * @retval None
+     82            */
+     83          void UART3_Init(uint32_t BaudRate, UART3_WordLength_TypeDef WordLength, 
+     84                          UART3_StopBits_TypeDef StopBits, UART3_Parity_TypeDef Parity, 
+     85                          UART3_Mode_TypeDef Mode)
+     86          {
+     87            uint8_t BRR2_1 = 0, BRR2_2 = 0;
+     88            uint32_t BaudRate_Mantissa = 0, BaudRate_Mantissa100 = 0;
+     89            
+     90            /* Check the parameters */
+     91            assert_param(IS_UART3_WORDLENGTH_OK(WordLength));
+     92            assert_param(IS_UART3_STOPBITS_OK(StopBits));
+     93            assert_param(IS_UART3_PARITY_OK(Parity));
+     94            assert_param(IS_UART3_BAUDRATE_OK(BaudRate));
+     95            assert_param(IS_UART3_MODE_OK((uint8_t)Mode));
+     96            
+     97            /* Clear the word length bit */
+     98            UART3->CR1 &= (uint8_t)(~UART3_CR1_M);     
+     99            /* Set the word length bit according to UART3_WordLength value */
+    100            UART3->CR1 |= (uint8_t)WordLength; 
+    101            
+    102            /* Clear the STOP bits */
+    103            UART3->CR3 &= (uint8_t)(~UART3_CR3_STOP);  
+    104            /* Set the STOP bits number according to UART3_StopBits value  */
+    105            UART3->CR3 |= (uint8_t)StopBits;  
+    106            
+    107            /* Clear the Parity Control bit */
+    108            UART3->CR1 &= (uint8_t)(~(UART3_CR1_PCEN | UART3_CR1_PS));  
+    109            /* Set the Parity Control bit to UART3_Parity value */
+    110            UART3->CR1 |= (uint8_t)Parity;     
+    111            
+    112            /* Clear the LSB mantissa of UART3DIV  */
+    113            UART3->BRR1 &= (uint8_t)(~UART3_BRR1_DIVM);  
+    114            /* Clear the MSB mantissa of UART3DIV  */
+    115            UART3->BRR2 &= (uint8_t)(~UART3_BRR2_DIVM);  
+    116            /* Clear the Fraction bits of UART3DIV */
+    117            UART3->BRR2 &= (uint8_t)(~UART3_BRR2_DIVF);  
+    118            
+    119            /* Set the UART3 BaudRates in BRR1 and BRR2 registers according to UART3_BaudRate value */
+    120            BaudRate_Mantissa    = ((uint32_t)CLK_GetClockFreq() / (BaudRate << 4));
+    121            BaudRate_Mantissa100 = (((uint32_t)CLK_GetClockFreq() * 100) / (BaudRate << 4));
+    122            /* The fraction and MSB mantissa should be loaded in one step in the BRR2 register */
+    123            /* Set the fraction of UART3DIV  */
+    124            BRR2_1 = (uint8_t)((uint8_t)(((BaudRate_Mantissa100 - (BaudRate_Mantissa * 100))
+    125                                          << 4) / 100) & (uint8_t)0x0F); 
+    126            BRR2_2 = (uint8_t)((BaudRate_Mantissa >> 4) & (uint8_t)0xF0);
+    127            
+    128            UART3->BRR2 = (uint8_t)(BRR2_1 | BRR2_2);
+    129            /* Set the LSB mantissa of UART3DIV  */
+    130            UART3->BRR1 = (uint8_t)BaudRate_Mantissa;           
+    131            
+    132            if ((uint8_t)(Mode & UART3_MODE_TX_ENABLE))
+    133            {
+    134              /* Set the Transmitter Enable bit */
+    135              UART3->CR2 |= UART3_CR2_TEN;  
+    136            }
+    137            else
+    138            {
+    139              /* Clear the Transmitter Disable bit */
+    140              UART3->CR2 &= (uint8_t)(~UART3_CR2_TEN);  
+    141            }
+    142            if ((uint8_t)(Mode & UART3_MODE_RX_ENABLE))
+    143            {
+    144              /* Set the Receiver Enable bit */
+    145              UART3->CR2 |= UART3_CR2_REN;  
+    146            }
+    147            else
+    148            {
+    149              /* Clear the Receiver Disable bit */
+    150              UART3->CR2 &= (uint8_t)(~UART3_CR2_REN);  
+    151            }
+    152          }
+    153          
+    154          /**
+    155            * @brief  Enable the UART1 peripheral.
+    156            * @param  NewState : The new state of the UART Communication.
+    157            *         This parameter can be any of the @ref FunctionalState enumeration.
+    158            * @retval None
+    159            */
+    160          void UART3_Cmd(FunctionalState NewState)
+    161          {
+    162            if (NewState != DISABLE)
+    163            {
+    164              /* UART3 Enable */
+    165              UART3->CR1 &= (uint8_t)(~UART3_CR1_UARTD); 
+    166            }
+    167            else
+    168            {
+    169              /* UART3 Disable */
+    170              UART3->CR1 |= UART3_CR1_UARTD;  
+    171            }
+    172          }
+    173          
+    174          /**
+    175            * @brief  Enables or disables the specified UART3 interrupts.
+    176            * @param  UART3_IT specifies the UART3 interrupt sources to be enabled or disabled.
+    177            *         This parameter can be one of the following values:
+    178            *         - UART3_IT_LBDF:  LIN Break detection interrupt
+    179            *         - UART3_IT_LHDF:  LIN Break detection interrupt
+    180            *         - UART3_IT_TXE:  Transmit Data Register empty interrupt
+    181            *         - UART3_IT_TC:   Transmission complete interrupt
+    182            *         - UART3_IT_RXNE_OR: Receive Data register not empty/Over run error interrupt
+    183            *         - UART3_IT_IDLE: Idle line detection interrupt
+    184            *         - UART3_IT_PE:   Parity Error interrupt
+    185            * @param  NewState new state of the specified UART3 interrupts.
+    186            *         This parameter can be: ENABLE or DISABLE.
+    187            * @retval None
+    188            */
+    189          void UART3_ITConfig(UART3_IT_TypeDef UART3_IT, FunctionalState NewState)
+    190          {
+    191            uint8_t uartreg = 0, itpos = 0x00;
+    192            
+    193            /* Check the parameters */
+    194            assert_param(IS_UART3_CONFIG_IT_OK(UART3_IT));
+    195            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    196            
+    197            /* Get the UART3 register index */
+    198            uartreg = (uint8_t)((uint16_t)UART3_IT >> 0x08);
+    199            
+    200            /* Get the UART3 IT index */
+    201            itpos = (uint8_t)((uint8_t)1 << (uint8_t)((uint8_t)UART3_IT & (uint8_t)0x0F));
+    202            
+    203            if (NewState != DISABLE)
+    204            {
+    205              /* Enable the Interrupt bits according to UART3_IT mask */
+    206              if (uartreg == 0x01)
+    207              {
+    208                UART3->CR1 |= itpos;
+    209              }
+    210              else if (uartreg == 0x02)
+    211              {
+    212                UART3->CR2 |= itpos;
+    213              }
+    214              else if (uartreg == 0x03)
+    215              {
+    216                UART3->CR4 |= itpos;
+    217              }
+    218              else
+    219              {
+    220                UART3->CR6 |= itpos;
+    221              }
+    222            }
+    223            else
+    224            {
+    225              /* Disable the interrupt bits according to UART3_IT mask */
+    226              if (uartreg == 0x01)
+    227              {
+    228                UART3->CR1 &= (uint8_t)(~itpos);
+    229              }
+    230              else if (uartreg == 0x02)
+    231              {
+    232                UART3->CR2 &= (uint8_t)(~itpos);
+    233              }
+    234              else if (uartreg == 0x03)
+    235              {
+    236                UART3->CR4 &= (uint8_t)(~itpos);
+    237              }
+    238              else
+    239              {
+    240                UART3->CR6 &= (uint8_t)(~itpos);
+    241              }
+    242            }
+    243          }
+    244          
+    245          /**
+    246            * @brief  Sets the UART3 LIN Break detection length.
+    247            * @param  UART3_LINBreakDetectionLength specifies the LIN break detection length.
+    248            *         This parameter can be any of the 
+    249            *         @ref UART3_LINBreakDetectionLength_TypeDef values.
+    250            * @retval None
+    251            */
+    252          void UART3_LINBreakDetectionConfig(UART3_LINBreakDetectionLength_TypeDef UART3_LINBreakDetectionLength)
+    253          {
+    254            /* Check the parameters */
+    255            assert_param(IS_UART3_LINBREAKDETECTIONLENGTH_OK(UART3_LINBreakDetectionLength));
+    256            
+    257            if (UART3_LINBreakDetectionLength != UART3_LINBREAKDETECTIONLENGTH_10BITS)
+    258            {
+    259              UART3->CR4 |= UART3_CR4_LBDL;
+    260            }
+    261            else
+    262            {
+    263              UART3->CR4 &= ((uint8_t)~UART3_CR4_LBDL);
+    264            }
+    265          }
+    266          
+    267          /**
+    268            * @brief  Configure the UART3 peripheral.
+    269            * @param  UART3_Mode specifies the LIN mode.
+    270            *         This parameter can be any of the @ref UART3_LinMode_TypeDef values.
+    271            * @param  UART3_Autosync specifies the LIN automatic resynchronization mode.
+    272            *         This parameter can be any of the @ref UART3_LinAutosync_TypeDef values.
+    273            * @param  UART3_DivUp specifies the LIN divider update method.
+    274            *         This parameter can be any of the @ref UART3_LinDivUp_TypeDef values.
+    275            * @retval None
+    276            */
+    277          void UART3_LINConfig(UART3_LinMode_TypeDef UART3_Mode,
+    278                               UART3_LinAutosync_TypeDef UART3_Autosync, 
+    279                               UART3_LinDivUp_TypeDef UART3_DivUp)
+    280          {
+    281            /* Check the parameters */
+    282            assert_param(IS_UART3_SLAVE_OK(UART3_Mode));
+    283            assert_param(IS_UART3_AUTOSYNC_OK(UART3_Autosync));
+    284            assert_param(IS_UART3_DIVUP_OK(UART3_DivUp));
+    285            
+    286            if (UART3_Mode != UART3_LIN_MODE_MASTER)
+    287            {
+    288              UART3->CR6 |=  UART3_CR6_LSLV;
+    289            }
+    290            else
+    291            {
+    292              UART3->CR6 &= ((uint8_t)~UART3_CR6_LSLV);
+    293            }
+    294            
+    295            if (UART3_Autosync != UART3_LIN_AUTOSYNC_DISABLE)
+    296            {
+    297              UART3->CR6 |=  UART3_CR6_LASE ;
+    298            }
+    299            else
+    300            {
+    301              UART3->CR6 &= ((uint8_t)~ UART3_CR6_LASE );
+    302            }
+    303            
+    304            if (UART3_DivUp != UART3_LIN_DIVUP_LBRR1)
+    305            {
+    306              UART3->CR6 |=  UART3_CR6_LDUM;
+    307            }
+    308            else
+    309            {
+    310              UART3->CR6 &= ((uint8_t)~ UART3_CR6_LDUM);
+    311            }
+    312          }
+    313          
+    314          /**
+    315            * @brief  Enables or disables the UART3 LIN mode.
+    316            * @param  NewState is new state of the UART3 LIN mode.
+    317            *         This parameter can be ENABLE or DISABLE
+    318            * @retval None
+    319            */
+    320          void UART3_LINCmd(FunctionalState NewState)
+    321          {
+    322            /* Check the parameters */
+    323            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    324            
+    325            if (NewState != DISABLE)
+    326            {
+    327              /* Enable the LIN mode by setting the LINE bit in the CR2 register */
+    328              UART3->CR3 |= UART3_CR3_LINEN;
+    329            }
+    330            else
+    331            {
+    332              /* Disable the LIN mode by clearing the LINE bit in the CR2 register */
+    333              UART3->CR3 &= ((uint8_t)~UART3_CR3_LINEN);
+    334            }
+    335          }
+    336          
+    337          /**
+    338            * @brief  Selects the UART3 WakeUp method.
+    339            * @param  UART3_WakeUp: specifies the UART3 wakeup method.
+    340            *         This parameter can be any of the @ref UART3_WakeUp_TypeDef values.
+    341            * @retval None
+    342            */
+    343          void UART3_WakeUpConfig(UART3_WakeUp_TypeDef UART3_WakeUp)
+    344          {
+    345            /* Check the parameters */
+    346            assert_param(IS_UART3_WAKEUP_OK(UART3_WakeUp));
+    347            
+    348            UART3->CR1 &= ((uint8_t)~UART3_CR1_WAKE);
+    349            UART3->CR1 |= (uint8_t)UART3_WakeUp;
+    350          }
+    351          
+    352          /**
+    353            * @brief  Determines if the UART3 is in mute mode or not.
+    354            * @param  NewState: new state of the UART3 mode.
+    355            *         This parameter can be ENABLE or DISABLE
+    356            * @retval None
+    357            */
+    358          void UART3_ReceiverWakeUpCmd(FunctionalState NewState)
+    359          {
+    360            /* Check the parameters */
+    361            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    362            
+    363            if (NewState != DISABLE)
+    364            {
+    365              /* Enable the mute mode UART3 by setting the RWU bit in the CR2 register */
+    366              UART3->CR2 |= UART3_CR2_RWU;
+    367            }
+    368            else
+    369            {
+    370              /* Disable the mute mode UART3 by clearing the RWU bit in the CR1 register */
+    371              UART3->CR2 &= ((uint8_t)~UART3_CR2_RWU);
+    372            }
+    373          }
+    374          
+    375          /**
+    376            * @brief  Returns the most recent received data by the UART3 peripheral.
+    377            * @param  None
+    378            * @retval Received Data
+    379            */
+    380          uint8_t UART3_ReceiveData8(void)
+    381          {
+    382            return ((uint8_t)UART3->DR);
+    383          }
+    384          
+    385          /**
+    386            * @brief  Returns the most recent received data by the UART3 peripheral.
+    387            * @param  None
+    388            * @retval Received Data
+    389            */
+    390          uint16_t UART3_ReceiveData9(void)
+    391          {
+    392            uint16_t temp = 0;
+    393            
+    394            temp = (uint16_t)(((uint16_t)((uint16_t)UART3->CR1 & (uint16_t)UART3_CR1_R8)) << 1);
+    395            return (uint16_t)((((uint16_t)UART3->DR) | temp) & ((uint16_t)0x01FF));
+    396          }
+    397          
+    398          /**
+    399            * @brief  Transmits 8 bit data through the UART3 peripheral.
+    400            * @param  Data the data to transmit.
+    401            * @retval None
+    402            */
+    403          void UART3_SendData8(uint8_t Data)
+    404          {
+    405            /* Transmit Data */
+    406            UART3->DR = Data;
+    407          }
+    408          
+    409          /**
+    410            * @brief  Transmits 9 bit data through the UART3 peripheral.
+    411            * @param   Data: the data to transmit.
+    412            * @retval None
+    413            */
+    414          void UART3_SendData9(uint16_t Data)
+    415          {
+    416            /* Clear the transmit data bit 8 */
+    417            UART3->CR1 &= ((uint8_t)~UART3_CR1_T8);                  
+    418            
+    419            /* Write the transmit data bit [8] */
+    420            UART3->CR1 |= (uint8_t)(((uint8_t)(Data >> 2)) & UART3_CR1_T8); 
+    421            
+    422            /* Write the transmit data bit [0:7] */
+    423            UART3->DR   = (uint8_t)(Data);                    
+    424          }
+    425          
+    426          /**
+    427            * @brief  Transmits break characters.
+    428            * @param  None
+    429            * @retval None
+    430            */
+    431          void UART3_SendBreak(void)
+    432          {
+    433            UART3->CR2 |= UART3_CR2_SBK;
+    434          }
+    435          
+    436          /**
+    437            * @brief  Sets the address of the UART3 node.
+    438            * @param  UART3_Address: Indicates the address of the UART3 node.
+    439            * @retval None
+    440            */
+    441          void UART3_SetAddress(uint8_t UART3_Address)
+    442          {
+    443            /* Check the parameters */
+    444            assert_param(IS_UART3_ADDRESS_OK(UART3_Address));
+    445            
+    446            /* Clear the UART3 address */
+    447            UART3->CR4 &= ((uint8_t)~UART3_CR4_ADD);
+    448            /* Set the UART3 address node */
+    449            UART3->CR4 |= UART3_Address;
+    450          }
+    451          
+    452          /**
+    453            * @brief  Checks whether the specified UART3 flag is set or not.
+    454            * @param  UART3_FLAG specifies the flag to check.
+    455            *         This parameter can be any of the @ref UART3_Flag_TypeDef enumeration.
+    456            * @retval FlagStatus (SET or RESET)
+    457            */
+    458          FlagStatus UART3_GetFlagStatus(UART3_Flag_TypeDef UART3_FLAG)
+    459          {
+    460            FlagStatus status = RESET;
+    461            
+    462            /* Check parameters */
+    463            assert_param(IS_UART3_FLAG_OK(UART3_FLAG));
+    464            
+    465            /* Check the status of the specified UART3 flag*/
+    466            if (UART3_FLAG == UART3_FLAG_LBDF)
+    467            {
+    468              if ((UART3->CR4 & (uint8_t)UART3_FLAG) != (uint8_t)0x00)
+    469              {
+    470                /* UART3_FLAG is set*/
+    471                status = SET;
+    472              }
+    473              else
+    474              {
+    475                /* UART3_FLAG is reset*/
+    476                status = RESET;
+    477              }
+    478            }
+    479            else if (UART3_FLAG == UART3_FLAG_SBK)
+    480            {
+    481              if ((UART3->CR2 & (uint8_t)UART3_FLAG) != (uint8_t)0x00)
+    482              {
+    483                /* UART3_FLAG is set*/
+    484                status = SET;
+    485              }
+    486              else
+    487              {
+    488                /* UART3_FLAG is reset*/
+    489                status = RESET;
+    490              }
+    491            }
+    492            else if ((UART3_FLAG == UART3_FLAG_LHDF) || (UART3_FLAG == UART3_FLAG_LSF))
+    493            {
+    494              if ((UART3->CR6 & (uint8_t)UART3_FLAG) != (uint8_t)0x00)
+    495              {
+    496                /* UART3_FLAG is set*/
+    497                status = SET;
+    498              }
+    499              else
+    500              {
+    501                /* UART3_FLAG is reset*/
+    502                status = RESET;
+    503              }
+    504            }
+    505            else
+    506            {
+    507              if ((UART3->SR & (uint8_t)UART3_FLAG) != (uint8_t)0x00)
+    508              {
+    509                /* UART3_FLAG is set*/
+    510                status = SET;
+    511              }
+    512              else
+    513              {
+    514                /* UART3_FLAG is reset*/
+    515                status = RESET;
+    516              }
+    517            }
+    518            
+    519            /* Return the UART3_FLAG status*/
+    520            return  status;
+    521          }
+    522          
+    523          /**
+    524            * @brief  Clears the UART3 flags.
+    525            * @param  UART3_FLAG specifies the flag to clear
+    526            *         This parameter can be any combination of the following values:
+    527            *         - UART3_FLAG_LBDF: LIN Break detection flag.
+    528            *         - UART3_FLAG_LHDF: LIN Header detection flag.
+    529            *         - UART3_FLAG_LSF: LIN synchrone field flag.
+    530            *         - UART3_FLAG_RXNE: Receive data register not empty flag.
+    531            * @note
+    532            *         - PE (Parity error), FE (Framing error), NF (Noise error), 
+    533            *           OR (OverRun error) and IDLE (Idle line detected) flags are cleared
+    534            *           by software sequence: a read operation to UART3_SR register 
+    535            *           (UART3_GetFlagStatus())followed by a read operation to UART3_DR 
+    536            *           register(UART3_ReceiveData8() or UART3_ReceiveData9()).
+    537            *             
+    538            *         - RXNE flag can be also cleared by a read to the UART3_DR register
+    539            *           (UART3_ReceiveData8()or UART3_ReceiveData9()).
+    540            *             
+    541            *         - TC flag can be also cleared by software sequence: a read operation
+    542            *           to UART3_SR register (UART3_GetFlagStatus()) followed by a write 
+    543            *           operation to UART3_DR register (UART3_SendData8() or UART3_SendData9()).
+    544            *             
+    545            *         - TXE flag is cleared only by a write to the UART3_DR register 
+    546            *           (UART3_SendData8() or UART3_SendData9()).
+    547            *             
+    548            *         - SBK flag is cleared during the stop bit of break.
+    549            * @retval None
+    550            */
+    551          void UART3_ClearFlag(UART3_Flag_TypeDef UART3_FLAG)
+    552          {
+    553            /* Check the parameters */
+    554            assert_param(IS_UART3_CLEAR_FLAG_OK(UART3_FLAG));
+    555            
+    556            /*Clear the Receive Register Not Empty flag */
+    557            if (UART3_FLAG == UART3_FLAG_RXNE)
+    558            {
+    559              UART3->SR = (uint8_t)~(UART3_SR_RXNE);
+    560            }
+    561            /*Clear the LIN Break Detection flag */
+    562            else if (UART3_FLAG == UART3_FLAG_LBDF)
+    563            {
+    564              UART3->CR4 &= (uint8_t)(~UART3_CR4_LBDF);
+    565            }
+    566            /*Clear the LIN Header Detection Flag */
+    567            else if (UART3_FLAG == UART3_FLAG_LHDF)
+    568            {
+    569              UART3->CR6 &= (uint8_t)(~UART3_CR6_LHDF);
+    570            }
+    571            /*Clear the LIN Synch Field flag */
+    572            else
+    573            {
+    574              UART3->CR6 &= (uint8_t)(~UART3_CR6_LSF);
+    575            }
+    576          }
+    577          
+    578          /**
+    579            * @brief  Checks whether the specified UART3 interrupt has occurred or not.
+    580            * @param  UART3_IT: Specifies the UART3 interrupt pending bit to check.
+    581            *         This parameter can be one of the following values:
+    582            *         - UART3_IT_LBDF:  LIN Break detection interrupt
+    583            *         - UART3_IT_TXE:  Transmit Data Register empty interrupt
+    584            *         - UART3_IT_TC:   Transmission complete interrupt
+    585            *         - UART3_IT_RXNE: Receive Data register not empty interrupt
+    586            *         - UART3_IT_IDLE: Idle line detection interrupt
+    587            *         - UART3_IT_OR:  OverRun Error interrupt
+    588            *         - UART3_IT_PE:   Parity Error interrupt
+    589            * @retval The state of UART3_IT (SET or RESET).
+    590            */
+    591          ITStatus UART3_GetITStatus(UART3_IT_TypeDef UART3_IT)
+    592          {
+    593            ITStatus pendingbitstatus = RESET;
+    594            uint8_t itpos = 0;
+    595            uint8_t itmask1 = 0;
+    596            uint8_t itmask2 = 0;
+    597            uint8_t enablestatus = 0;
+    598            
+    599            /* Check parameters */
+    600            assert_param(IS_UART3_GET_IT_OK(UART3_IT));
+    601            
+    602            /* Get the UART3 IT index*/
+    603            itpos = (uint8_t)((uint8_t)1 << (uint8_t)((uint8_t)UART3_IT & (uint8_t)0x0F));
+    604            /* Get the UART3 IT index*/
+    605            itmask1 = (uint8_t)((uint8_t)UART3_IT >> (uint8_t)4);
+    606            /* Set the IT mask*/
+    607            itmask2 = (uint8_t)((uint8_t)1 << itmask1);
+    608            
+    609            /* Check the status of the specified UART3 pending bit*/
+    610            if (UART3_IT == UART3_IT_PE)
+    611            {
+    612              /* Get the UART3_ITPENDINGBIT enable bit status*/
+    613              enablestatus = (uint8_t)((uint8_t)UART3->CR1 & itmask2);
+    614              /* Check the status of the specified UART3 interrupt*/
+    615              
+    616              if (((UART3->SR & itpos) != (uint8_t)0x00) && enablestatus)
+    617              {
+    618                /* Interrupt occurred*/
+    619                pendingbitstatus = SET;
+    620              }
+    621              else
+    622              {
+    623                /* Interrupt not occurred*/
+    624                pendingbitstatus = RESET;
+    625              }
+    626            }
+    627            else if (UART3_IT == UART3_IT_LBDF)
+    628            {
+    629              /* Get the UART3_IT enable bit status*/
+    630              enablestatus = (uint8_t)((uint8_t)UART3->CR4 & itmask2);
+    631              /* Check the status of the specified UART3 interrupt*/
+    632              if (((UART3->CR4 & itpos) != (uint8_t)0x00) && enablestatus)
+    633              {
+    634                /* Interrupt occurred*/
+    635                pendingbitstatus = SET;
+    636              }
+    637              else
+    638              {
+    639                /* Interrupt not occurred*/
+    640                pendingbitstatus = RESET;
+    641              }
+    642            }
+    643            else if (UART3_IT == UART3_IT_LHDF)
+    644            {
+    645              /* Get the UART3_IT enable bit status*/
+    646              enablestatus = (uint8_t)((uint8_t)UART3->CR6 & itmask2);
+    647              /* Check the status of the specified UART3 interrupt*/
+    648              if (((UART3->CR6 & itpos) != (uint8_t)0x00) && enablestatus)
+    649              {
+    650                /* Interrupt occurred*/
+    651                pendingbitstatus = SET;
+    652              }
+    653              else
+    654              {
+    655                /* Interrupt not occurred*/
+    656                pendingbitstatus = RESET;
+    657              }
+    658            }
+    659            else
+    660            {
+    661              /* Get the UART3_IT enable bit status*/
+    662              enablestatus = (uint8_t)((uint8_t)UART3->CR2 & itmask2);
+    663              /* Check the status of the specified UART3 interrupt*/
+    664              if (((UART3->SR & itpos) != (uint8_t)0x00) && enablestatus)
+    665              {
+    666                /* Interrupt occurred*/
+    667                pendingbitstatus = SET;
+    668              }
+    669              else
+    670              {
+    671                /* Interrupt not occurred*/
+    672                pendingbitstatus = RESET;
+    673              }
+    674            }
+    675            /* Return the UART3_IT status*/
+    676            return  pendingbitstatus;
+    677          }
+    678          
+    679          /**
+    680            * @brief  Clears the UART3 pending flags.
+    681            * @param  UART3_IT specifies the pending bit to clear
+    682            *         This parameter can be one of the following values:
+    683            *         - UART3_IT_LBDF:  LIN Break detection interrupt
+    684            *         - UART3_IT_LHDF:  LIN Header detection interrupt
+    685            *         - UART3_IT_RXNE: Receive Data register not empty interrupt.
+    686            *
+    687            * @note
+    688            *         - PE (Parity error), FE (Framing error), NF (Noise error), 
+    689            *           OR (OverRun error) and IDLE (Idle line detected) pending bits are 
+    690            *           cleared by software sequence: a read operation to UART3_SR register
+    691            *           (UART3_GetITStatus()) followed by a read operation to UART3_DR register 
+    692            *           (UART3_ReceiveData8() or UART3_ReceiveData9()).
+    693            *             
+    694            *         - RXNE pending bit can be also cleared by a read to the UART3_DR register
+    695            *           (UART3_ReceiveData8() or UART3_ReceiveData9() ).
+    696            *             
+    697            *         - TC (Transmit complete) pending bit can be cleared by software 
+    698            *           sequence: a read operation to UART3_SR register (UART3_GetITStatus())
+    699            *           followed by a write operation to UART3_DR register 
+    700            *           (UART3_SendData8()or UART3_SendData9()).
+    701            *             
+    702            *         - TXE pending bit is cleared only by a write to the UART3_DR register
+    703            *           (UART3_SendData8() or UART3_SendData9()).
+    704            * @retval None
+    705            */
+    706          void UART3_ClearITPendingBit(UART3_IT_TypeDef UART3_IT)
+    707          {
+    708            /* Check the parameters */
+    709            assert_param(IS_UART3_CLEAR_IT_OK(UART3_IT));
+    710            
+    711            /*Clear the Receive Register Not Empty pending bit */
+    712            if (UART3_IT == UART3_IT_RXNE)
+    713            {
+    714              UART3->SR = (uint8_t)~(UART3_SR_RXNE);
+    715            }
+    716            /*Clear the LIN Break Detection pending bit */
+    717            else if (UART3_IT == UART3_IT_LBDF)
+    718            {
+    719              UART3->CR4 &= (uint8_t)~(UART3_CR4_LBDF);
+    720            }
+    721            /*Clear the LIN Header Detection pending bit */
+    722            else
+    723            {
+    724              UART3->CR6 &= (uint8_t)(~UART3_CR6_LHDF);
+    725            }
+    726          }
+    727          
+    728          /**
+    729            * @}
+    730            */
+    731            
+    732          /**
+    733            * @}
+    734            */
+    735            
+    736          
+    737          /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+Errors: 46
+Warnings: none

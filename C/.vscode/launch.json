@@ -8,7 +8,7 @@
             "serverType": "st7",
             "interface": "stlink3",
             "cpu": "STM8S003F3",
-            "executable": "build\\Debug\\STM8S003.out"
+            "executable": "build\\Debug\\STM8S005.out"
         }
     ]
 }

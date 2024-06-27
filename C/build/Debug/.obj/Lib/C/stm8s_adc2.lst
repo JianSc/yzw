@@ -1,0 +1,424 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 19/Jan/2024  20:39:51
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\Lib\C\stm8s_adc2.c
+#    Command line =  
+#        -f "e:\Nas\电路\保温箱\YZW-S805-EE22(Rev1.0) -
+#        KF7620\C\build\Debug\.obj\Lib\C\stm8s_adc2.args.txt" (--silent -lCN
+#        .\build\Debug\.obj\Lib\C\stm8s_adc2.lst -I d:/IAR/STM8/stm8/inc -I
+#        d:/IAR/STM8/stm8/lib -I Lib/H -I Lib/C -I User -D STM8S005
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\.obj\Lib\C\stm8s_adc2.o .\Lib\C\stm8s_adc2.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\.obj\Lib\C\stm8s_adc2.lst
+#    Object file  =  .\build\Debug\.obj\Lib\C\stm8s_adc2.o
+#
+###############################################################################
+
+e:\Nas\电路\保温箱\YZW-S805-EE22(Rev1.0) - KF7620\C\Lib\C\stm8s_adc2.c
+      1          /**
+      2            ******************************************************************************
+      3            * @file    stm8s_adc2.c
+      4            * @author  MCD Application Team
+      5            * @version V2.3.0
+      6            * @date    16-June-2017
+      7            * @brief   This file contains all the functions/macros for the ADC2 peripheral.
+      8             ******************************************************************************
+      9            * @attention
+     10            *
+     11            * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
+     12            *
+     13            * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+     14            * You may not use this file except in compliance with the License.
+     15            * You may obtain a copy of the License at:
+     16            *
+     17            *        http://www.st.com/software_license_agreement_liberty_v2
+     18            *
+     19            * Unless required by applicable law or agreed to in writing, software 
+     20            * distributed under the License is distributed on an "AS IS" BASIS, 
+     21            * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     22            * See the License for the specific language governing permissions and
+     23            * limitations under the License.
+     24            *
+     25            ******************************************************************************
+     26            */
+     27          
+     28          /* Includes ------------------------------------------------------------------*/
+     29          #include "stm8s_adc2.h"
+     30          
+     31          /** @addtogroup STM8S_StdPeriph_Driver
+     32            * @{
+     33            */
+     34          /* Private typedef -----------------------------------------------------------*/
+     35          /* Private define ------------------------------------------------------------*/
+     36          /* Private macro -------------------------------------------------------------*/
+     37          /* Private variables ---------------------------------------------------------*/
+     38          /* Private function prototypes -----------------------------------------------*/
+     39          /* Private functions ---------------------------------------------------------*/
+     40          
+     41          /* Public functions ----------------------------------------------------------*/
+     42          
+     43          /**
+     44            * @addtogroup ADC2_Public_Functions
+     45            * @{
+     46            */
+     47          
+     48          /**
+     49            * @brief  Deinitializes the ADC2 peripheral registers to their default reset
+     50            * values.
+     51            * @param  None
+     52            * @retval None
+     53            */
+     54          void ADC2_DeInit(void)
+     55          {
+     56            ADC2->CSR  = ADC2_CSR_RESET_VALUE;
+     57            ADC2->CR1  = ADC2_CR1_RESET_VALUE;
+     58            ADC2->CR2  = ADC2_CR2_RESET_VALUE;
+     59            ADC2->TDRH = ADC2_TDRH_RESET_VALUE;
+     60            ADC2->TDRL = ADC2_TDRL_RESET_VALUE;
+     61          }
+     62          
+     63          /**
+     64            * @brief  Initializes the ADC2 peripheral according to the specified parameters
+     65            * @param   ADC2_ConversionMode: specifies the conversion mode
+     66            * can be one of the values of @ref ADC2_ConvMode_TypeDef.
+     67            * @param   ADC2_Channel: specifies the channel to convert
+     68            * can be one of the values of @ref ADC2_Channel_TypeDef.
+     69            * @param   ADC2_PrescalerSelection: specifies the ADC2 prescaler
+     70            * can be one of the values of @ref ADC2_PresSel_TypeDef.
+     71            * @param   ADC2_ExtTrigger: specifies the external trigger
+     72            * can be one of the values of @ref ADC2_ExtTrig_TypeDef.
+     73            * @param   ADC2_ExtTriggerState: specifies the external trigger new state
+     74            * can be one of the values of @ref FunctionalState.
+     75            * @param   ADC2_Align: specifies the converted data alignment
+     76            * can be one of the values of @ref ADC2_Align_TypeDef.
+     77            * @param   ADC2_SchmittTriggerChannel: specifies the schmitt trigger channel
+     78            * can be one of the values of @ref ADC2_SchmittTrigg_TypeDef.
+     79            * @param   ADC2_SchmittTriggerState: specifies the schmitt trigger state
+     80            * can be one of the values of @ref FunctionalState.
+     81            * @retval None
+     82            */
+     83          void ADC2_Init(ADC2_ConvMode_TypeDef ADC2_ConversionMode, ADC2_Channel_TypeDef ADC2_Channel, ADC2_PresSel_TypeDef ADC2_PrescalerSelection, ADC2_ExtTrig_TypeDef ADC2_ExtTrigger, FunctionalState ADC2_ExtTriggerState, ADC2_Align_TypeDef ADC2_Align, ADC2_SchmittTrigg_TypeDef ADC2_SchmittTriggerChannel, FunctionalState ADC2_SchmittTriggerState)
+     84          {
+     85            /* Check the parameters */
+     86            assert_param(IS_ADC2_CONVERSIONMODE_OK(ADC2_ConversionMode));
+     87            assert_param(IS_ADC2_CHANNEL_OK(ADC2_Channel));
+     88            assert_param(IS_ADC2_PRESSEL_OK(ADC2_PrescalerSelection));
+     89            assert_param(IS_ADC2_EXTTRIG_OK(ADC2_ExtTrigger));
+     90            assert_param(IS_FUNCTIONALSTATE_OK(((ADC2_ExtTriggerState))));
+     91            assert_param(IS_ADC2_ALIGN_OK(ADC2_Align));
+     92            assert_param(IS_ADC2_SCHMITTTRIG_OK(ADC2_SchmittTriggerChannel));
+     93            assert_param(IS_FUNCTIONALSTATE_OK(ADC2_SchmittTriggerState));
+     94            
+     95            /*-----------------CR1 & CSR configuration --------------------*/
+     96            /* Configure the conversion mode and the channel to convert
+     97            respectively according to ADC2_ConversionMode & ADC2_Channel values  &  ADC2_Align values */
+     98            ADC2_ConversionConfig(ADC2_ConversionMode, ADC2_Channel, ADC2_Align);
+     99            /* Select the prescaler division factor according to ADC2_PrescalerSelection values */
+    100            ADC2_PrescalerConfig(ADC2_PrescalerSelection);
+    101            
+    102            /*-----------------CR2 configuration --------------------*/
+    103            /* Configure the external trigger state and event respectively
+    104            according to ADC2_ExtTrigStatus, ADC2_ExtTrigger */
+    105            ADC2_ExternalTriggerConfig(ADC2_ExtTrigger, ADC2_ExtTriggerState);
+    106            
+    107            /*------------------TDR configuration ---------------------------*/
+    108            /* Configure the schmitt trigger channel and state respectively
+    109            according to ADC2_SchmittTriggerChannel & ADC2_SchmittTriggerNewState  values */
+    110            ADC2_SchmittTriggerConfig(ADC2_SchmittTriggerChannel, ADC2_SchmittTriggerState);
+    111            
+    112            /* Enable the ADC2 peripheral */
+    113            ADC2->CR1 |= ADC2_CR1_ADON;
+    114          }
+    115          
+    116          /**
+    117            * @brief  Enables or Disables the ADC2 peripheral.
+    118            * @param   NewState: specifies the peripheral enabled or disabled state.
+    119            * @retval None
+    120            */
+    121          void ADC2_Cmd(FunctionalState NewState)
+    122          {
+    123            /* Check the parameters */
+    124            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    125            
+    126            if (NewState != DISABLE)
+    127            {
+    128              ADC2->CR1 |= ADC2_CR1_ADON;
+    129            }
+    130            else /* NewState == DISABLE */
+    131            {
+    132              ADC2->CR1 &= (uint8_t)(~ADC2_CR1_ADON);
+    133            }
+    134          }
+    135          
+    136          /**
+    137            * @brief  Enables or disables the ADC2 interrupt.
+    138            * @param   NewState specifies the state of ADC2 interrupt.
+    139            * @retval None
+    140            */
+    141          void ADC2_ITConfig(FunctionalState NewState)
+    142          {
+    143            /* Check the parameters */
+    144            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    145            
+    146            if (NewState != DISABLE)
+    147            {
+    148              /* Enable the ADC2 interrupts */
+    149              ADC2->CSR |= (uint8_t)ADC2_CSR_EOCIE;
+    150            }
+    151            else  /*NewState == DISABLE */
+    152            {
+    153              /* Disable the ADC2 interrupts */
+    154              ADC2->CSR &= (uint8_t)(~ADC2_CSR_EOCIE);
+    155            }
+    156          }
+    157          
+    158          /**
+    159            * @brief  Configure the ADC2 prescaler division factor.
+    160            * @param   ADC2_Prescaler: the selected prescaler.
+    161            * It can be one of the values of @ref ADC2_PresSel_TypeDef.
+    162            * @retval None
+    163            */
+    164          void ADC2_PrescalerConfig(ADC2_PresSel_TypeDef ADC2_Prescaler)
+    165          {
+    166            /* Check the parameter */
+    167            assert_param(IS_ADC2_PRESSEL_OK(ADC2_Prescaler));
+    168            
+    169            /* Clear the SPSEL bits */
+    170            ADC2->CR1 &= (uint8_t)(~ADC2_CR1_SPSEL);
+    171            /* Select the prescaler division factor according to ADC2_PrescalerSelection values */
+    172            ADC2->CR1 |= (uint8_t)(ADC2_Prescaler);
+    173          }
+    174          
+    175          /**
+    176            * @brief  Enables or disables the ADC2 Schmitt Trigger on a selected channel.
+    177            * @param   ADC2_SchmittTriggerChannel specifies the desired Channel.
+    178            * It can be set of the values of @ref ADC2_SchmittTrigg_TypeDef.
+    179            * @param   NewState specifies the Channel  ADC2 Schmitt Trigger new status.
+    180            * can have one of the values of @ref FunctionalState.
+    181            * @retval None
+    182            */
+    183          void ADC2_SchmittTriggerConfig(ADC2_SchmittTrigg_TypeDef ADC2_SchmittTriggerChannel, FunctionalState NewState)
+    184          {
+    185            /* Check the parameters */
+    186            assert_param(IS_ADC2_SCHMITTTRIG_OK(ADC2_SchmittTriggerChannel));
+    187            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    188            
+    189            if (ADC2_SchmittTriggerChannel == ADC2_SCHMITTTRIG_ALL)
+    190            {
+    191              if (NewState != DISABLE)
+    192              {
+    193                ADC2->TDRL &= (uint8_t)0x0;
+    194                ADC2->TDRH &= (uint8_t)0x0;
+    195              }
+    196              else /* NewState == DISABLE */
+    197              {
+    198                ADC2->TDRL |= (uint8_t)0xFF;
+    199                ADC2->TDRH |= (uint8_t)0xFF;
+    200              }
+    201            }
+    202            else if (ADC2_SchmittTriggerChannel < ADC2_SCHMITTTRIG_CHANNEL8)
+    203            {
+    204              if (NewState != DISABLE)
+    205              {
+    206                ADC2->TDRL &= (uint8_t)(~(uint8_t)((uint8_t)0x01 << (uint8_t)ADC2_SchmittTriggerChannel));
+    207              }
+    208              else /* NewState == DISABLE */
+    209              {
+    210                ADC2->TDRL |= (uint8_t)((uint8_t)0x01 << (uint8_t)ADC2_SchmittTriggerChannel);
+    211              }
+    212            }
+    213            else /* ADC2_SchmittTriggerChannel >= ADC2_SCHMITTTRIG_CHANNEL8 */
+    214            {
+    215              if (NewState != DISABLE)
+    216              {
+    217                ADC2->TDRH &= (uint8_t)(~(uint8_t)((uint8_t)0x01 << ((uint8_t)ADC2_SchmittTriggerChannel - (uint8_t)8)));
+    218              }
+    219              else /* NewState == DISABLE */
+    220              {
+    221                ADC2->TDRH |= (uint8_t)((uint8_t)0x01 << ((uint8_t)ADC2_SchmittTriggerChannel - (uint8_t)8));
+    222              }
+    223            }
+    224          }
+    225          
+    226          /**
+    227            * @brief  Configure the ADC2 conversion on selected channel.
+    228            * @param   ADC2_ConversionMode Specifies the conversion type.
+    229            * It can be set of the values of @ref ADC2_ConvMode_TypeDef
+    230            * @param   ADC2_Channel specifies the ADC2 Channel.
+    231            * It can be set of the values of @ref ADC2_Channel_TypeDef
+    232            * @param   ADC2_Align specifies the converted data alignment.
+    233            * It can be set of the values of @ref ADC2_Align_TypeDef
+    234            * @retval None
+    235            */
+    236          void ADC2_ConversionConfig(ADC2_ConvMode_TypeDef ADC2_ConversionMode, ADC2_Channel_TypeDef ADC2_Channel, ADC2_Align_TypeDef ADC2_Align)
+    237          {
+    238            /* Check the parameters */
+    239            assert_param(IS_ADC2_CONVERSIONMODE_OK(ADC2_ConversionMode));
+    240            assert_param(IS_ADC2_CHANNEL_OK(ADC2_Channel));
+    241            assert_param(IS_ADC2_ALIGN_OK(ADC2_Align));
+    242            
+    243            /* Clear the align bit */
+    244            ADC2->CR2 &= (uint8_t)(~ADC2_CR2_ALIGN);
+    245            /* Configure the data alignment */
+    246            ADC2->CR2 |= (uint8_t)(ADC2_Align);
+    247            
+    248            if (ADC2_ConversionMode == ADC2_CONVERSIONMODE_CONTINUOUS)
+    249            {
+    250              /* Set the continuous conversion mode */
+    251              ADC2->CR1 |= ADC2_CR1_CONT;
+    252            }
+    253            else /* ADC2_ConversionMode == ADC2_CONVERSIONMODE_SINGLE */
+    254            {
+    255              /* Set the single conversion mode */
+    256              ADC2->CR1 &= (uint8_t)(~ADC2_CR1_CONT);
+    257            }
+    258            
+    259            /* Clear the ADC2 channels */
+    260            ADC2->CSR &= (uint8_t)(~ADC2_CSR_CH);
+    261            /* Select the ADC2 channel */
+    262            ADC2->CSR |= (uint8_t)(ADC2_Channel);
+    263          }
+    264          
+    265          /**
+    266            * @brief  Configure the ADC2 conversion on external trigger event.
+    267            * @par Full description:
+    268            * The selected external trigger event can be enabled or disabled.
+    269            * @param   ADC2_ExtTrigger to select the External trigger event.
+    270            * can have one of the values of @ref ADC2_ExtTrig_TypeDef.
+    271            * @param   NewState to enable/disable the selected external trigger
+    272            * can have one of the values of @ref FunctionalState.
+    273            * @retval None
+    274            */
+    275          void ADC2_ExternalTriggerConfig(ADC2_ExtTrig_TypeDef ADC2_ExtTrigger, FunctionalState NewState)
+    276          {
+    277            /* Check the parameters */
+    278            assert_param(IS_ADC2_EXTTRIG_OK(ADC2_ExtTrigger));
+    279            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    280            
+    281            /* Clear the external trigger selection bits */
+    282            ADC2->CR2 &= (uint8_t)(~ADC2_CR2_EXTSEL);
+    283            
+    284            if (NewState != DISABLE)
+    285            {
+    286              /* Enable the selected external Trigger */
+    287              ADC2->CR2 |= (uint8_t)(ADC2_CR2_EXTTRIG);
+    288            }
+    289            else /* NewState == DISABLE */
+    290            {
+    291              /* Disable the selected external trigger */
+    292              ADC2->CR2 &= (uint8_t)(~ADC2_CR2_EXTTRIG);
+    293            }
+    294            
+    295            /* Set the selected external trigger */
+    296            ADC2->CR2 |= (uint8_t)(ADC2_ExtTrigger);
+    297          }
+    298          
+    299          /**
+    300            * @brief  Start ADC2 conversion
+    301            * @par Full description:
+    302            * This function  triggers the start of conversion, after ADC2 configuration.
+    303            * @param  None
+    304            * @retval None
+    305            * @par Required preconditions:
+    306            * Enable the ADC2 peripheral before calling this function
+    307            */
+    308          void ADC2_StartConversion(void)
+    309          {
+    310            ADC2->CR1 |= ADC2_CR1_ADON;
+    311          }
+    312          
+    313          /**
+    314            * @brief  Get one sample of measured signal.
+    315            * @param  None
+    316            * @retval ConversionValue:  value of the measured signal.
+    317            * @par Required preconditions:
+    318            * ADC2 conversion finished.
+    319            */
+    320          uint16_t ADC2_GetConversionValue(void)
+    321          {
+    322            uint16_t temph = 0;
+    323            uint8_t templ = 0;
+    324            
+    325            if ((ADC2->CR2 & ADC2_CR2_ALIGN) != 0) /* Right alignment */
+    326            {
+    327              /* Read LSB first */
+    328              templ = ADC2->DRL;
+    329              /* Then read MSB */
+    330              temph = ADC2->DRH;
+    331              
+    332              temph = (uint16_t)(templ | (uint16_t)(temph << (uint8_t)8));
+    333            }
+    334            else /* Left alignment */
+    335            {
+    336              /* Read MSB first*/
+    337              temph = ADC2->DRH;
+    338              /* Then read LSB */
+    339              templ = ADC2->DRL;
+    340              
+    341              temph = (uint16_t)((uint16_t)((uint16_t)templ << 6) | (uint16_t)((uint16_t)temph << 8));
+    342            }
+    343            
+    344            return ((uint16_t)temph);
+    345          }
+    346          
+    347          /**
+    348            * @brief  Checks the ADC2 EOC flag status.
+    349            * @param  None
+    350            * @retval FlagStatus Status of the ADC2 EOC flag.
+    351            */
+    352          FlagStatus ADC2_GetFlagStatus(void)
+    353          {
+    354            /* Get EOC  flag status */
+    355            return (FlagStatus)(ADC2->CSR & ADC2_CSR_EOC);
+    356          }
+    357          
+    358          /**
+    359            * @brief  Clear the ADC2 EOC Flag.
+    360            * @param  None
+    361            * @retval None
+    362            */
+    363          void ADC2_ClearFlag(void)
+    364          {
+    365            ADC2->CSR &= (uint8_t)(~ADC2_CSR_EOC);
+    366          }
+    367          
+    368          /**
+    369            * @brief  Returns the EOC  pending bit status
+    370           * @par Parameters:
+    371            * None
+    372            * @retval FlagStatus: status of the EOC pending bit.
+    373            */
+    374          ITStatus ADC2_GetITStatus(void)
+    375          {
+    376            return (ITStatus)(ADC2->CSR & ADC2_CSR_EOC);
+    377          }
+    378          
+    379          /**
+    380            * @brief  Clear the ADC2 End of Conversion pending bit.
+    381            * @param  None
+    382            * @retval None
+    383            */
+    384          void ADC2_ClearITPendingBit(void)
+    385          {
+    386            ADC2->CSR &= (uint8_t)(~ADC2_CSR_EOC);
+    387          }
+    388          
+    389          /**
+    390            * @}
+    391            */
+    392            
+    393          /**
+    394            * @}
+    395            */
+    396            
+    397          
+    398          /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+Errors: 45
+Warnings: none

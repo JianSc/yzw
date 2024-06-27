@@ -70,16 +70,20 @@ void main(void)
   while (1)
   {
     // 过温检测，如果温度高于设定的5度，并且持续30秒，就关闭加温继电器
-    // if(MSD_TIME_STATUS)
-    // {
-    //   MSD_CL;
-    //   SW_CL;
-    //   LED_STATUS = TRUE;
-    //   FAN_CL;
-    //   TEM_LED_CL;
+    if (MSD_TIME_STATUS)
+    {
+      MSD_CL;
+      SW_CL;
+      LED_STATUS = TRUE;
+      FAN_CL;
+      TEM_LED_CL;
+      tm1650_displayW(0, LED7CodeL[14]);
+      tm1650_displayW(1, LED7CodeL[1]);
+      tm1650_displayW(2, LED7CodeL[0]);
 
-    //   while(1);
-    // }
+      while (1)
+        ;
+    }
     // 启动 DS18B20 进行温度转换
     int SUM;
     if (!DS18B20_CONVERT_STATUS)
@@ -133,6 +137,16 @@ void main(void)
       }
       x++;
       x = (x > 10) ? 0 : x;
+    }
+
+    // 验证温度
+    if (SUM > (TEM_SUM + 50))
+    {
+      MSD_STATUS = TRUE;
+    }
+    else
+    {
+      MSD_STATUS = FALSE;
     }
 
     // LED 开启状态

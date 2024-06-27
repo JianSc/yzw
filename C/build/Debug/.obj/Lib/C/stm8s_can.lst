@@ -1,0 +1,1478 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 19/Jan/2024  20:40:01
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\Lib\C\stm8s_can.c
+#    Command line =  
+#        -f "e:\Nas\电路\保温箱\YZW-S805-EE22(Rev1.0) -
+#        KF7620\C\build\Debug\.obj\Lib\C\stm8s_can.args.txt" (--silent -lCN
+#        .\build\Debug\.obj\Lib\C\stm8s_can.lst -I d:/IAR/STM8/stm8/inc -I
+#        d:/IAR/STM8/stm8/lib -I Lib/H -I Lib/C -I User -D STM8S005
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\.obj\Lib\C\stm8s_can.o .\Lib\C\stm8s_can.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\.obj\Lib\C\stm8s_can.lst
+#    Object file  =  .\build\Debug\.obj\Lib\C\stm8s_can.o
+#
+###############################################################################
+
+e:\Nas\电路\保温箱\YZW-S805-EE22(Rev1.0) - KF7620\C\Lib\C\stm8s_can.c
+      1          /**
+      2            ******************************************************************************
+      3            * @file    stm8s_can.c
+      4            * @author  MCD Application Team
+      5            * @version V2.3.0
+      6            * @date    16-June-2017
+      7            * @brief   This file contains all the functions for the CAN peripheral.
+      8             ******************************************************************************
+      9            * @attention
+     10            *
+     11            * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
+     12            *
+     13            * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+     14            * You may not use this file except in compliance with the License.
+     15            * You may obtain a copy of the License at:
+     16            *
+     17            *        http://www.st.com/software_license_agreement_liberty_v2
+     18            *
+     19            * Unless required by applicable law or agreed to in writing, software 
+     20            * distributed under the License is distributed on an "AS IS" BASIS, 
+     21            * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     22            * See the License for the specific language governing permissions and
+     23            * limitations under the License.
+     24            *
+     25            ******************************************************************************
+     26            */
+     27          
+     28          /* Includes ------------------------------------------------------------------*/
+     29          #include "stm8s_can.h"
+     30          
+     31          /** @addtogroup STM8S_StdPeriph_Driver
+     32            * @{
+     33            */
+     34          /* Private typedef -----------------------------------------------------------*/
+     35          /* Private define ------------------------------------------------------------*/
+     36          #define CAN_IDLIST_IDMASK_MASK ((uint8_t) 0x55)
+     37          #define CAN_IDMASK_IDLIST_MASK ((uint8_t) 0xAA)
+     38          #define CAN_MODE_MASK ((uint8_t) 0x03)
+     39          #define CAN_ACKNOWLEDGE_TIMEOUT ((uint16_t)0xFFFF)
+     40          /* Private macro -------------------------------------------------------------*/
+     41          /* Private variables ---------------------------------------------------------*/
+     42          __IO uint32_t _Id = 0;
+     43          __IO uint8_t _IDE = 0;
+     44          __IO uint8_t _RTR = 0;
+     45          __IO uint8_t _DLC = 0;
+     46          __IO uint8_t _Data[8] = {0};
+     47          __IO uint8_t _FMI = 0;
+     48          /* Private function prototypes -----------------------------------------------*/
+     49          static ITStatus CheckITStatus(uint8_t CAN_Reg, uint8_t It_Bit);
+     50          
+     51          /* Private functions ---------------------------------------------------------*/
+     52          /**
+     53            * @addtogroup CAN_Public_Functions
+     54            * @{
+     55            */
+     56          
+     57          /**
+     58            * @brief  Deinitializes the CAN peripheral registers to their default reset values.
+     59            * @param  None
+     60            * @retval None
+     61            */
+     62          void CAN_DeInit(void)
+     63          {
+     64            /* Request initialisation */
+     65            CAN->MCR = CAN_MCR_INRQ;
+     66            CAN->PSR = CAN_Page_Config;
+     67            CAN_OperatingModeRequest(CAN_OperatingMode_Initialization);
+     68            CAN->Page.Config.ESR = CAN_ESR_RESET_VALUE;
+     69            CAN->Page.Config.EIER = CAN_EIER_RESET_VALUE;
+     70            CAN->Page.Config.BTR1 = CAN_BTR1_RESET_VALUE;
+     71            CAN->Page.Config.BTR2 = CAN_BTR2_RESET_VALUE;
+     72            CAN->Page.Config.FMR1 = CAN_FMR1_RESET_VALUE;
+     73            CAN->Page.Config.FMR2 = CAN_FMR2_RESET_VALUE;
+     74            CAN->Page.Config.FCR1 = CAN_FCR_RESET_VALUE;
+     75            CAN->Page.Config.FCR2 = CAN_FCR_RESET_VALUE;
+     76            CAN->Page.Config.FCR3 = CAN_FCR_RESET_VALUE;
+     77            CAN_OperatingModeRequest(CAN_OperatingMode_Normal);
+     78            CAN->PSR = CAN_Page_RxFifo;
+     79            CAN->Page.RxFIFO.MDLCR = CAN_MDLC_RESET_VALUE;
+     80            CAN->PSR = CAN_Page_TxMailBox0;
+     81            CAN->Page.TxMailbox.MDLCR = CAN_MDLC_RESET_VALUE;
+     82            CAN->PSR = CAN_Page_TxMailBox1;
+     83            CAN->Page.TxMailbox.MDLCR = CAN_MDLC_RESET_VALUE;
+     84            CAN->PSR = CAN_Page_TxMailBox2;
+     85            CAN->Page.TxMailbox.MDLCR = CAN_MDLC_RESET_VALUE;
+     86            
+     87            CAN->MCR = CAN_MCR_RESET_VALUE;
+     88            CAN->MSR = (uint8_t)(~CAN_MSR_RESET_VALUE);/* rc_w1 */
+     89            CAN->TSR = (uint8_t)(~CAN_TSR_RESET_VALUE);/* rc_w1 */
+     90            CAN->RFR = (uint8_t)(~CAN_RFR_RESET_VALUE);/* rc_w1 */
+     91            CAN->IER = CAN_IER_RESET_VALUE;
+     92            CAN->DGR = CAN_DGR_RESET_VALUE;
+     93            CAN->PSR = CAN_PSR_RESET_VALUE;
+     94          }
+     95          
+     96          /**
+     97            * @brief  Initializes the CAN peripheral according to the specified parameters.
+     98            * @param   CAN_MasterCtrl : Master control option, can be one or a combination of @ref CAN_MasterCtrl_TypeDef.
+     99            * @param   CAN_Mode : CAN mode , can be one of @ref CAN_Mode_TypeDef.
+    100            * @param   CAN_SynJumpWidth : CAN Synchronisation Jump Width , can be one of @ref CAN_SynJumpWidth_TypeDef.
+    101            * @param   CAN_BitSeg1 : CAN bit segment 1 , can be one of @ref CAN_BitSeg1_TypeDef.
+    102            * @param   CAN_BitSeg2 : CAN bit segment 2 , can be one of @ref CAN_BitSeg2_TypeDef.
+    103            * @param   CAN_Prescaler : CAN Baud Rate Prescaler , can be a value from 0x01 to 0xFF.
+    104            * @retval Indicates if initialization is succeed. it can be one of @ref CAN_InitStatus_TypeDef enumeration.
+    105            */
+    106          CAN_InitStatus_TypeDef CAN_Init(CAN_MasterCtrl_TypeDef CAN_MasterCtrl,
+    107                                          CAN_Mode_TypeDef CAN_Mode,
+    108                                          CAN_SynJumpWidth_TypeDef CAN_SynJumpWidth,
+    109                                          CAN_BitSeg1_TypeDef CAN_BitSeg1,
+    110                                          CAN_BitSeg2_TypeDef CAN_BitSeg2,
+    111                                          uint8_t CAN_Prescaler)
+    112          {
+    113            CAN_InitStatus_TypeDef InitStatus =  CAN_InitStatus_Failed;
+    114            uint16_t timeout = CAN_ACKNOWLEDGE_TIMEOUT;
+    115            CAN_Page_TypeDef can_page = CAN_GetSelectedPage();
+    116            
+    117            
+    118            /* Check the parameters */
+    119            assert_param(IS_CAN_MASTERCTRL_OK(CAN_MasterCtrl));
+    120            assert_param(IS_CAN_MODE_OK(CAN_Mode));
+    121            assert_param(IS_CAN_SYNJUMPWIDTH_OK(CAN_SynJumpWidth));
+    122            assert_param(IS_CAN_BITSEG1_OK(CAN_BitSeg1));
+    123            assert_param(IS_CAN_BITSEG2_OK(CAN_BitSeg2));
+    124            assert_param(IS_CAN_PRESCALER_OK(CAN_Prescaler));
+    125            
+    126            /* Request initialisation */
+    127            CAN->MCR = CAN_MCR_INRQ;
+    128            /* Wait the acknowledge */
+    129            while (((uint8_t)(CAN->MSR & CAN_MSR_INAK) != 0x01) && ((uint16_t)timeout != 0))
+    130            {
+    131              timeout--;
+    132            }
+    133            
+    134            /* Check acknowledged */
+    135            if ((CAN->MSR & CAN_MSR_INAK) != CAN_MSR_INAK)
+    136            {
+    137              
+    138              InitStatus =  CAN_InitStatus_Failed;
+    139              
+    140            }
+    141            else
+    142            {
+    143              /* Set the time triggered communication mode  &  Set the automatic bus-off management  &   Set the automatic wake-up mode
+    144              &     Set the no automatic retransmission & Set the receive FIFO locked mode & Set the transmit FIFO priority */
+    145              CAN->MCR |= (uint8_t)CAN_MasterCtrl;
+    146              
+    147              /* Set the bit timing register */
+    148              CAN->DGR |= (uint8_t)CAN_Mode ;
+    149              CAN->PSR = CAN_Page_Config;
+    150              CAN->Page.Config.BTR1 = (uint8_t)((uint8_t)(CAN_Prescaler - (uint8_t)1) | CAN_SynJumpWidth);
+    151              CAN->Page.Config.BTR2 = (uint8_t)(CAN_BitSeg1 | (uint8_t)CAN_BitSeg2);
+    152              
+    153              /* Request leave initialisation */
+    154              CAN->MCR &= (uint8_t)(~CAN_MCR_INRQ);
+    155              /* Wait the acknowledge */
+    156              timeout = 0xFFFF;
+    157              while ((((uint8_t)(CAN->MSR & CAN_MSR_INAK) == 0x01))&&(timeout != 0))
+    158              {
+    159                timeout--;
+    160              }
+    161              /* Check acknowledged */
+    162              if ((CAN->MSR & CAN_MSR_INAK) == CAN_MSR_INAK)
+    163              {
+    164                InitStatus = CAN_InitStatus_Failed;
+    165              }
+    166              else
+    167              {
+    168                InitStatus = CAN_InitStatus_Success;
+    169              }
+    170            }
+    171            /*Restore Last Page*/
+    172            CAN_SelectPage(can_page);
+    173            
+    174            /* Return the status of initialization */
+    175            return (CAN_InitStatus_TypeDef)InitStatus;
+    176          }
+    177          
+    178          /**
+    179            * @brief  Initializes the CAN peripheral Filter according to the specified parameters.
+    180            * @param   CAN_FilterNumber : CAN Filter number , can be one of @ref CAN_FilterNumber_TypeDef
+    181            * @param   CAN_FilterActivation : CAN Filter Activation state , can be one of @ref FunctionalState
+    182            * @param   CAN_FilterMode : CAN Filter Mode , can be one of @ref CAN_FilterMode_TypeDef
+    183            * @param   CAN_FilterScale : CAN Filter Scale , can be one of @ref CAN_FilterScale_TypeDef
+    184            * @param   CAN_FilterID1 : CAN Filter ID 1 , can be a value from 0x00 to 0xFF
+    185            * @param   CAN_FilterID2 : CAN Filter ID 2 , can be a value from 0x00 to 0xFF
+    186            * @param   CAN_FilterID3 : CAN Filter ID 3 , can be a value from 0x00 to 0xFF
+    187            * @param   CAN_FilterID4 : CAN Filter ID 4 , can be a value from 0x00 to 0xFF
+    188            * @param   CAN_FilterIDMask1 : CAN Filter ID 1/ Mask 1  , can be a value from 0x00 to 0xFF depending of CAN_FilterMode parameter
+    189            * @param   CAN_FilterIDMask2 : CAN Filter ID 2/ Mask 2 , can be a value from 0x00 to 0xFF depending of CAN_FilterMode parameter
+    190            * @param   CAN_FilterIDMask3 : CAN Filter ID 3/ Mask 3 , can be a value from 0x00 to 0xFF depending of CAN_FilterMode parameter
+    191            * @param   CAN_FilterIDMask4 : CAN Filter ID 4/ Mask 4 , can be a value from 0x00 to 0xFF depending of CAN_FilterMode parameter
+    192            * @retval None
+    193            */
+    194          void CAN_FilterInit(CAN_FilterNumber_TypeDef CAN_FilterNumber,
+    195                              FunctionalState CAN_FilterActivation,
+    196                              CAN_FilterMode_TypeDef CAN_FilterMode,
+    197                              CAN_FilterScale_TypeDef CAN_FilterScale,
+    198                              uint8_t CAN_FilterID1,
+    199                              uint8_t CAN_FilterID2,
+    200                              uint8_t CAN_FilterID3,
+    201                              uint8_t CAN_FilterID4,
+    202                              uint8_t CAN_FilterIDMask1,
+    203                              uint8_t CAN_FilterIDMask2,
+    204                              uint8_t CAN_FilterIDMask3,
+    205                              uint8_t CAN_FilterIDMask4)
+    206          {
+    207            uint8_t fact = 0;
+    208            uint8_t fsc  = 0;
+    209            uint8_t fmhl = 0;
+    210            
+    211            CAN_Page_TypeDef can_page_filter = CAN_Page_Filter01;
+    212            CAN_Page_TypeDef can_page = CAN_GetSelectedPage();
+    213            
+    214            /* Check the parameters */
+    215            assert_param(IS_CAN_FILTER_NUMBER_OK(CAN_FilterNumber));
+    216            assert_param(IS_FUNCTIONALSTATE_OK(CAN_FilterActivation));
+    217            assert_param(IS_CAN_FILTER_MODE_OK(CAN_FilterMode));
+    218            assert_param(IS_CAN_FILTER_SCALE_OK(CAN_FilterScale));
+    219            
+    220            
+    221            if (CAN_FilterNumber == CAN_FilterNumber_0)
+    222            {
+    223              fact = 0x01;
+    224              fsc  = 0x00;
+    225              fmhl = 0x03;
+    226              
+    227              can_page_filter = CAN_Page_Filter01;
+    228            }
+    229            else if (CAN_FilterNumber == CAN_FilterNumber_1)
+    230            {
+    231              fact = 0x10;
+    232              fsc  = 0x04;
+    233              fmhl = 0x0C;
+    234              
+    235              can_page_filter = CAN_Page_Filter01;
+    236            }
+    237            else if (CAN_FilterNumber == CAN_FilterNumber_2)
+    238            {
+    239              fact = 0x01;
+    240              fsc  = 0x00;
+    241              fmhl = 0x30;
+    242              
+    243              can_page_filter = CAN_Page_Filter23;
+    244            }
+    245            else if (CAN_FilterNumber == CAN_FilterNumber_3)
+    246            {
+    247              fact = 0x10;
+    248              fsc  = 0x04;
+    249              fmhl = 0xC0;
+    250              
+    251              can_page_filter = CAN_Page_Filter23;
+    252            }
+    253            else if (CAN_FilterNumber == CAN_FilterNumber_4)
+    254            {
+    255              fact = 0x01;
+    256              fsc  = 0x00;
+    257              fmhl = 0x03;
+    258              
+    259              can_page_filter = CAN_Page_Filter45;
+    260            }
+    261            else /*if (CAN_FilterNumber == CAN_FilterNumber_5)*/
+    262            {
+    263              fact = 0x10;
+    264              fsc  = 0x04;
+    265              fmhl = 0x0C;
+    266              
+    267              can_page_filter = CAN_Page_Filter45;
+    268            }
+    269            
+    270            
+    271            CAN_OperatingModeRequest(CAN_OperatingMode_Initialization);
+    272            
+    273            CAN->PSR = CAN_Page_Config;
+    274            /*---------------------------------------------------------*/
+    275            /*Configuration of Filter Scale                            */
+    276            /*---------------------------------------------------------*/
+    277            
+    278            if (can_page_filter == CAN_Page_Filter01) /* FCR1 */
+    279            {
+    280              /* Filter Deactivation  & Reset the Filter Scale */
+    281              CAN->Page.Config.FCR1 &= (uint8_t)(~(uint8_t)(fact | (uint8_t)((uint8_t)(CAN_FCR1_FSC00|CAN_FCR1_FSC01) << fsc )));
+    282              /* Set the new Filter Scale */
+    283              CAN->Page.Config.FCR1 |= (uint8_t)(CAN_FilterScale << fsc);
+    284            }
+    285            else if (can_page_filter == CAN_Page_Filter23) /* FCR2*/
+    286            {
+    287              /* Filter Deactivation  & Reset the Filter Scale */
+    288              CAN->Page.Config.FCR2 &= (uint8_t)~(uint8_t)( fact | (uint8_t)((uint8_t)(CAN_FCR1_FSC00|CAN_FCR1_FSC01) << fsc ));
+    289              
+    290              /* Set the new Filter Scale */
+    291              CAN->Page.Config.FCR2 |= (uint8_t)(CAN_FilterScale << fsc);
+    292              
+    293            }
+    294            else /*if(can_page_filter == CAN_Page_Filter45)*/ /* FCR3*/
+    295            {
+    296              /* Filter Deactivation  & Reset the Filter Scale */
+    297              CAN->Page.Config.FCR3 &= (uint8_t)~(uint8_t)( fact | (uint8_t)((uint8_t)(CAN_FCR1_FSC00|CAN_FCR1_FSC01) << fsc ));
+    298              
+    299              /* Set the new Filter Scale */
+    300              CAN->Page.Config.FCR3 |= (uint8_t)(CAN_FilterScale << fsc);
+    301            }
+    302            
+    303            /*---------------------------------------------------------*/
+    304            /*Configuration of Filter Mode                             */
+    305            /*---------------------------------------------------------*/
+    306            if (can_page_filter != CAN_Page_Filter45) /* FMR1*/
+    307            {
+    308              /* Filter Mode */
+    309              if (CAN_FilterMode == CAN_FilterMode_IdMask)
+    310              {
+    311                /*Id/Mask mode for the filter*/
+    312                CAN->Page.Config.FMR1 &= (uint8_t)~(fmhl);
+    313              }
+    314              else if ( CAN_FilterMode == CAN_FilterMode_IdList)
+    315              {
+    316                /*Identifier list mode for the filter*/
+    317                CAN->Page.Config.FMR1 |= (uint8_t)(fmhl);
+    318              }
+    319              else if ( CAN_FilterMode == CAN_FilterMode_IdList_IdMask)
+    320              {
+    321                /*Identifier list mode is first  for the filter*/
+    322                CAN->Page.Config.FMR1 |= (uint8_t)(fmhl & CAN_IDLIST_IDMASK_MASK);
+    323              }
+    324              else /* ( CAN_FilterMode == CAN_FilterMode_IdMask_IdList)*/
+    325              {
+    326                /*Id Mask mode is first  for the filter*/
+    327                CAN->Page.Config.FMR1 |= (uint8_t)(fmhl & CAN_IDMASK_IDLIST_MASK);
+    328              }
+    329              
+    330              
+    331            }
+    332            else /* FMR2 */
+    333            {
+    334              
+    335              /* Filter Mode */
+    336              if (CAN_FilterMode == CAN_FilterMode_IdMask)
+    337              {
+    338                /*Id/Mask mode for the filter*/
+    339                CAN->Page.Config.FMR2 &= (uint8_t)~(fmhl);
+    340              }
+    341              else if ( CAN_FilterMode == CAN_FilterMode_IdList)
+    342              {
+    343                /*Identifier list mode for the filter*/
+    344                CAN->Page.Config.FMR2 |= (uint8_t)(fmhl);
+    345              }
+    346              else if ( CAN_FilterMode == CAN_FilterMode_IdList_IdMask)
+    347              {
+    348                /*Identifier list mode is first  for the filter*/
+    349                CAN->Page.Config.FMR2 |= (uint8_t)(fmhl & CAN_IDLIST_IDMASK_MASK);
+    350              }
+    351              else /* ( CAN_FilterMode == CAN_FilterMode_IdMask_IdList)*/
+    352              {
+    353                /*Id Mask mode is first  for the filter*/
+    354                CAN->Page.Config.FMR2 |= (uint8_t)(fmhl & CAN_IDMASK_IDLIST_MASK);
+    355              }
+    356            }
+    357            /*---------------------------------------------------------*/
+    358            /*Configuration of Filter IDs                              */
+    359            /*---------------------------------------------------------*/
+    360            CAN->PSR = (uint8_t)can_page_filter;
+    361            if (fsc != 0)
+    362            {
+    363              /* Filter Scale */
+    364              if (CAN_FilterScale == CAN_FilterScale_8Bit)
+    365              {
+    366                CAN->Page.Filter.FR09 = CAN_FilterID1;
+    367                CAN->Page.Filter.FR10 = CAN_FilterIDMask1;
+    368                CAN->Page.Filter.FR11 = CAN_FilterID2;
+    369                CAN->Page.Filter.FR12 = CAN_FilterIDMask2;
+    370                CAN->Page.Filter.FR13 = CAN_FilterID3;
+    371                CAN->Page.Filter.FR14 = CAN_FilterIDMask3;
+    372                CAN->Page.Filter.FR15 = CAN_FilterID4;
+    373                CAN->Page.Filter.FR16 = CAN_FilterIDMask4;
+    374              }
+    375              else if (CAN_FilterScale == CAN_FilterScale_16_8Bit)
+    376              {
+    377                CAN->Page.Filter.FR09 = CAN_FilterID1;
+    378                CAN->Page.Filter.FR10 = CAN_FilterID2;
+    379                CAN->Page.Filter.FR11 = CAN_FilterIDMask1;
+    380                CAN->Page.Filter.FR12 = CAN_FilterIDMask2;
+    381                CAN->Page.Filter.FR13 = CAN_FilterID3;
+    382                CAN->Page.Filter.FR14 = CAN_FilterIDMask3;
+    383                CAN->Page.Filter.FR15 = CAN_FilterID4;
+    384                CAN->Page.Filter.FR16 = CAN_FilterIDMask4;
+    385              }
+    386              else if (CAN_FilterScale == CAN_FilterScale_16Bit)
+    387              {
+    388                CAN->Page.Filter.FR09 = CAN_FilterID1;
+    389                CAN->Page.Filter.FR10 = CAN_FilterID2;
+    390                CAN->Page.Filter.FR11 = CAN_FilterIDMask1;
+    391                CAN->Page.Filter.FR12 = CAN_FilterIDMask2;
+    392                CAN->Page.Filter.FR13 = CAN_FilterID3;
+    393                CAN->Page.Filter.FR14 = CAN_FilterID4;
+    394                CAN->Page.Filter.FR15 = CAN_FilterIDMask3;
+    395                CAN->Page.Filter.FR16 = CAN_FilterIDMask4;
+    396              }
+    397              else if (CAN_FilterScale == CAN_FilterScale_32Bit)
+    398              {
+    399                CAN->Page.Filter.FR09 = CAN_FilterID1;
+    400                CAN->Page.Filter.FR10 = CAN_FilterID2;
+    401                CAN->Page.Filter.FR11 = CAN_FilterID3;
+    402                CAN->Page.Filter.FR12 = CAN_FilterID4;
+    403                CAN->Page.Filter.FR13 = CAN_FilterIDMask1;
+    404                CAN->Page.Filter.FR14 = CAN_FilterIDMask2;
+    405                CAN->Page.Filter.FR15 = CAN_FilterIDMask3;
+    406                CAN->Page.Filter.FR16 = CAN_FilterIDMask4;
+    407              }
+    408            }
+    409            else
+    410            {
+    411              /* Filter Scale */
+    412              if (CAN_FilterScale == CAN_FilterScale_8Bit)
+    413              {
+    414                CAN->Page.Filter.FR01 = CAN_FilterID1;
+    415                CAN->Page.Filter.FR02 = CAN_FilterIDMask1;
+    416                CAN->Page.Filter.FR03 = CAN_FilterID2;
+    417                CAN->Page.Filter.FR04 = CAN_FilterIDMask2;
+    418                CAN->Page.Filter.FR05 = CAN_FilterID3;
+    419                CAN->Page.Filter.FR06 = CAN_FilterIDMask3;
+    420                CAN->Page.Filter.FR07 = CAN_FilterID4;
+    421                CAN->Page.Filter.FR08 = CAN_FilterIDMask4;
+    422              }
+    423              else if (CAN_FilterScale == CAN_FilterScale_16_8Bit)
+    424              {
+    425                CAN->Page.Filter.FR01 = CAN_FilterID1;
+    426                CAN->Page.Filter.FR02 = CAN_FilterID2;
+    427                CAN->Page.Filter.FR03 = CAN_FilterIDMask1;
+    428                CAN->Page.Filter.FR04 = CAN_FilterIDMask2;
+    429                CAN->Page.Filter.FR05 = CAN_FilterID3;
+    430                CAN->Page.Filter.FR06 = CAN_FilterIDMask3;
+    431                CAN->Page.Filter.FR07 = CAN_FilterID4;
+    432                CAN->Page.Filter.FR08 = CAN_FilterIDMask4;
+    433              }
+    434              else if (CAN_FilterScale == CAN_FilterScale_16Bit)
+    435              {
+    436                CAN->Page.Filter.FR01 = CAN_FilterID1;
+    437                CAN->Page.Filter.FR02 = CAN_FilterID2;
+    438                CAN->Page.Filter.FR03 = CAN_FilterIDMask1;
+    439                CAN->Page.Filter.FR04 = CAN_FilterIDMask2;
+    440                CAN->Page.Filter.FR05 = CAN_FilterID3;
+    441                CAN->Page.Filter.FR06 = CAN_FilterID4;
+    442                CAN->Page.Filter.FR07 = CAN_FilterIDMask3;
+    443                CAN->Page.Filter.FR08 = CAN_FilterIDMask4;
+    444              }
+    445              else if (CAN_FilterScale == CAN_FilterScale_32Bit)
+    446              {
+    447                CAN->Page.Filter.FR01 = CAN_FilterID1;
+    448                CAN->Page.Filter.FR02 = CAN_FilterID2;
+    449                CAN->Page.Filter.FR03 = CAN_FilterID3;
+    450                CAN->Page.Filter.FR04 = CAN_FilterID4;
+    451                CAN->Page.Filter.FR05 = CAN_FilterIDMask1;
+    452                CAN->Page.Filter.FR06 = CAN_FilterIDMask2;
+    453                CAN->Page.Filter.FR07 = CAN_FilterIDMask3;
+    454                CAN->Page.Filter.FR08 = CAN_FilterIDMask4;
+    455              }
+    456            }
+    457            
+    458            
+    459            /*---------------------------------------------------------*/
+    460            /*Configuration of Filter Activation                       */
+    461            /*---------------------------------------------------------*/
+    462            /* Filter activation */
+    463            CAN->PSR = CAN_Page_Config;
+    464            if (CAN_FilterActivation != DISABLE)
+    465            {
+    466              if ((CAN_FilterNumber & 0x06) == 0x00) /* FCR1*/
+    467              {   CAN->Page.Config.FCR1 |= (uint8_t)fact;
+    468              }
+    469              else if ((CAN_FilterNumber & 0x06) == 0x02) /*FCR2*/
+    470              { CAN->Page.Config.FCR2 |= (uint8_t)fact;
+    471              }
+    472              else /*if((CAN_FilterNumber & 0x06) == 0x04)*/ /*FCR3*/
+    473              { CAN->Page.Config.FCR3 |= (uint8_t)fact;
+    474              }
+    475            }
+    476            CAN_OperatingModeRequest(CAN_OperatingMode_Normal);
+    477            /*Restore Last Page*/
+    478            CAN_SelectPage(can_page);
+    479          }
+    480          
+    481          /**
+    482            * @brief   Enables or disables the specified CAN interrupts.
+    483            * @param    CAN_IT: specifies the CAN interrupt sources to be enabled or disabled.
+    484            * @param   NewState : CAN_IT new state , can be one of @ref FunctionalState
+    485            * @retval None
+    486            */
+    487          void CAN_ITConfig(CAN_IT_TypeDef CAN_IT, FunctionalState NewState)
+    488          {
+    489            uint8_t tmperrorinterrupt = 0;
+    490            CAN_Page_TypeDef can_page = CAN_GetSelectedPage();
+    491            
+    492            
+    493            /* Check the parameters */
+    494            assert_param(IS_CAN_IT_CONFIG_OK(CAN_IT));
+    495            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    496            
+    497            tmperrorinterrupt = (uint8_t)(((uint16_t)CAN_IT) >>7);
+    498            tmperrorinterrupt = (uint8_t)((uint8_t)((uint16_t)tmperrorinterrupt & 0xF0) | 
+    499                                          (uint8_t)((uint8_t)((uint16_t)tmperrorinterrupt & 0x0F) >>1));
+    500            
+    501            CAN->PSR = CAN_Page_Config;
+    502            if (NewState != DISABLE)
+    503            {
+    504              /* Enable the selected CAN interrupt */
+    505              CAN->IER |= (uint8_t)(CAN_IT);
+    506              CAN->Page.Config.EIER |= (uint8_t)(tmperrorinterrupt);
+    507            }
+    508            else
+    509            {
+    510              /* Disable the selected CAN interrupt */
+    511              CAN->IER &= (uint8_t)~(uint8_t)((uint16_t)CAN_IT);
+    512              CAN->Page.Config.EIER &= (uint8_t)~(tmperrorinterrupt);
+    513            }
+    514            /*Restore Last Page*/
+    515            CAN_SelectPage(can_page);
+    516          }
+    517          
+    518          /**
+    519            * @brief   Enables or Disables the ST7 CAN Compatibility.
+    520            * if the ST7 compatibility is Enabled, CAN provides only 2 mailboxes.
+    521            * if the ST7 compatibility is Disabled, CAN provides 3 mailboxes.
+    522            * @param   CAN_ST7Compatibility : CAN ST7 Compatibility , this parameter can be one of @ref CAN_ST7Compatibility_TypeDef enumeration.
+    523            * @retval None
+    524            */
+    525          void CAN_ST7CompatibilityCmd(CAN_ST7Compatibility_TypeDef CAN_ST7Compatibility)
+    526          {
+    527            /* Check the parameters */
+    528            assert_param(IS_CAN_ST7_COMPATIBILITY_OK(CAN_ST7Compatibility));
+    529            /*Reset the old configuration of TXM2E */
+    530            CAN->DGR &= (uint8_t)(~CAN_DGR_TXM2E);
+    531            
+    532            /*Set the old configuration of TXM2E */
+    533            CAN->DGR |= (uint8_t)CAN_ST7Compatibility;
+    534          }
+    535          
+    536          /**
+    537            * @brief  Enables or disables the CAN Time TriggerOperation communication mode.
+    538            * @param   NewState : Mode new state , can be one of @ref FunctionalState
+    539            * @retval None
+    540            */
+    541          void CAN_TTComModeCmd(FunctionalState NewState)
+    542          {
+    543            CAN_Page_TypeDef can_page = CAN_GetSelectedPage();
+    544            /* Check the parameters */
+    545            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    546            if (NewState != DISABLE)
+    547            {
+    548              /*Enable the TTCM mode */
+    549              CAN->MCR |= CAN_MCR_TTCM;
+    550              /*Set TGT bits setting in Tx and FIFO pages*/
+    551              CAN->PSR = CAN_Page_TxMailBox0;
+    552              CAN->Page.TxMailbox.MDLCR |= CAN_MDLCR_TGT;
+    553              CAN->PSR = CAN_Page_TxMailBox1;
+    554              CAN->Page.TxMailbox.MDLCR |= CAN_MDLCR_TGT;
+    555              CAN->PSR = CAN_Page_TxMailBox2;
+    556              CAN->Page.TxMailbox.MDLCR |= CAN_MDLCR_TGT;
+    557              CAN->PSR = CAN_Page_RxFifo;
+    558              CAN->Page.RxFIFO.MDLCR |= CAN_MDLCR_TGT;
+    559            }
+    560            else
+    561            {
+    562              /*Disable the TTCM mode */
+    563              CAN->MCR &= ((uint8_t)~CAN_MCR_TTCM);
+    564              /*Reset TGT bits setting in Tx and FIFO pages*/
+    565              CAN->PSR = CAN_Page_TxMailBox0;
+    566              CAN->Page.TxMailbox.MDLCR &= ((uint8_t)~CAN_MDLCR_TGT);
+    567              CAN->PSR = CAN_Page_TxMailBox1;
+    568              CAN->Page.TxMailbox.MDLCR &= ((uint8_t)~CAN_MDLCR_TGT);
+    569              CAN->PSR = CAN_Page_TxMailBox2;
+    570              CAN->Page.TxMailbox.MDLCR &= ((uint8_t)~CAN_MDLCR_TGT);
+    571              CAN->PSR = CAN_Page_RxFifo;
+    572              CAN->Page.RxFIFO.MDLCR &= ((uint8_t)~CAN_MDLCR_TGT);
+    573            }
+    574            /*Restore Last Page*/
+    575            CAN_SelectPage(can_page);
+    576          }
+    577          
+    578          /**
+    579            * @brief  Initiates the transmission of a message.
+    580            * @param  CAN_Id the ID number of the message, its size depends on CAN_IDE value.
+    581            * @param[in] CAN_IDE the ID type of the message, this parameter can be one of the @ref CAN_Id_TypeDef enumeration.
+    582            * @param[in] CAN_RTR the message type, this parameter can be one of the @ref CAN_RTR_TypeDef enumeration.
+    583            * @param[in] CAN_DLC the number of data in the message type, this parameter can be a value between 0 to 7.
+    584            * @param[in] CAN_Data pointer to a the @ref uint8_t table which contains data to sent.
+    585            * @retval Transmit Status, this returned value can be one of the @ref CAN_TxStatus_TypeDef enumeration.
+    586            */
+    587          CAN_TxStatus_TypeDef CAN_Transmit(uint32_t CAN_Id,
+    588                                            CAN_Id_TypeDef CAN_IDE,
+    589                                            CAN_RTR_TypeDef CAN_RTR,
+    590                                            uint8_t CAN_DLC,
+    591                                            uint8_t *CAN_Data)
+    592          {
+    593            CAN_TxStatus_TypeDef CAN_TxStatus = CAN_TxStatus_NoMailBox;
+    594            CAN_Page_TypeDef can_page = CAN_GetSelectedPage();
+    595            /* Check the parameters */
+    596            assert_param(IS_CAN_IDTYPE_OK(CAN_IDE));
+    597            if (CAN_IDE != CAN_Id_Standard)
+    598            {
+    599              assert_param(IS_CAN_EXTID_OK(CAN_Id));
+    600            }
+    601            else
+    602            {
+    603              assert_param(IS_CAN_STDID_OK(CAN_Id));
+    604            }
+    605            assert_param(IS_CAN_RTR_OK(CAN_RTR));
+    606            assert_param(IS_CAN_DLC_OK(CAN_DLC));
+    607            /* Select one empty transmit mailbox */
+    608            if ((CAN->TPR & CAN_TPR_TME0) == CAN_TPR_TME0)
+    609            {
+    610              CAN_TxStatus = CAN_TxStatus_MailBox0Ok;
+    611            }
+    612            else if ((CAN->TPR & CAN_TPR_TME1) == CAN_TPR_TME1)
+    613            {
+    614              CAN_TxStatus = CAN_TxStatus_MailBox1Ok;
+    615            }
+    616            else if ((CAN->TPR & CAN_TPR_TME2) == CAN_TPR_TME2)
+    617            {
+    618              CAN_TxStatus = CAN_TxStatus_MailBox2Ok;
+    619            }
+    620            else
+    621            {
+    622              CAN_TxStatus = CAN_TxStatus_NoMailBox;
+    623            }
+    624            if (CAN_TxStatus != CAN_TxStatus_NoMailBox)
+    625            {
+    626              CAN->PSR = (uint8_t)CAN_TxStatus;
+    627              /* Set up the Id */
+    628              if (CAN_IDE != CAN_Id_Standard)
+    629              {
+    630                CAN_Id &= (uint32_t)CAN_EXTID_SIZE;
+    631                CAN->Page.TxMailbox.MIDR4 = (uint8_t)(CAN_Id);
+    632                CAN_Id = CAN_Id>>8;
+    633                CAN->Page.TxMailbox.MIDR3 = (uint8_t)(CAN_Id);
+    634                CAN_Id = CAN_Id>>8;
+    635                CAN->Page.TxMailbox.MIDR2 = (uint8_t)(CAN_Id);
+    636                CAN_Id = CAN_Id>>8;
+    637                CAN->Page.TxMailbox.MIDR1 = (uint8_t)(CAN_Id |CAN_IDE | CAN_RTR);
+    638              }
+    639              else
+    640              {
+    641                CAN_Id &= (uint16_t)CAN_STDID_SIZE;
+    642                CAN->Page.TxMailbox.MIDR1 = (uint8_t)((CAN_Id>>6) | (CAN_RTR)) ;
+    643                CAN->Page.TxMailbox.MIDR2 = (uint8_t)(CAN_Id<<2);
+    644              }
+    645              /* Set up the DLC                 */
+    646              /*clear old DLC value*/
+    647              CAN->Page.TxMailbox.MDLCR &= (uint8_t)0xF0;
+    648              /*set the new value of DLC*/
+    649              CAN->Page.TxMailbox.MDLCR |= CAN_DLC;
+    650              /* Set up the data field */
+    651              CAN->Page.TxMailbox.MDAR1 = CAN_Data[0];
+    652              CAN->Page.TxMailbox.MDAR2 = CAN_Data[1];
+    653              CAN->Page.TxMailbox.MDAR3 = CAN_Data[2];
+    654              CAN->Page.TxMailbox.MDAR4 = CAN_Data[3];
+    655              CAN->Page.TxMailbox.MDAR5 = CAN_Data[4];
+    656              CAN->Page.TxMailbox.MDAR6 = CAN_Data[5];
+    657              CAN->Page.TxMailbox.MDAR7 = CAN_Data[6];
+    658              CAN->Page.TxMailbox.MDAR8 = CAN_Data[7];
+    659              /* Request transmission */
+    660              CAN->Page.TxMailbox.MCSR |= CAN_MCSR_TXRQ;
+    661            }
+    662            /*Restore Last Page*/
+    663            CAN_SelectPage(can_page);
+    664            return (CAN_TxStatus_TypeDef)CAN_TxStatus;
+    665          }
+    666          
+    667          /**
+    668            * @brief  Checks the transmission of a message.
+    669            * @param  CAN_TransmitMailbox : the number of the mailbox that is used for transmission, can be on of  @ref CAN_TransmitMailBox_TypeDef.
+    670            * @retval CAN_TxStatus_Ok if the CAN driver transmits the message, CAN_TxStatus_Failed in an other case.
+    671            */
+    672          CAN_TxStatus_TypeDef CAN_TransmitStatus(CAN_TransmitMailBox_TypeDef CAN_TransmitMailbox)
+    673          {
+    674            /* RQCP, TXOK and TME bits */
+    675            CAN_TxStatus_TypeDef tstate = CAN_TxStatus_Failed;
+    676            uint8_t tmpstate=0;
+    677            
+    678            /* Check the parameters */
+    679            assert_param(IS_CAN_TRANSMITMAILBOX_OK(CAN_TransmitMailbox));
+    680            
+    681            switch (CAN_TransmitMailbox)
+    682            {
+    683            case (CAN_TransmitMailBox_0): tmpstate = (uint8_t)((CAN->TSR & (uint8_t)(CAN_TSR_RQCP0|CAN_TSR_TXOK0)));
+    684            tmpstate |= (uint8_t)((CAN->TPR & CAN_TPR_TME0));
+    685            break;
+    686            case (CAN_TransmitMailBox_1): tmpstate = (uint8_t)((uint8_t)(CAN->TSR & (uint8_t)(CAN_TSR_RQCP1|CAN_TSR_TXOK1))>>1);
+    687            tmpstate |= (uint8_t)((uint8_t)(CAN->TPR & CAN_TPR_TME1) >> 1);
+    688            break;
+    689            case (CAN_TransmitMailBox_2): tmpstate = (uint8_t)((uint8_t)(CAN->TSR & (uint8_t)(CAN_TSR_RQCP2|CAN_TSR_TXOK2))>>2);
+    690            tmpstate |= (uint8_t)((uint8_t)(CAN->TPR & CAN_TPR_TME2) >> 2);
+    691            break;
+    692            default:
+    693              tstate = CAN_TxStatus_Failed;
+    694              break;
+    695            }
+    696            
+    697            switch (tmpstate)
+    698            {
+    699              /*transmit pending  */
+    700            case (0x00): tstate = CAN_TxStatus_Pending;
+    701            break;
+    702            /* transmit failed  */
+    703            case (0x05): tstate = CAN_TxStatus_Failed;
+    704            break;
+    705            /* transmit succeeded */
+    706            case (0x15): tstate = CAN_TxStatus_Ok;
+    707            break;
+    708            /* transmit mailbox is empty : no activity on this TX mail box */
+    709            case (0x04): tstate = CAN_TxStatus_MailBoxEmpty;
+    710            break;
+    711            default:
+    712              tstate = CAN_TxStatus_Failed;
+    713              break;
+    714            }
+    715            
+    716            return (CAN_TxStatus_TypeDef)tstate;
+    717          }
+    718          
+    719          /**
+    720            * @brief  Cancels a transmit request.
+    721            * @param  CAN_TransmitMailbox : the Transmission mailbox, can be one of CAN_TransmitMailBox_TypeDef
+    722            * @retval None
+    723            */
+    724          void CAN_CancelTransmit(CAN_TransmitMailBox_TypeDef CAN_TransmitMailbox)
+    725          {
+    726            CAN_Page_TypeDef can_page = CAN_GetSelectedPage();
+    727            /* Check the parameters */
+    728            assert_param(IS_CAN_TRANSMITMAILBOX_OK(CAN_TransmitMailbox));
+    729            /*switch to the specific page */
+    730            CAN->PSR = (uint8_t)CAN_TransmitMailbox;
+    731            /* abort transmission */
+    732            CAN->Page.TxMailbox.MCSR |= CAN_MCSR_ABRQ;
+    733            /*Restore Last Page*/
+    734            CAN_SelectPage(can_page);
+    735          }
+    736          
+    737          /**
+    738            * @brief   Releases the CAN FIFO.
+    739            * @param  None
+    740            * @retval None
+    741            */
+    742          void CAN_FIFORelease(void)
+    743          {
+    744            /* Release FIFO*/
+    745            CAN->RFR = CAN_RFR_RFOM; /*rc-w1*/
+    746          }
+    747          
+    748          /**
+    749            * @brief  Returns the number of pending messages.
+    750            * @retval Number of pending messages.
+    751            */
+    752          CAN_NbrPendingMessage_TypeDef CAN_MessagePending(void)
+    753          {
+    754            CAN_NbrPendingMessage_TypeDef msgpending = CAN_NbrPendingMessage_0;
+    755            msgpending = (CAN_NbrPendingMessage_TypeDef)(CAN->RFR & CAN_RFR_FMP01);
+    756            return (CAN_NbrPendingMessage_TypeDef)msgpending;
+    757          }
+    758          
+    759          /**
+    760            * @brief   Receives a message which contains CAN Id, IDE, RTR
+    761            * DLC, data and FMI number.
+    762            * In order to get these data, use CAN_GetReceivedId(), CAN_GetReceivedIDE(), CAN_GetReceivedRTR(),
+    763            * CAN_GetReceivedDLC(), CAN_GetReceivedFMI() and CAN_GetReceivedData() functions.
+    764            * @param  None
+    765            * @retval None
+    766            */
+    767          void CAN_Receive(void)
+    768          {
+    769            CAN_Page_TypeDef can_page = CAN_GetSelectedPage();
+    770            uint32_t temp1 = 0, temp2 = 0, temp3 = 0;
+    771            
+    772            /* select Fifo page*/
+    773            CAN->PSR = CAN_Page_RxFifo;
+    774            
+    775            /* Get the Id */
+    776            _IDE = (uint8_t)(CAN->Page.RxFIFO.MIDR1 & CAN_Id_Extended);
+    777            if (_IDE != CAN_Id_Standard)
+    778            {
+    779              temp1 = ((uint32_t)((uint32_t)CAN->Page.RxFIFO.MIDR3) << 8);
+    780              temp2 = ((uint32_t)((uint32_t)CAN->Page.RxFIFO.MIDR2) << 16);  
+    781              temp3 = ((uint32_t)((uint32_t)CAN->Page.RxFIFO.MIDR1 & 0x1F) << 24);
+    782              
+    783              _Id = (uint32_t)CAN_EXTID_SIZE & ((CAN->Page.RxFIFO.MIDR4) | temp1 | temp2 | temp3 );
+    784            }
+    785            else
+    786            {
+    787              temp1 = (uint16_t)((uint16_t)((uint16_t)((uint16_t)CAN->Page.RxFIFO.MIDR1 & 0x1F) << 6));
+    788              temp2 = (uint16_t)((uint16_t)((uint16_t)CAN->Page.RxFIFO.MIDR2 >> 2)&0x3F);
+    789              
+    790              _Id = (uint16_t)CAN_STDID_SIZE & (temp1 | temp2 );
+    791            }
+    792            
+    793            _RTR = (uint8_t)((uint8_t)0x20 & CAN->Page.RxFIFO.MIDR1);
+    794            
+    795            /* Get the DLC */
+    796            _DLC = (uint8_t)(CAN->Page.RxFIFO.MDLCR & (uint8_t)0x0F);
+    797            
+    798            /* Get the FMI */
+    799            _FMI = CAN->Page.RxFIFO.MFMI;
+    800            
+    801            /* Get the data field */
+    802            _Data[0] = CAN->Page.RxFIFO.MDAR1;
+    803            _Data[1] = CAN->Page.RxFIFO.MDAR2;
+    804            _Data[2] = CAN->Page.RxFIFO.MDAR3;
+    805            _Data[3] = CAN->Page.RxFIFO.MDAR4;
+    806            _Data[4] = CAN->Page.RxFIFO.MDAR5;
+    807            _Data[5] = CAN->Page.RxFIFO.MDAR6;
+    808            _Data[6] = CAN->Page.RxFIFO.MDAR7;
+    809            _Data[7] = CAN->Page.RxFIFO.MDAR8;
+    810            
+    811            /* Release the FIFO */
+    812            CAN_FIFORelease();
+    813            /*Restore Last Page*/
+    814            CAN_SelectPage(can_page);
+    815          }
+    816          
+    817          /**
+    818            * @brief  Gets the  CAN Id of the received message.
+    819            * @param  None
+    820            * @retval the received CAN message Id.
+    821            * @par Required preconditions:
+    822            * This function is used to get data loaded by CAN_Receive function.
+    823            * Before using this function, CAN_Receive function must be called.
+    824            */
+    825          uint32_t CAN_GetReceivedId(void)
+    826          {
+    827            return (_Id);
+    828          }
+    829          
+    830          /**
+    831            * @brief  Gets the  CAN IDE of the received message.
+    832            * @param  None
+    833            * @retval the received CAN message IDE.
+    834            * @par Required preconditions:
+    835            * This function is used to get data loaded by CAN_Receive function.
+    836            * Before using this function, CAN_Receive function must be called.
+    837            */
+    838          CAN_Id_TypeDef CAN_GetReceivedIDE(void)
+    839          {
+    840            return (CAN_Id_TypeDef)(_IDE);
+    841          }
+    842          
+    843          /**
+    844            * @brief  Gets the  CAN RTR of the received message.
+    845            * @param  None
+    846            * @retval the received CAN message RTR.
+    847            * @par Required preconditions:
+    848            * This function is used to get data loaded by CAN_Receive function.
+    849            * Before using this function, CAN_Receive function must be called.
+    850            */
+    851          CAN_RTR_TypeDef CAN_GetReceivedRTR(void)
+    852          {
+    853            return (CAN_RTR_TypeDef)(_RTR);
+    854          }
+    855          
+    856          /**
+    857            * @brief  Gets the  CAN DLC of the received message.
+    858            * @param  None
+    859            * @retval the received CAN message DLC.
+    860            * @par Required preconditions:
+    861            * This function is used to get data loaded by CAN_Receive function.
+    862            * Before using this function, CAN_Receive function must be called.
+    863            */
+    864          uint8_t CAN_GetReceivedDLC(void)
+    865          {
+    866            return (_DLC);
+    867          }
+    868          
+    869          /**
+    870            * @brief  Gets the  CAN Data of the received message.
+    871            * @param  CAN_DataIndex : number of the received Data, it can
+    872            *  be an integer between 0 to 7.
+    873            * @retval the received CAN message ith Data.
+    874            * @par Required preconditions:
+    875            * This function is used to get data loaded by CAN_Receive function.
+    876            * Before using this function, CAN_Receive function must be called.
+    877            */
+    878          uint8_t CAN_GetReceivedData(uint8_t CAN_DataIndex)
+    879          {
+    880            assert_param(IS_CAN_DLC_OK(CAN_DataIndex));
+    881            return (_Data[CAN_DataIndex]);
+    882          }
+    883          
+    884          /**
+    885            * @brief  Gets the  CAN FMI of the received message.
+    886            * @param  None
+    887            * @retval the received CAN message FMI.
+    888            * @par Required preconditions:
+    889            * This function is used to get data loaded by CAN_Receive function.
+    890            * Before using this function, CAN_Receive function must be called.
+    891            */
+    892          uint8_t CAN_GetReceivedFMI(void)
+    893          {
+    894            return (_FMI);
+    895          }
+    896          
+    897          /**
+    898            * @brief  Returns the Received time stamp.
+    899            * @param  None
+    900            * @retval uint16_t the received  time stamp.
+    901            */
+    902          uint16_t CAN_GetMessageTimeStamp(void)
+    903          {
+    904            uint16_t timestamp = 0;
+    905            CAN_Page_TypeDef can_page = CAN_GetSelectedPage();
+    906            
+    907            /*switch to the specific page */
+    908            CAN->PSR = CAN_Page_RxFifo;
+    909            /* Get the Received Time stamp */
+    910            timestamp = CAN->Page.RxFIFO.MTSRL;
+    911            timestamp |= (uint16_t)(((uint16_t)CAN->Page.RxFIFO.MTSRH)<<8);
+    912            
+    913            /*Restore Last Page*/
+    914            CAN_SelectPage(can_page);
+    915            
+    916            return (uint16_t)(timestamp);
+    917          }
+    918          
+    919          /**
+    920            * @brief  Enters the Sleep low power mode.
+    921            * @param  None
+    922            * @retval  CAN_Sleep_Ok if sleep entered, CAN_Sleep_Failed in an other case.
+    923            */
+    924          CAN_Sleep_TypeDef CAN_Sleep(void)
+    925          {
+    926            CAN_Sleep_TypeDef sleepstatus = CAN_Sleep_Failed;
+    927            
+    928            /* Request Sleep mode */
+    929            CAN->MCR = (uint8_t)((uint8_t)(CAN->MCR & (uint8_t)(~CAN_MCR_INRQ)) | CAN_MCR_SLEEP);
+    930            
+    931            /* Sleep mode status */
+    932            if ((CAN->MSR & (CAN_MSR_SLAK|CAN_MSR_INAK)) == CAN_MSR_SLAK)
+    933            {
+    934              /* Sleep mode not entered */
+    935              sleepstatus =  CAN_Sleep_Ok;
+    936            }
+    937            
+    938            /* At this step, sleep mode status */
+    939            return (CAN_Sleep_TypeDef) sleepstatus;
+    940          }
+    941          
+    942          /**
+    943            * @brief  Wakes the CAN up.
+    944            * @param  None
+    945            * @retval CAN_WakeUp_Ok if sleep mode left, CAN_WakeUp_Failed in an other  case.
+    946            */
+    947          CAN_WakeUp_TypeDef CAN_WakeUp(void)
+    948          {
+    949            CAN_WakeUp_TypeDef wakeupstatus = CAN_WakeUp_Failed;
+    950            
+    951            /* Wake up request */
+    952            CAN->MCR &= (uint8_t)(~CAN_MCR_SLEEP);
+    953            
+    954            /* Sleep mode status */
+    955            if ((CAN->MSR & CAN_MSR_SLAK) != CAN_MSR_SLAK)
+    956            {
+    957              /* Sleep mode exited */
+    958              wakeupstatus = CAN_WakeUp_Ok;
+    959            }
+    960            
+    961            /* At this step, sleep mode status */
+    962            return (CAN_WakeUp_TypeDef)wakeupstatus;
+    963          }
+    964          
+    965          /**
+    966            * @brief  Select the CAN Operation mode.
+    967            * @param  CAN_OperatingMode CAN Operating Mode ,
+    968            *         this parameter can be one of @ref CAN_OperatingMode_TypeDef enumeration.
+    969            * @retval the status of the requested mode which can be 
+    970            *         - CAN_ModeStatus_Failed    CAN failed entering the specific mode
+    971            *         - CAN_ModeStatus_Success  CAN Succeed entering the specific mode 
+    972          
+    973            */
+    974          CAN_ModeStatus_TypeDef CAN_OperatingModeRequest(CAN_OperatingMode_TypeDef CAN_OperatingMode)
+    975          {
+    976            uint16_t timeout = CAN_ACKNOWLEDGE_TIMEOUT;
+    977            uint8_t modestatus = 0;
+    978            
+    979            assert_param(IS_CAN_OPERATINGMODE_OK(CAN_OperatingMode));
+    980            
+    981            if (CAN_OperatingMode == CAN_OperatingMode_Initialization)
+    982            {
+    983              /* Request initialisation */
+    984              CAN->MCR = (uint8_t)((uint8_t)(CAN->MCR & (uint8_t)(~CAN_MCR_SLEEP)) | CAN_MCR_INRQ);
+    985              
+    986              /* Wait the acknowledge */
+    987              while (((CAN->MSR & CAN_MODE_MASK) != CAN_MSR_INAK) && (timeout != 0))
+    988              {
+    989                timeout--;
+    990              }
+    991              if ((CAN->MSR & CAN_MODE_MASK) != CAN_MSR_INAK)
+    992              {
+    993                modestatus = CAN_ModeStatus_Failed;
+    994              }
+    995              else
+    996              {
+    997                modestatus = CAN_ModeStatus_Success;  
+    998              }
+    999              
+   1000            }
+   1001            else  if (CAN_OperatingMode == CAN_OperatingMode_Normal)
+   1002            {
+   1003              /* Request leave initialisation and sleep mode  and enter Normal mode */
+   1004              CAN->MCR &= (uint8_t)(~(CAN_MCR_SLEEP|CAN_MCR_INRQ));
+   1005              
+   1006              /* Wait the acknowledge */
+   1007              while (((CAN->MSR & CAN_MODE_MASK) != 0) && (timeout!=0))
+   1008              {
+   1009                timeout--;
+   1010              }
+   1011              if ((CAN->MSR & CAN_MODE_MASK) != 0)
+   1012              {
+   1013                modestatus = CAN_ModeStatus_Failed;
+   1014              }
+   1015              else
+   1016              {
+   1017                modestatus = CAN_ModeStatus_Success;  
+   1018              }
+   1019            }
+   1020            else  if (CAN_OperatingMode == CAN_OperatingMode_Sleep)
+   1021            {
+   1022              /* Request Sleep mode */
+   1023              CAN->MCR = (uint8_t)((uint8_t)(CAN->MCR & (uint8_t)(~CAN_MCR_INRQ)) | CAN_MCR_SLEEP);
+   1024              
+   1025              /* Wait the acknowledge */
+   1026              while (((CAN->MSR & CAN_MODE_MASK) != CAN_MSR_SLAK) && (timeout!=0))
+   1027              {
+   1028                timeout--;
+   1029              }
+   1030              if ((CAN->MSR & CAN_MODE_MASK) != CAN_MSR_SLAK)
+   1031              {
+   1032                modestatus = CAN_ModeStatus_Failed;  
+   1033              }
+   1034              else
+   1035              {
+   1036                modestatus = CAN_ModeStatus_Success;  
+   1037              }
+   1038            }
+   1039            else
+   1040            {
+   1041              modestatus = CAN_ModeStatus_Failed;
+   1042            }
+   1043            return (CAN_ModeStatus_TypeDef)(modestatus);
+   1044          }
+   1045          
+   1046          /**
+   1047            * @brief  Gets the  Last Error Code.
+   1048            * @param  None
+   1049            * @retval Error Code.
+   1050            */
+   1051          CAN_ErrorCode_TypeDef CAN_GetLastErrorCode(void)
+   1052          {
+   1053            CAN_ErrorCode_TypeDef errcode = CAN_ErrorCode_NoErr;
+   1054            CAN_Page_TypeDef can_page = CAN_GetSelectedPage();
+   1055            
+   1056            CAN->PSR = CAN_Page_Config;
+   1057            errcode = (CAN_ErrorCode_TypeDef)((CAN->Page.Config.ESR) & (CAN_ESR_LEC));
+   1058            
+   1059            /*Restore Last Page*/
+   1060            CAN_SelectPage(can_page);
+   1061            
+   1062            return (CAN_ErrorCode_TypeDef)(errcode);
+   1063          }
+   1064          
+   1065          /**
+   1066            * @brief  Clears the CAN's pending flags.
+   1067            * @param   CAN_Flag : Flag to be cleared, can be one of the following parameters:
+   1068            *          CAN_FLAG_RQCP0            Request MailBox0  Flag
+   1069            *          CAN_FLAG_RQCP1            Request MailBox1  Flag
+   1070            *          CAN_FLAG_RQCP2            Request MailBox2  Flag
+   1071            *          CAN_FLAG_FF               FIFO Full  Flag
+   1072            *          CAN_FLAG_FOV              FIFO Overrun  Flag
+   1073            *          CAN_FLAG_WKU              wake up  Flag
+   1074            *          CAN_FLAG_LEC              Last error code Flag
+   1075            * @retval None
+   1076            */
+   1077          void CAN_ClearFlag(CAN_FLAG_TypeDef CAN_Flag)
+   1078          {
+   1079            CAN_Page_TypeDef can_page = (CAN_Page_TypeDef)0;
+   1080            /* Check the parameters */
+   1081            assert_param(IS_CAN_FLAG_CLEAR_OK(CAN_Flag));
+   1082            if (((uint16_t)CAN_Flag & 0x0700)!= RESET)
+   1083            {
+   1084              if (((uint16_t)CAN_Flag & 0x020B)!= RESET)
+   1085              {
+   1086                /*Receive Flags*/
+   1087                CAN->RFR = (uint8_t)(CAN_Flag);
+   1088              }
+   1089              else if (((uint16_t)CAN_Flag & 0x0403)!= RESET)
+   1090              {
+   1091                /*Transmit Flags*/
+   1092                CAN->TSR = (uint8_t)(CAN_Flag);
+   1093              }
+   1094              else /*if((CAN_Flag & 0x0108)!=(uint16_t)RESET)*/
+   1095              {
+   1096                /*wake up Flags*/
+   1097                CAN->MSR = (uint8_t)(CAN_Flag);
+   1098              }
+   1099            }
+   1100            else
+   1101            {
+   1102              /*Error Flags*/
+   1103              can_page = CAN_GetSelectedPage();
+   1104              
+   1105              /* Clear the selected CAN flags */
+   1106              CAN->PSR = CAN_Page_Config;
+   1107              CAN->Page.Config.ESR = (uint8_t)RESET;
+   1108              
+   1109              /*Restore Last Page*/
+   1110              CAN_SelectPage(can_page);
+   1111            }
+   1112          }
+   1113          
+   1114          /**
+   1115            * @brief  Checks whether the specified CAN flag is set or not.
+   1116            * @param  CAN_Flag : specifies the flag to check, can be one of @ref CAN_FLAG_TypeDef enumeration.
+   1117            * @retval The new state of CAN_FLAG which can be one of @ref FlagStatus.
+   1118            */
+   1119          FlagStatus CAN_GetFlagStatus(CAN_FLAG_TypeDef CAN_Flag)
+   1120          {
+   1121            FlagStatus bitstatus = RESET;
+   1122            CAN_Page_TypeDef can_page = (CAN_Page_TypeDef)0;
+   1123            
+   1124            /* Check the parameters */
+   1125            assert_param(IS_CAN_FLAG_STATUS_OK(CAN_Flag));
+   1126            
+   1127            if (((uint16_t)CAN_Flag & 0x0700)!= RESET)
+   1128            {
+   1129              if (((uint16_t)CAN_Flag & 0x020B)!= RESET)
+   1130              {
+   1131                /*Receive Flags*/
+   1132                if ((CAN->RFR & (uint16_t)CAN_Flag )!= RESET)
+   1133                {
+   1134                  /* CAN_FLAG is set */
+   1135                  bitstatus = SET;
+   1136                }
+   1137                else
+   1138                {
+   1139                  /* CAN_FLAG is reset */
+   1140                  bitstatus = RESET;
+   1141                }
+   1142                
+   1143              }
+   1144              else if (((uint16_t)CAN_Flag & 0x0403)!= RESET)
+   1145              {
+   1146                /*Transmit Flags*/
+   1147                if ((CAN->TSR & (uint16_t)CAN_Flag )!= RESET)
+   1148                {
+   1149                  /* CAN_FLAG is set */
+   1150                  bitstatus = SET;
+   1151                }
+   1152                else
+   1153                {
+   1154                  /* CAN_FLAG is reset */
+   1155                  bitstatus = RESET;
+   1156                }
+   1157              }
+   1158              else /*if((CAN_Flag & 0x0108)!=(uint16_t)RESET)*/
+   1159              {
+   1160                /*wake up Flags*/
+   1161                if ((CAN->MSR & (uint16_t)CAN_Flag )!= RESET)
+   1162                {
+   1163                  /* CAN_FLAG is set */
+   1164                  bitstatus = SET;
+   1165                }
+   1166                else
+   1167                {
+   1168                  /* CAN_FLAG is reset */
+   1169                  bitstatus = RESET;
+   1170                }
+   1171              }
+   1172            }
+   1173            else
+   1174            {
+   1175              /*Error Flags*/
+   1176              can_page = CAN_GetSelectedPage();
+   1177              
+   1178              CAN->PSR = CAN_Page_Config;
+   1179              if ((CAN->Page.Config.ESR & (uint16_t)CAN_Flag) != RESET)
+   1180              {
+   1181                /* CAN_FLAG is set */
+   1182                bitstatus = SET;
+   1183              }
+   1184              else
+   1185              {
+   1186                /* CAN_FLAG is reset */
+   1187                bitstatus = RESET;
+   1188              }
+   1189              /*Restore Last Page*/
+   1190              CAN_SelectPage(can_page);
+   1191            }
+   1192            
+   1193            
+   1194            /* Return the CAN_FLAG status */
+   1195            return  (FlagStatus)bitstatus;
+   1196          }
+   1197          
+   1198          /**
+   1199            * @brief  Checks whether the specified CAN interrupt has occurred or not.
+   1200            * @param   CAN_IT: specifies the CAN interrupt source to check, can be one of @ref CAN_IT_TypeDef.
+   1201            * @retval The new state of CAN_IT, which can be one of @ref ITStatus.
+   1202            */
+   1203          ITStatus CAN_GetITStatus(CAN_IT_TypeDef CAN_IT)
+   1204          {
+   1205            ITStatus pendingbitstatus = RESET;
+   1206            CAN_Page_TypeDef can_page = CAN_GetSelectedPage();
+   1207            
+   1208            /* Check the parameters */
+   1209            assert_param(IS_CAN_IT_STATUS_OK(CAN_IT));
+   1210            
+   1211            
+   1212            switch (CAN_IT)
+   1213            {
+   1214            case CAN_IT_TME:
+   1215              if ((CAN->IER & CAN_IER_TMEIE) !=RESET)
+   1216              {
+   1217                pendingbitstatus = CheckITStatus(CAN->TSR, CAN_TSR_RQCP012);
+   1218              }
+   1219              else
+   1220              {
+   1221                pendingbitstatus = RESET;
+   1222              }
+   1223              break;
+   1224              
+   1225            case CAN_IT_FMP:
+   1226              if ((CAN->IER & CAN_IER_FMPIE) !=RESET)
+   1227              {
+   1228                pendingbitstatus = CheckITStatus(CAN->RFR, CAN_RFR_FMP01);
+   1229              }
+   1230              else
+   1231              {
+   1232                pendingbitstatus = RESET;
+   1233              }
+   1234              break;
+   1235            case CAN_IT_FF:
+   1236              if ((CAN->IER & CAN_IER_FFIE) !=RESET)
+   1237              {
+   1238                pendingbitstatus = CheckITStatus(CAN->RFR, CAN_RFR_FULL);
+   1239              }
+   1240              else
+   1241              {
+   1242                pendingbitstatus = RESET;
+   1243              }
+   1244              break;
+   1245            case CAN_IT_FOV:
+   1246              if ((CAN->IER & CAN_IER_FOVIE) !=RESET)
+   1247              {
+   1248                pendingbitstatus = CheckITStatus(CAN->RFR, CAN_RFR_FOVR);
+   1249              }
+   1250              else
+   1251              {
+   1252                pendingbitstatus = RESET;
+   1253              }
+   1254              break;
+   1255            case CAN_IT_WKU:
+   1256              if ((CAN->IER & CAN_IER_WKUIE) !=RESET)
+   1257              {
+   1258                pendingbitstatus = CheckITStatus(CAN->MSR, CAN_MSR_WKUI);
+   1259              }
+   1260              else
+   1261              {
+   1262                pendingbitstatus = RESET;
+   1263              }
+   1264              break;
+   1265              
+   1266            case CAN_IT_ERR:
+   1267              CAN->PSR = CAN_Page_Config;
+   1268              if ((CAN->Page.Config.EIER & CAN_EIER_ERRIE) !=RESET)
+   1269              {
+   1270                pendingbitstatus = CheckITStatus(CAN->Page.Config.ESR, CAN_ESR_EWGF|CAN_ESR_EPVF|CAN_ESR_BOFF|CAN_ESR_LEC);
+   1271              }
+   1272              else
+   1273              {
+   1274                pendingbitstatus = RESET;
+   1275              }
+   1276              break;
+   1277              
+   1278            case CAN_IT_EWG:
+   1279              CAN->PSR = CAN_Page_Config;
+   1280              if ((CAN->Page.Config.EIER & CAN_EIER_EWGIE) !=RESET)
+   1281              {
+   1282                pendingbitstatus = CheckITStatus(CAN->Page.Config.ESR, CAN_ESR_EWGF);
+   1283              }
+   1284              else
+   1285              {
+   1286                pendingbitstatus = RESET;
+   1287              }
+   1288              break;
+   1289              
+   1290            case CAN_IT_EPV:
+   1291              CAN->PSR = CAN_Page_Config;
+   1292              if ((CAN->Page.Config.EIER & CAN_EIER_EPVIE) !=RESET)
+   1293              {
+   1294                pendingbitstatus = CheckITStatus(CAN->Page.Config.ESR, CAN_ESR_EPVF);
+   1295              }
+   1296              else
+   1297              {
+   1298                pendingbitstatus = RESET;
+   1299              }
+   1300              break;
+   1301            case CAN_IT_BOF:
+   1302              CAN->PSR = CAN_Page_Config;
+   1303              if ((CAN->Page.Config.EIER & CAN_EIER_BOFIE) !=RESET)
+   1304              {
+   1305                pendingbitstatus = CheckITStatus(CAN->Page.Config.ESR, CAN_ESR_BOFF);
+   1306              }
+   1307              else
+   1308              {
+   1309                pendingbitstatus = RESET;
+   1310              }
+   1311              break;
+   1312            case CAN_IT_LEC:
+   1313              CAN->PSR = CAN_Page_Config;
+   1314              if ((CAN->Page.Config.EIER & CAN_EIER_LECIE) !=RESET)
+   1315              {
+   1316                pendingbitstatus = CheckITStatus(CAN->Page.Config.ESR, CAN_ESR_LEC);
+   1317              }
+   1318              else
+   1319              {
+   1320                pendingbitstatus = RESET;
+   1321              }
+   1322              break;
+   1323            default :
+   1324              pendingbitstatus = RESET;
+   1325              break;
+   1326            }
+   1327            /*Restore Last Page*/
+   1328            CAN_SelectPage(can_page);
+   1329            /* Return the CAN_IT status */
+   1330            return  (ITStatus)pendingbitstatus;
+   1331          }
+   1332          
+   1333          /**
+   1334            * @brief   Clears the CAN抯 interrupt pending bits.
+   1335            * @param   CAN_IT: specifies the interrupt pending bit to clear,
+   1336            *  can be one of the following parameters:
+   1337            *                            CAN_IT_TME = Transmit mailbox empty interrupt
+   1338            *                             CAN_IT_FF =FIFO  full    interrupt
+   1339            *                            CAN_IT_FOV =FIFO  overrun  interrupt
+   1340            *                             CAN_IT_WKU =Wake-up interrupt
+   1341            *                             CAN_IT_ERR =General Error interrupt
+   1342            *                             CAN_IT_EWG =Error warning interrupt
+   1343            *                             CAN_IT_EPV  =Error passive  interrupt
+   1344            *                             CAN_IT_BOF = Bus-off   interrupt
+   1345            *                             CAN_IT_LEC  =Last error code interrupt
+   1346            * @retval None
+   1347            */
+   1348          void CAN_ClearITPendingBit(CAN_IT_TypeDef CAN_IT)
+   1349          {
+   1350            CAN_Page_TypeDef can_page = CAN_GetSelectedPage();
+   1351            /* Check the parameters */
+   1352            assert_param(IS_CAN_IT_PENDING_BIT_OK(CAN_IT));
+   1353            
+   1354            switch (CAN_IT)
+   1355            {
+   1356            case CAN_IT_TME:
+   1357              CAN->TSR = CAN_TSR_RQCP012;/* rc_w1*/
+   1358              break;
+   1359              
+   1360            case CAN_IT_FF:
+   1361              CAN->RFR = CAN_RFR_FULL; /* rc_w1*/
+   1362              break;
+   1363              
+   1364            case CAN_IT_FOV:
+   1365              CAN->RFR = CAN_RFR_FOVR; /* rc_w1*/
+   1366              break;
+   1367              
+   1368            case CAN_IT_WKU:
+   1369              CAN->MSR = CAN_MSR_WKUI;  /* rc_w1*/
+   1370              break;
+   1371              
+   1372            case CAN_IT_ERR:
+   1373              CAN->PSR = CAN_Page_Config;
+   1374              CAN->Page.Config.ESR = (uint8_t)CAN_ESR_RESET_VALUE;
+   1375              CAN->MSR = CAN_MSR_ERRI;
+   1376              break;
+   1377              
+   1378            case CAN_IT_EWG:
+   1379              CAN->MSR = CAN_MSR_ERRI;
+   1380              break;
+   1381              
+   1382            case CAN_IT_EPV:
+   1383              CAN->MSR = CAN_MSR_ERRI;
+   1384              break;
+   1385              
+   1386            case CAN_IT_BOF:
+   1387              CAN->MSR = CAN_MSR_ERRI;
+   1388              break;
+   1389              
+   1390            case CAN_IT_LEC:
+   1391              CAN->PSR = CAN_Page_Config;
+   1392              CAN->Page.Config.ESR = (uint8_t)CAN_ESR_RESET_VALUE;
+   1393              break;
+   1394          
+   1395            default :
+   1396              break;
+   1397            }
+   1398            /*Restore Last Page*/
+   1399            CAN_SelectPage(can_page);
+   1400          }
+   1401          
+   1402          /**
+   1403            * @brief  Gets the selected registers page.
+   1404            * @param  None
+   1405            * @retval the selected page which can be one of the @ref CAN_Page_TypeDef.
+   1406            */
+   1407          CAN_Page_TypeDef CAN_GetSelectedPage(void)
+   1408          {
+   1409            return (CAN_Page_TypeDef)(CAN->PSR);
+   1410          }
+   1411          
+   1412          /**
+   1413            * @brief  Sets the registers page to be selected.
+   1414            * @param  CAN_Page: the selected page which can be one of the @ref CAN_Page_TypeDef.
+   1415            * @retval None
+   1416            */
+   1417          void CAN_SelectPage(CAN_Page_TypeDef CAN_Page)
+   1418          {
+   1419            CAN->PSR = (uint8_t)CAN_Page;
+   1420          }
+   1421          
+   1422          /**
+   1423            * @brief  Checks whether the CAN interrupt has occurred or not.
+   1424            * @param   CAN_Reg: specifies the CAN interrupt register to check.
+   1425            * @param   It_Bit: specifies the interrupt source bit to check.
+   1426            * @retval The new state of the CAN Interrupt, which can be one of ITStatus.
+   1427            */
+   1428          static ITStatus CheckITStatus(uint8_t CAN_Reg, uint8_t It_Bit)
+   1429          {
+   1430            ITStatus pendingbitstatus = RESET;
+   1431            if ((CAN_Reg & It_Bit) != (uint8_t)RESET)
+   1432            {
+   1433              /* CAN_IT is set */
+   1434              pendingbitstatus = SET;
+   1435            }
+   1436            else
+   1437            {
+   1438              /* CAN_IT is reset */
+   1439              pendingbitstatus = RESET;
+   1440            }
+   1441            return (ITStatus)pendingbitstatus;
+   1442          }
+   1443          
+   1444          /**
+   1445            * @}
+   1446            */
+   1447            
+   1448          /**
+   1449            * @}
+   1450            */
+   1451          
+   1452          /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+Errors: 38
+Warnings: none

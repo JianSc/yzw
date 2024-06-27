@@ -1,15 +1,15 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V3.11.1.207 for STM8                 24/Jan/2024  16:39:11
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 19/Jan/2024  20:42:43
 # Copyright 2010-2019 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
 #
 #    Source file  =  .\Lib\C\stm8s_flash.c
 #    Command line =  
-#        -f "e:\Nas\电路\保温箱\YZW-S803-EE22-
-#        KF7620-分体\C\build\Debug\.obj\Lib\C\stm8s_flash.args.txt" (--silent
-#        -lCN .\build\Debug\.obj\Lib\C\stm8s_flash.lst -I "d:/Program Files
-#        (x86)/IAR Systems/STM8/stm8/lib" -I Lib/H -I Lib/C -I User -D STM8S003
+#        -f "e:\Nas\电路\保温箱\YZW-S805-EE22(Rev1.0) -
+#        KF7620\C\build\Debug\.obj\Lib\C\stm8s_flash.args.txt" (--silent -lCN
+#        .\build\Debug\.obj\Lib\C\stm8s_flash.lst -I d:/IAR/STM8/stm8/inc -I
+#        d:/IAR/STM8/stm8/lib -I Lib/H -I Lib/C -I User -D STM8S005
 #        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
 #        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
 #        --no_tbaa --no_cross_call --debug --dependencies=m + -o
@@ -20,7 +20,7 @@
 #
 ###############################################################################
 
-e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
+e:\Nas\电路\保温箱\YZW-S805-EE22(Rev1.0) - KF7620\C\Lib\C\stm8s_flash.c
       1          /**
       2            ******************************************************************************
       3            * @file    stm8s_flash.c
@@ -290,10 +290,10 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
    \                     ??FLASH_EraseByte_0:
    \   000014 25 0E        JRC       L:??FLASH_EraseByte_1
    \   000016 BE ..        LDW       X, S:?w4
-   \   000018 A3 0000      CPW       X, #0x0
+   \   000018 A3 0001      CPW       X, #0x1
    \   00001B 26 05        JRNE      L:??FLASH_EraseByte_2
    \   00001D BE ..        LDW       X, S:?w5
-   \   00001F A3 A000      CPW       X, #0xa000
+   \   00001F A3 0000      CPW       X, #0x0
    \                     ??FLASH_EraseByte_2:
    \   000022 25 2B        JRC       L:??FLASH_EraseByte_3
    \                     ??FLASH_EraseByte_1:
@@ -308,7 +308,7 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
    \   000034 A3 0000      CPW       X, #0x0
    \   000037 26 05        JRNE      L:??FLASH_EraseByte_6
    \   000039 BE ..        LDW       X, S:?w5
-   \   00003B A3 4280      CPW       X, #0x4280
+   \   00003B A3 4400      CPW       X, #0x4400
    \                     ??FLASH_EraseByte_6:
    \   00003E 25 0F        JRC       L:??FLASH_EraseByte_3
    \                     ??FLASH_EraseByte_5:
@@ -354,10 +354,10 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
    \                     ??FLASH_ProgramByte_0:
    \   000019 25 0E        JRC       L:??FLASH_ProgramByte_1
    \   00001B BE ..        LDW       X, S:?w4
-   \   00001D A3 0000      CPW       X, #0x0
+   \   00001D A3 0001      CPW       X, #0x1
    \   000020 26 05        JRNE      L:??FLASH_ProgramByte_2
    \   000022 BE ..        LDW       X, S:?w5
-   \   000024 A3 A000      CPW       X, #0xa000
+   \   000024 A3 0000      CPW       X, #0x0
    \                     ??FLASH_ProgramByte_2:
    \   000027 25 2B        JRC       L:??FLASH_ProgramByte_3
    \                     ??FLASH_ProgramByte_1:
@@ -372,7 +372,7 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
    \   000039 A3 0000      CPW       X, #0x0
    \   00003C 26 05        JRNE      L:??FLASH_ProgramByte_6
    \   00003E BE ..        LDW       X, S:?w5
-   \   000040 A3 4280      CPW       X, #0x4280
+   \   000040 A3 4400      CPW       X, #0x4400
    \                     ??FLASH_ProgramByte_6:
    \   000043 25 0F        JRC       L:??FLASH_ProgramByte_3
    \                     ??FLASH_ProgramByte_5:
@@ -415,10 +415,10 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
    \                     ??FLASH_ReadByte_0:
    \   000014 25 0E        JRC       L:??FLASH_ReadByte_1
    \   000016 BE ..        LDW       X, S:?w4
-   \   000018 A3 0000      CPW       X, #0x0
+   \   000018 A3 0001      CPW       X, #0x1
    \   00001B 26 05        JRNE      L:??FLASH_ReadByte_2
    \   00001D BE ..        LDW       X, S:?w5
-   \   00001F A3 A000      CPW       X, #0xa000
+   \   00001F A3 0000      CPW       X, #0x0
    \                     ??FLASH_ReadByte_2:
    \   000022 25 2B        JRC       L:??FLASH_ReadByte_3
    \                     ??FLASH_ReadByte_1:
@@ -433,7 +433,7 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
    \   000034 A3 0000      CPW       X, #0x0
    \   000037 26 05        JRNE      L:??FLASH_ReadByte_6
    \   000039 BE ..        LDW       X, S:?w5
-   \   00003B A3 4280      CPW       X, #0x4280
+   \   00003B A3 4400      CPW       X, #0x4400
    \                     ??FLASH_ReadByte_6:
    \   00003E 25 0F        JRC       L:??FLASH_ReadByte_3
    \                     ??FLASH_ReadByte_5:
@@ -478,10 +478,10 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
    \                     ??FLASH_ProgramWord_0:
    \   000018 25 0E        JRC       L:??FLASH_ProgramWord_1
    \   00001A BE ..        LDW       X, S:?w4
-   \   00001C A3 0000      CPW       X, #0x0
+   \   00001C A3 0001      CPW       X, #0x1
    \   00001F 26 05        JRNE      L:??FLASH_ProgramWord_2
    \   000021 BE ..        LDW       X, S:?w5
-   \   000023 A3 A000      CPW       X, #0xa000
+   \   000023 A3 0000      CPW       X, #0x0
    \                     ??FLASH_ProgramWord_2:
    \   000026 25 2B        JRC       L:??FLASH_ProgramWord_3
    \                     ??FLASH_ProgramWord_1:
@@ -496,7 +496,7 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
    \   000038 A3 0000      CPW       X, #0x0
    \   00003B 26 05        JRNE      L:??FLASH_ProgramWord_6
    \   00003D BE ..        LDW       X, S:?w5
-   \   00003F A3 4280      CPW       X, #0x4280
+   \   00003F A3 4400      CPW       X, #0x4400
    \                     ??FLASH_ProgramWord_6:
    \   000042 25 0F        JRC       L:??FLASH_ProgramWord_3
    \                     ??FLASH_ProgramWord_5:
@@ -982,49 +982,52 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
     420            /* Check parameters */
     421            assert_param(IS_FLASH_FLAGS_OK(FLASH_FLAG));
    \   000008 B6 ..        LD        A, S:?b9
-   \   00000A A1 08        CP        A, #0x8
-   \   00000C 27 21        JREQ      L:??FLASH_GetFlagStatus_0
+   \   00000A A1 40        CP        A, #0x40
+   \   00000C 27 27        JREQ      L:??FLASH_GetFlagStatus_0
    \   00000E B6 ..        LD        A, S:?b9
-   \   000010 A1 04        CP        A, #0x4
-   \   000012 27 1B        JREQ      L:??FLASH_GetFlagStatus_0
+   \   000010 A1 08        CP        A, #0x8
+   \   000012 27 21        JREQ      L:??FLASH_GetFlagStatus_0
    \   000014 B6 ..        LD        A, S:?b9
-   \   000016 A1 02        CP        A, #0x2
-   \   000018 27 15        JREQ      L:??FLASH_GetFlagStatus_0
+   \   000016 A1 04        CP        A, #0x4
+   \   000018 27 1B        JREQ      L:??FLASH_GetFlagStatus_0
    \   00001A B6 ..        LD        A, S:?b9
-   \   00001C A1 01        CP        A, #0x1
-   \   00001E 27 0F        JREQ      L:??FLASH_GetFlagStatus_0
-   \   000020 AE 01A5      LDW       X, #0x1a5
-   \   000023 BF ..        LDW       S:?w1, X
-   \   000025 5F           CLRW      X
-   \   000026 BF ..        LDW       S:?w0, X
-   \   000028 AE ....      LDW       X, #?_0
-   \   00002B 8D ......    CALLF     assert_failed
+   \   00001C A1 02        CP        A, #0x2
+   \   00001E 27 15        JREQ      L:??FLASH_GetFlagStatus_0
+   \   000020 B6 ..        LD        A, S:?b9
+   \   000022 A1 01        CP        A, #0x1
+   \   000024 27 0F        JREQ      L:??FLASH_GetFlagStatus_0
+   \   000026 AE 01A5      LDW       X, #0x1a5
+   \   000029 BF ..        LDW       S:?w1, X
+   \   00002B 5F           CLRW      X
+   \   00002C BF ..        LDW       S:?w0, X
+   \   00002E AE ....      LDW       X, #?_0
+   \   000031 8D ......    CALLF     assert_failed
     422            
     423            /* Check the status of the specified FLASH flag */
     424            if((FLASH->IAPSR & (uint8_t)FLASH_FLAG) != (uint8_t)RESET)
    \                     ??FLASH_GetFlagStatus_0:
-   \   00002F C6 505F      LD        A, L:0x505f
-   \   000032 B4 ..        AND       A, S:?b9
-   \   000034 A1 00        CP        A, #0x0
-   \   000036 27 06        JREQ      L:??FLASH_GetFlagStatus_1
+   \   000035 C6 505F      LD        A, L:0x505f
+   \   000038 B4 ..        AND       A, S:?b9
+   \   00003A A1 00        CP        A, #0x0
+   \   00003C 27 06        JREQ      L:??FLASH_GetFlagStatus_1
     425            {
     426              status = SET; /* FLASH_FLAG is set */
-   \   000038 A6 01        LD        A, #0x1
-   \   00003A B7 ..        LD        S:?b8, A
-   \   00003C 20 02        JRA       L:??FLASH_GetFlagStatus_2
+   \   00003E A6 01        LD        A, #0x1
+   \   000040 B7 ..        LD        S:?b8, A
+   \   000042 20 02        JRA       L:??FLASH_GetFlagStatus_2
     427            }
     428            else
     429            {
     430              status = RESET; /* FLASH_FLAG is reset*/
    \                     ??FLASH_GetFlagStatus_1:
-   \   00003E 3F ..        CLR       S:?b8
+   \   000044 3F ..        CLR       S:?b8
     431            }
     432            
     433            /* Return the FLASH_FLAG status */
     434            return status;
    \                     ??FLASH_GetFlagStatus_2:
-   \   000040 B6 ..        LD        A, S:?b8
-   \   000042 AC ......    JPF       L:?epilogue_w4
+   \   000046 B6 ..        LD        A, S:?b8
+   \   000048 AC ......    JPF       L:?epilogue_w4
     435          }
     436          
     437          /**
@@ -1155,56 +1158,69 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
     555          #if defined (STM8S208) || defined(STM8S207) || defined(STM8S007) || defined(STM8S105) || \
     556              defined (STM8S005) || defined(STM8AF52Ax) || defined(STM8AF62Ax) || defined(STM8AF626x)  
     557              if(FLASH_MemType == FLASH_MEMTYPE_PROG)
+   \   000006 B6 ..        LD        A, S:?b1
+   \   000008 A1 FD        CP        A, #0xfd
+   \   00000A 26 11        JRNE      L:??FLASH_WaitForLastOperation_0
     558              {
     559                while((flagstatus == 0x00) && (timeout != 0x00))
+   \                     ??FLASH_WaitForLastOperation_1:
+   \   00000C 3D ..        TNZ       S:?b0
+   \   00000E 26 1E        JRNE      L:??FLASH_WaitForLastOperation_2
+   \   000010 5D           TNZW      X
+   \   000011 27 1B        JREQ      L:??FLASH_WaitForLastOperation_2
     560                {
     561                  flagstatus = (uint8_t)(FLASH->IAPSR & (uint8_t)(FLASH_IAPSR_EOP |
     562                                                                  FLASH_IAPSR_WR_PG_DIS));
+   \   000013 C6 505F      LD        A, L:0x505f
+   \   000016 A4 05        AND       A, #0x5
+   \   000018 B7 ..        LD        S:?b0, A
     563                  timeout--;
+   \   00001A 5A           DECW      X
+   \   00001B 20 EF        JRA       L:??FLASH_WaitForLastOperation_1
     564                }
     565              }
     566              else
     567              {
     568                while((flagstatus == 0x00) && (timeout != 0x00))
+   \                     ??FLASH_WaitForLastOperation_0:
+   \   00001D 3D ..        TNZ       S:?b0
+   \   00001F 26 0D        JRNE      L:??FLASH_WaitForLastOperation_2
+   \   000021 5D           TNZW      X
+   \   000022 27 0A        JREQ      L:??FLASH_WaitForLastOperation_2
     569                {
     570                  flagstatus = (uint8_t)(FLASH->IAPSR & (uint8_t)(FLASH_IAPSR_HVOFF |
     571                                                                  FLASH_IAPSR_WR_PG_DIS));
+   \   000024 C6 505F      LD        A, L:0x505f
+   \   000027 A4 41        AND       A, #0x41
+   \   000029 B7 ..        LD        S:?b0, A
     572                  timeout--;
+   \   00002B 5A           DECW      X
+   \   00002C 20 EF        JRA       L:??FLASH_WaitForLastOperation_0
     573                }
     574              }
     575          #else /*STM8S103, STM8S001, STM8S903, STM8AF622x */
     576            UNUSED(FLASH_MemType);
     577            while((flagstatus == 0x00) && (timeout != 0x00))
-   \                     ??FLASH_WaitForLastOperation_0:
-   \   000006 3D ..        TNZ       S:?b0
-   \   000008 26 0D        JRNE      L:??FLASH_WaitForLastOperation_1
-   \   00000A 5D           TNZW      X
-   \   00000B 27 0A        JREQ      L:??FLASH_WaitForLastOperation_1
     578            {
     579              flagstatus = (uint8_t)(FLASH->IAPSR & (FLASH_IAPSR_EOP | FLASH_IAPSR_WR_PG_DIS));
-   \   00000D C6 505F      LD        A, L:0x505f
-   \   000010 A4 05        AND       A, #0x5
-   \   000012 B7 ..        LD        S:?b0, A
     580              timeout--;
-   \   000014 5A           DECW      X
-   \   000015 20 EF        JRA       L:??FLASH_WaitForLastOperation_0
     581            }
     582          #endif /* STM8S208, STM8S207, STM8S105, STM8AF52Ax, STM8AF62Ax, STM8AF262x */
     583            
     584            if(timeout == 0x00 )
-   \                     ??FLASH_WaitForLastOperation_1:
-   \   000017 5D           TNZW      X
-   \   000018 26 04        JRNE      L:??FLASH_WaitForLastOperation_2
+   \                     ??FLASH_WaitForLastOperation_2:
+   \   00002E 5D           TNZW      X
+   \   00002F 26 04        JRNE      L:??FLASH_WaitForLastOperation_3
     585            {
     586              flagstatus = FLASH_STATUS_TIMEOUT;
-   \   00001A A6 02        LD        A, #0x2
-   \   00001C B7 ..        LD        S:?b0, A
+   \   000031 A6 02        LD        A, #0x2
+   \   000033 B7 ..        LD        S:?b0, A
     587            }
     588            
     589            return((FLASH_Status_TypeDef)flagstatus);
-   \                     ??FLASH_WaitForLastOperation_2:
-   \   00001E B6 ..        LD        A, S:?b0
-   \   000020 87           RETF
+   \                     ??FLASH_WaitForLastOperation_3:
+   \   000035 B6 ..        LD        A, S:?b0
+   \   000037 87           RETF
     590          }
     591          
     592          /**
@@ -1259,7 +1275,7 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
     613            {
     614              assert_param(IS_FLASH_PROG_BLOCK_NUMBER_OK(BlockNum));
    \   000037 BE ..        LDW       X, S:?w7
-   \   000039 A3 0080      CPW       X, #0x80
+   \   000039 A3 0100      CPW       X, #0x100
    \   00003C 25 0F        JRC       L:??FLASH_EraseBlock_2
    \   00003E AE 0266      LDW       X, #0x266
    \   000041 BF ..        LDW       S:?w1, X
@@ -1281,7 +1297,7 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
     619              assert_param(IS_FLASH_DATA_BLOCK_NUMBER_OK(BlockNum));
    \                     ??FLASH_EraseBlock_1:
    \   00005B BE ..        LDW       X, S:?w7
-   \   00005D A3 000A      CPW       X, #0xa
+   \   00005D A3 0008      CPW       X, #0x8
    \   000060 25 0F        JRC       L:??FLASH_EraseBlock_4
    \   000062 AE 026B      LDW       X, #0x26b
    \   000065 BF ..        LDW       S:?w1, X
@@ -1305,7 +1321,7 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
     627                defined(STM8S001) || defined (STM8S903) || defined (STM8AF626x) || defined (STM8AF622x)
     628              pwFlash = (PointerAttr uint32_t *)(MemoryAddressCast)(startaddress + ((uint32_t)BlockNum * FLASH_BLOCK_SIZE));
    \                     ??FLASH_EraseBlock_3:
-   \   00007D AE 0040      LDW       X, #0x40
+   \   00007D AE 0080      LDW       X, #0x80
    \   000080 BF ..        LDW       S:?w0, X
    \   000082 BE ..        LDW       X, S:?w7
    \   000084 8D ......    CALLF     L:?mul16_x_x_w0
@@ -1408,7 +1424,7 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
     666            {
     667              assert_param(IS_FLASH_PROG_BLOCK_NUMBER_OK(BlockNum));
    \   000053 1E 03        LDW       X, (0x3,SP)
-   \   000055 A3 0080      CPW       X, #0x80
+   \   000055 A3 0100      CPW       X, #0x100
    \   000058 25 0F        JRC       L:??FLASH_ProgramBlock_3
    \   00005A AE 029B      LDW       X, #0x29b
    \   00005D BF ..        LDW       S:?w1, X
@@ -1430,7 +1446,7 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
     672              assert_param(IS_FLASH_DATA_BLOCK_NUMBER_OK(BlockNum));
    \                     ??FLASH_ProgramBlock_2:
    \   000077 1E 03        LDW       X, (0x3,SP)
-   \   000079 A3 000A      CPW       X, #0xa
+   \   000079 A3 0008      CPW       X, #0x8
    \   00007C 25 0F        JRC       L:??FLASH_ProgramBlock_5
    \   00007E AE 02A0      LDW       X, #0x2a0
    \   000081 BF ..        LDW       S:?w1, X
@@ -1454,7 +1470,7 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
    \   00009B BF ..        LDW       S:?w1, X
    \   00009D 5F           CLRW      X
    \   00009E BF ..        LDW       S:?w0, X
-   \   0000A0 AE 0040      LDW       X, #0x40
+   \   0000A0 AE 0080      LDW       X, #0x80
    \   0000A3 BF ..        LDW       S:?w3, X
    \   0000A5 5F           CLRW      X
    \   0000A6 BF ..        LDW       S:?w2, X
@@ -1493,7 +1509,7 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
    \   0000D3 BF ..        LDW       S:?w6, X
    \                     ??FLASH_ProgramBlock_8:
    \   0000D5 BE ..        LDW       X, S:?w6
-   \   0000D7 A3 0040      CPW       X, #0x40
+   \   0000D7 A3 0080      CPW       X, #0x80
    \   0000DA 24 17        JRNC      L:??FLASH_ProgramBlock_9
     695            {
     696              *((PointerAttr uint8_t*) (MemoryAddressCast)startaddress + Count) = ((uint8_t)(Buffer[Count]));
@@ -1544,7 +1560,7 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
       86  FLASH_EraseByte
       82  FLASH_EraseOptionByte
       70  FLASH_GetBootSize
-      70  FLASH_GetFlagStatus
+      76  FLASH_GetFlagStatus
        6  FLASH_GetLowPowerMode
        6  FLASH_GetProgrammingTime
       48  FLASH_ITConfig
@@ -1558,13 +1574,13 @@ e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_flash.c
       62  FLASH_SetLowPowerMode
       46  FLASH_SetProgrammingTime
       60  FLASH_Unlock
-      33  FLASH_WaitForLastOperation
+      56  FLASH_WaitForLastOperation
 
  
- 1 582 bytes in section .far_func.text
+ 1 611 bytes in section .far_func.text
     22 bytes in section .near.rodata
  
- 1 582 bytes of CODE  memory
+ 1 611 bytes of CODE  memory
     22 bytes of CONST memory
 
 Errors: none

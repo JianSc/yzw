@@ -1,7 +1,7 @@
 #ifndef _USER_CONFIG_H
 #define _USER_CONFIG_H
 
-#include "iostm8s003f3.h"
+#include "iostm8s005k6.h"
 #include "stm8s.h"
 
 // 开启换风功能

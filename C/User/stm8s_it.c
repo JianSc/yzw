@@ -238,6 +238,7 @@ INTERRUPT_HANDLER(TIM1_UPD_OVF_TRG_BRK_IRQHandler, 11)
    extern bool CONFIG_LED_STATUS;
    extern bool HF_STATUS;
    extern bool IT_HF_STATUS;
+   extern bool MSD_STATUS, MSD_TIME_STATUS;
 
    static u8 LED_PWM_TIME;
    static u8 LED_PWM;
@@ -246,10 +247,22 @@ INTERRUPT_HANDLER(TIM1_UPD_OVF_TRG_BRK_IRQHandler, 11)
    static u16 KEY_DOWN_TIME;
    static u16 HF_TIME_S;
    static u8 HF_TIME_M, HF_TIME_H;
+   static u16 MSD_TIME;
 
    static bool bol_Config_LED_status = FALSE;
 
-   // 自动换气计时
+   if (MSD_STATUS)
+   {
+      MSD_TIME++;
+      if (MSD_TIME > 30000)
+      {
+         MSD_TIME_STATUS = TRUE;
+      }
+   }
+   else
+   {
+      MSD_TIME = 0;
+   }
 
    if (HF_STATUS)
    {
@@ -294,8 +307,6 @@ INTERRUPT_HANDLER(TIM1_UPD_OVF_TRG_BRK_IRQHandler, 11)
       }
    }
 
-   // 按钮按下计时
-
    if (KEY_DOWN)
    {
       if (KEY_DOWN_TIME > 500)
@@ -312,8 +323,6 @@ INTERRUPT_HANDLER(TIM1_UPD_OVF_TRG_BRK_IRQHandler, 11)
    {
       KEY_DOWN_TIME = 0;
    }
-
-   // 设置开启， 数码码闪烁记时
 
    if (CONFIG_STATUS)
    {
@@ -341,8 +350,6 @@ INTERRUPT_HANDLER(TIM1_UPD_OVF_TRG_BRK_IRQHandler, 11)
       bol_Config_LED_status = FALSE;
    }
 
-   // DS18B20 转换时间延时
-
    if (DS18B20_CONVERT_STATUS)
    {
       if (DS18B20_CONVERT_TIME > 300)
@@ -360,8 +367,6 @@ INTERRUPT_HANDLER(TIM1_UPD_OVF_TRG_BRK_IRQHandler, 11)
    {
       DS18B20_CONVERT_TIME = 0;
    }
-
-   // LED PWM 开关记时
 
    if (LED_PWM_TIME == 30)
    {

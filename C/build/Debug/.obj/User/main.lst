@@ -1,15 +1,15 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V3.11.1.207 for STM8                 24/Jan/2024  16:39:13
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 19/Jan/2024  20:42:47
 # Copyright 2010-2019 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
 #
 #    Source file  =  .\User\main.c
 #    Command line =  
-#        -f "e:\Nas\µÁ¬∑\±£Œ¬œ‰\YZW-S803-EE22-
-#        KF7620-∑÷ÃÂ\C\build\Debug\.obj\User\main.args.txt" (--silent -lCN
-#        .\build\Debug\.obj\User\main.lst -I "d:/Program Files (x86)/IAR
-#        Systems/STM8/stm8/lib" -I Lib/H -I Lib/C -I User -D STM8S003
+#        -f "e:\Nas\µÁ¬∑\±£Œ¬œ‰\YZW-S805-EE22(Rev1.0) -
+#        KF7620\C\build\Debug\.obj\User\main.args.txt" (--silent -lCN
+#        .\build\Debug\.obj\User\main.lst -I d:/IAR/STM8/stm8/inc -I
+#        d:/IAR/STM8/stm8/lib -I Lib/H -I Lib/C -I User -D STM8S005
 #        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
 #        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
 #        --no_tbaa --no_cross_call --debug --dependencies=m + -o
@@ -20,7 +20,7 @@
 #
 ###############################################################################
 
-e:\Nas\µÁ¬∑\±£Œ¬œ‰\YZW-S803-EE22- KF7620-∑÷ÃÂ\C\User\main.c
+e:\Nas\µÁ¬∑\±£Œ¬œ‰\YZW-S805-EE22(Rev1.0) - KF7620\C\User\main.c
       1          /**
       2           ******************************************************************************
       3           * @file    Project/main.c
@@ -199,367 +199,391 @@ e:\Nas\µÁ¬∑\±£Œ¬œ‰\YZW-S803-EE22- KF7620-∑÷ÃÂ\C\User\main.c
      70            while (1)
      71            {
      72              // ËøáÊ∏©Ê£ÄÊµãÔºåÂ¶ÇÊûúÊ∏©Â∫¶È´ò‰∫éËÆæÂÆöÁöÑ5Â∫¶ÔºåÂπ∂‰∏îÊåÅÁª≠30ÁßíÔºåÂ∞±ÂÖ≥Èó≠Âä†Ê∏©ÁªßÁîµÂô®
-     73              // if(MSD_TIME_STATUS)
-     74              // {
-     75              //   MSD_CL;
-     76              //   SW_CL;
-     77              //   LED_STATUS = TRUE;
-     78              //   FAN_CL;
-     79              //   TEM_LED_CL;
-     80          
-     81              //   while(1);
-     82              // }
-     83              // ÂêØÂä® DS18B20 ËøõË°åÊ∏©Â∫¶ËΩ¨Êç¢
-     84              int SUM;
-     85              if (!DS18B20_CONVERT_STATUS)
+     73              if(MSD_TIME_STATUS)
    \                     ??main_0:
-   \   00005D C6 ....      LD        A, L:DS18B20_CONVERT_STATUS
+   \   00005D C6 ....      LD        A, L:MSD_TIME_STATUS
    \   000060 4D           TNZ       A
-   \   000061 27 03        JREQ      ??lb_0
-   \   000063 CC ....      JP        L:??main_1
-     86              {
-     87                disableInterrupts();
-   \                     ??lb_0:
-   \   000066 9B           SIM
-     88          
-     89                // ËΩ¨Êç¢Ê∏©Â∫¶
-     90                while (!DS18B20_Init())
+   \   000061 27 3A        JREQ      L:??main_1
+     74              {
+     75                MSD_CL;
+   \   000063 7219 500A    BRES      L:0x500a, #0x4
+     76                SW_CL;
+   \   000067 7217 500A    BRES      L:0x500a, #0x3
+     77                LED_STATUS = TRUE;
+   \   00006B 35 01 ....   MOV       L:LED_STATUS, #0x1
+     78                FAN_CL;
+   \   00006F 7219 500A    BRES      L:0x500a, #0x4
+     79                TEM_LED_CL;
+   \   000073 721A 500A    BSET      L:0x500a, #0x5
+   \   000077 721D 500A    BRES      L:0x500a, #0x6
+     80                tm1650_displayW(0,LED7CodeL[14]);
+   \   00007B 55 .... .... MOV       S:?b0, L:LED7CodeL + 14
+   \   000080 4F           CLR       A
+   \   000081 8D ......    CALLF     tm1650_displayW
+     81                tm1650_displayW(1,LED7CodeL[1]);
+   \   000085 55 .... .... MOV       S:?b0, L:LED7CodeL + 1
+   \   00008A A6 01        LD        A, #0x1
+   \   00008C 8D ......    CALLF     tm1650_displayW
+     82                tm1650_displayW(2,LED7CodeL[0]);
+   \   000090 55 .... .... MOV       S:?b0, L:LED7CodeL
+   \   000095 A6 02        LD        A, #0x2
+   \   000097 8D ......    CALLF     tm1650_displayW
+     83          
+     84                while(1);
    \                     ??main_2:
-   \   000067 8D ......    CALLF     DS18B20_Init
-   \   00006B A1 00        CP        A, #0x0
-   \   00006D 26 09        JRNE      L:??main_3
-     91                {
-     92                  delay_ms(10);
-   \   00006F AE 000A      LDW       X, #0xa
-   \   000072 8D ......    CALLF     delay_ms
-   \   000076 20 EF        JRA       L:??main_2
-     93                }
-     94                ds18b20_Conver();
-   \                     ??main_3:
-   \   000078 8D ......    CALLF     ds18b20_Conver
-     95                DS18B20_CONVERT_STATUS = TRUE;
-   \   00007C 35 01 ....   MOV       L:DS18B20_CONVERT_STATUS, #0x1
-     96          
-     97                // ËØªÂèñÊ∏©Â∫¶
-     98                while (!DS18B20_Init())
-   \                     ??main_4:
-   \   000080 8D ......    CALLF     DS18B20_Init
-   \   000084 A1 00        CP        A, #0x0
-   \   000086 26 09        JRNE      L:??main_5
-     99                {
-    100                  delay_ms(10);
-   \   000088 AE 000A      LDW       X, #0xa
-   \   00008B 8D ......    CALLF     delay_ms
-   \   00008F 20 EF        JRA       L:??main_4
-    101                };
-    102                SUM = DS18B20_Convert_Get_Tem(DS18B20_Read());
-   \                     ??main_5:
-   \   000091 8D ......    CALLF     DS18B20_Read
-   \   000095 8D ......    CALLF     DS18B20_Convert_Get_Tem
-   \   000099 BF ..        LDW       S:?w4, X
-    103                delay_ms(5);
-   \   00009B AE 0005      LDW       X, #0x5
-   \   00009E 8D ......    CALLF     delay_ms
-    104          
-    105                enableInterrupts();
-   \   0000A2 9A           RIM
-    106          
-    107                u8 x;
-    108                if (!SYSTEM_RUN && x > 2)
-   \   0000A3 C6 ....      LD        A, L:SYSTEM_RUN
-   \   0000A6 4D           TNZ       A
-   \   0000A7 27 03        JREQ      ??lb_1
-   \   0000A9 CC ....      JP        L:??main_6
-   \                     ??lb_1:
-   \   0000AC B6 ..        LD        A, S:?b10
-   \   0000AE A1 03        CP        A, #0x3
-   \   0000B0 24 03        JRNC      ??lb_2
-   \   0000B2 CC ....      JP        L:??main_6
-    109                {
-    110                  // ÊòæÁ§∫Ê∏©Â∫¶
-    111                  SUM = (SUM < -99) ? -99 : SUM;
-   \                     ??lb_2:
-   \   0000B5 BE ..        LDW       X, S:?w4
-   \   0000B7 A3 FF9D      CPW       X, #0xffffffffffffff9d
-   \   0000BA 2E 07        JRSGE     L:??main_7
-   \   0000BC AE FF9D      LDW       X, #0xff9d
-   \   0000BF BF ..        LDW       S:?w4, X
-   \   0000C1 20 00        JRA       L:??main_8
-    112                  if (SUM < 0)
-   \                     ??main_7:
-   \                     ??main_8:
-   \   0000C3 BE ..        LDW       X, S:?w4
-   \   0000C5 A3 0000      CPW       X, #0x0
-   \   0000C8 2E 4C        JRSGE     L:??main_9
-    113                  {
-    114                    tm1650_displayW(0, 0x40);
-   \   0000CA 35 40 ....   MOV       S:?b0, #0x40
-   \   0000CE 4F           CLR       A
-   \   0000CF 8D ......    CALLF     tm1650_displayW
-    115                    SUM = ~SUM + 1;
-   \   0000D3 BE ..        LDW       X, S:?w4
-   \   0000D5 53           CPLW      X
-   \   0000D6 BF ..        LDW       S:?w4, X
-   \   0000D8 BE ..        LDW       X, S:?w4
-   \   0000DA 5C           INCW      X
-   \   0000DB BF ..        LDW       S:?w4, X
-    116                    tm1650_displayW(1, (LED7CodeL[SUM / 10 % 10]) | 0x80);
-   \   0000DD 90AE 000A    LDW       Y, #0xa
-   \   0000E1 BE ..        LDW       X, S:?w4
-   \   0000E3 8D ......    CALLF     L:?sdiv16_x_x_y
-   \   0000E7 90AE 000A    LDW       Y, #0xa
-   \   0000EB 8D ......    CALLF     L:?smod16_y_x_y
-   \   0000EF 93           LDW       X, Y
-   \   0000F0 D6 ....      LD        A, (L:LED7CodeL,X)
-   \   0000F3 AA 80        OR        A, #0x80
-   \   0000F5 B7 ..        LD        S:?b0, A
-   \   0000F7 A6 01        LD        A, #0x1
-   \   0000F9 8D ......    CALLF     tm1650_displayW
-    117                    tm1650_displayW(2, LED7CodeL[SUM % 10]);
-   \   0000FD 90AE 000A    LDW       Y, #0xa
-   \   000101 BE ..        LDW       X, S:?w4
-   \   000103 8D ......    CALLF     L:?smod16_y_x_y
-   \   000107 93           LDW       X, Y
-   \   000108 D6 ....      LD        A, (L:LED7CodeL,X)
-   \   00010B B7 ..        LD        S:?b0, A
-   \   00010D A6 02        LD        A, #0x2
-   \   00010F 8D ......    CALLF     tm1650_displayW
-   \   000113 CC ....      JP        L:??main_6
-    118                  }
-    119                  else
-    120                  {
-    121                    SUM = (SUM > 999) ? 999 : SUM;
-   \                     ??main_9:
-   \   000116 BE ..        LDW       X, S:?w4
-   \   000118 A3 03E8      CPW       X, #0x3e8
-   \   00011B 2F 07        JRSLT     L:??main_10
-   \   00011D AE 03E7      LDW       X, #0x3e7
-   \   000120 BF ..        LDW       S:?w4, X
-   \   000122 20 00        JRA       L:??main_11
-    122                    if ((SUM / 100 % 100) == 0)
-   \                     ??main_10:
-   \                     ??main_11:
-   \   000124 90AE 0064    LDW       Y, #0x64
-   \   000128 BE ..        LDW       X, S:?w4
-   \   00012A 8D ......    CALLF     L:?sdiv16_x_x_y
-   \   00012E 90AE 0064    LDW       Y, #0x64
-   \   000132 8D ......    CALLF     L:?smod16_y_x_y
-   \   000136 905D         TNZW      Y
-   \   000138 26 09        JRNE      L:??main_12
-    123                    {
-    124                      tm1650_displayW(0, 0x00);
-   \   00013A 3F ..        CLR       S:?b0
-   \   00013C 4F           CLR       A
-   \   00013D 8D ......    CALLF     tm1650_displayW
-   \   000141 20 1D        JRA       L:??main_13
-    125                    }
-    126                    else
-    127                    {
-    128                      tm1650_displayW(0, LED7CodeL[SUM / 100 % 100]);
-   \                     ??main_12:
-   \   000143 90AE 0064    LDW       Y, #0x64
-   \   000147 BE ..        LDW       X, S:?w4
-   \   000149 8D ......    CALLF     L:?sdiv16_x_x_y
-   \   00014D 90AE 0064    LDW       Y, #0x64
-   \   000151 8D ......    CALLF     L:?smod16_y_x_y
-   \   000155 93           LDW       X, Y
-   \   000156 D6 ....      LD        A, (L:LED7CodeL,X)
-   \   000159 B7 ..        LD        S:?b0, A
-   \   00015B 4F           CLR       A
-   \   00015C 8D ......    CALLF     tm1650_displayW
-    129                    }
-    130                    tm1650_displayW(1, (LED7CodeL[SUM / 10 % 10]) | 0x80);
-   \                     ??main_13:
-   \   000160 90AE 000A    LDW       Y, #0xa
-   \   000164 BE ..        LDW       X, S:?w4
-   \   000166 8D ......    CALLF     L:?sdiv16_x_x_y
-   \   00016A 90AE 000A    LDW       Y, #0xa
-   \   00016E 8D ......    CALLF     L:?smod16_y_x_y
-   \   000172 93           LDW       X, Y
-   \   000173 D6 ....      LD        A, (L:LED7CodeL,X)
-   \   000176 AA 80        OR        A, #0x80
-   \   000178 B7 ..        LD        S:?b0, A
-   \   00017A A6 01        LD        A, #0x1
-   \   00017C 8D ......    CALLF     tm1650_displayW
-    131                    tm1650_displayW(2, LED7CodeL[SUM % 10]);
-   \   000180 90AE 000A    LDW       Y, #0xa
-   \   000184 BE ..        LDW       X, S:?w4
-   \   000186 8D ......    CALLF     L:?smod16_y_x_y
-   \   00018A 93           LDW       X, Y
-   \   00018B D6 ....      LD        A, (L:LED7CodeL,X)
-   \   00018E B7 ..        LD        S:?b0, A
-   \   000190 A6 02        LD        A, #0x2
-   \   000192 8D ......    CALLF     tm1650_displayW
-    132                  }
-    133                }
-    134                x++;
-   \                     ??main_6:
-   \   000196 3C ..        INC       S:?b10
-    135                x = (x > 10) ? 0 : x;
-   \   000198 B6 ..        LD        A, S:?b10
-   \   00019A A1 0B        CP        A, #0xb
-   \   00019C 25 04        JRC       L:??main_14
-   \   00019E 3F ..        CLR       S:?b10
-   \   0001A0 20 00        JRA       L:??main_1
-    136              }
-    137          
-    138              // LED ÂºÄÂêØÁä∂ÊÄÅ
-    139              if (LED_STATUS)
-   \                     ??main_14:
+   \   00009B 20 FE        JRA       L:??main_2
+     85              }
+     86              // ÂêØÂä® DS18B20 ËøõË°åÊ∏©Â∫¶ËΩ¨Êç¢
+     87              int SUM;
+     88              if (!DS18B20_CONVERT_STATUS)
    \                     ??main_1:
-   \   0001A2 C6 ....      LD        A, L:LED_STATUS
-   \   0001A5 4D           TNZ       A
-   \   0001A6 27 06        JREQ      L:??main_15
-    140              {
-    141                LED_LED_EN;
-   \   0001A8 7213 5000    BRES      L:0x5000, #0x1
-   \   0001AC 20 04        JRA       L:??main_16
-    142              }
-    143              else
-    144              {
-    145                LED_LED_CL;
+   \   00009D C6 ....      LD        A, L:DS18B20_CONVERT_STATUS
+   \   0000A0 4D           TNZ       A
+   \   0000A1 27 03        JREQ      ??lb_0
+   \   0000A3 CC ....      JP        L:??main_3
+     89              {
+     90                disableInterrupts();
+   \                     ??lb_0:
+   \   0000A6 9B           SIM
+     91          
+     92                // ËΩ¨Êç¢Ê∏©Â∫¶
+     93                while (!DS18B20_Init())
+   \                     ??main_4:
+   \   0000A7 8D ......    CALLF     DS18B20_Init
+   \   0000AB A1 00        CP        A, #0x0
+   \   0000AD 26 09        JRNE      L:??main_5
+     94                {
+     95                  delay_ms(10);
+   \   0000AF AE 000A      LDW       X, #0xa
+   \   0000B2 8D ......    CALLF     delay_ms
+   \   0000B6 20 EF        JRA       L:??main_4
+     96                }
+     97                ds18b20_Conver();
+   \                     ??main_5:
+   \   0000B8 8D ......    CALLF     ds18b20_Conver
+     98                DS18B20_CONVERT_STATUS = TRUE;
+   \   0000BC 35 01 ....   MOV       L:DS18B20_CONVERT_STATUS, #0x1
+     99          
+    100                // ËØªÂèñÊ∏©Â∫¶
+    101                while (!DS18B20_Init())
+   \                     ??main_6:
+   \   0000C0 8D ......    CALLF     DS18B20_Init
+   \   0000C4 A1 00        CP        A, #0x0
+   \   0000C6 26 09        JRNE      L:??main_7
+    102                {
+    103                  delay_ms(10);
+   \   0000C8 AE 000A      LDW       X, #0xa
+   \   0000CB 8D ......    CALLF     delay_ms
+   \   0000CF 20 EF        JRA       L:??main_6
+    104                };
+    105                SUM = DS18B20_Convert_Get_Tem(DS18B20_Read());
+   \                     ??main_7:
+   \   0000D1 8D ......    CALLF     DS18B20_Read
+   \   0000D5 8D ......    CALLF     DS18B20_Convert_Get_Tem
+   \   0000D9 BF ..        LDW       S:?w4, X
+    106                delay_ms(5);
+   \   0000DB AE 0005      LDW       X, #0x5
+   \   0000DE 8D ......    CALLF     delay_ms
+    107          
+    108                enableInterrupts();
+   \   0000E2 9A           RIM
+    109          
+    110                u8 x;
+    111                if (!SYSTEM_RUN && x > 2)
+   \   0000E3 C6 ....      LD        A, L:SYSTEM_RUN
+   \   0000E6 4D           TNZ       A
+   \   0000E7 27 03        JREQ      ??lb_1
+   \   0000E9 CC ....      JP        L:??main_8
+   \                     ??lb_1:
+   \   0000EC B6 ..        LD        A, S:?b10
+   \   0000EE A1 03        CP        A, #0x3
+   \   0000F0 24 03        JRNC      ??lb_2
+   \   0000F2 CC ....      JP        L:??main_8
+    112                {
+    113                  // ÊòæÁ§∫Ê∏©Â∫¶
+    114                  SUM = (SUM < -99) ? -99 : SUM;
+   \                     ??lb_2:
+   \   0000F5 BE ..        LDW       X, S:?w4
+   \   0000F7 A3 FF9D      CPW       X, #0xffffffffffffff9d
+   \   0000FA 2E 07        JRSGE     L:??main_9
+   \   0000FC AE FF9D      LDW       X, #0xff9d
+   \   0000FF BF ..        LDW       S:?w4, X
+   \   000101 20 00        JRA       L:??main_10
+    115                  if (SUM < 0)
+   \                     ??main_9:
+   \                     ??main_10:
+   \   000103 BE ..        LDW       X, S:?w4
+   \   000105 A3 0000      CPW       X, #0x0
+   \   000108 2E 4C        JRSGE     L:??main_11
+    116                  {
+    117                    tm1650_displayW(0, 0x40);
+   \   00010A 35 40 ....   MOV       S:?b0, #0x40
+   \   00010E 4F           CLR       A
+   \   00010F 8D ......    CALLF     tm1650_displayW
+    118                    SUM = ~SUM + 1;
+   \   000113 BE ..        LDW       X, S:?w4
+   \   000115 53           CPLW      X
+   \   000116 BF ..        LDW       S:?w4, X
+   \   000118 BE ..        LDW       X, S:?w4
+   \   00011A 5C           INCW      X
+   \   00011B BF ..        LDW       S:?w4, X
+    119                    tm1650_displayW(1, (LED7CodeL[SUM / 10 % 10]) | 0x80);
+   \   00011D 90AE 000A    LDW       Y, #0xa
+   \   000121 BE ..        LDW       X, S:?w4
+   \   000123 8D ......    CALLF     L:?sdiv16_x_x_y
+   \   000127 90AE 000A    LDW       Y, #0xa
+   \   00012B 8D ......    CALLF     L:?smod16_y_x_y
+   \   00012F 93           LDW       X, Y
+   \   000130 D6 ....      LD        A, (L:LED7CodeL,X)
+   \   000133 AA 80        OR        A, #0x80
+   \   000135 B7 ..        LD        S:?b0, A
+   \   000137 A6 01        LD        A, #0x1
+   \   000139 8D ......    CALLF     tm1650_displayW
+    120                    tm1650_displayW(2, LED7CodeL[SUM % 10]);
+   \   00013D 90AE 000A    LDW       Y, #0xa
+   \   000141 BE ..        LDW       X, S:?w4
+   \   000143 8D ......    CALLF     L:?smod16_y_x_y
+   \   000147 93           LDW       X, Y
+   \   000148 D6 ....      LD        A, (L:LED7CodeL,X)
+   \   00014B B7 ..        LD        S:?b0, A
+   \   00014D A6 02        LD        A, #0x2
+   \   00014F 8D ......    CALLF     tm1650_displayW
+   \   000153 CC ....      JP        L:??main_8
+    121                  }
+    122                  else
+    123                  {
+    124                    SUM = (SUM > 999) ? 999 : SUM;
+   \                     ??main_11:
+   \   000156 BE ..        LDW       X, S:?w4
+   \   000158 A3 03E8      CPW       X, #0x3e8
+   \   00015B 2F 07        JRSLT     L:??main_12
+   \   00015D AE 03E7      LDW       X, #0x3e7
+   \   000160 BF ..        LDW       S:?w4, X
+   \   000162 20 00        JRA       L:??main_13
+    125                    if ((SUM / 100 % 100) == 0)
+   \                     ??main_12:
+   \                     ??main_13:
+   \   000164 90AE 0064    LDW       Y, #0x64
+   \   000168 BE ..        LDW       X, S:?w4
+   \   00016A 8D ......    CALLF     L:?sdiv16_x_x_y
+   \   00016E 90AE 0064    LDW       Y, #0x64
+   \   000172 8D ......    CALLF     L:?smod16_y_x_y
+   \   000176 905D         TNZW      Y
+   \   000178 26 09        JRNE      L:??main_14
+    126                    {
+    127                      tm1650_displayW(0, 0x00);
+   \   00017A 3F ..        CLR       S:?b0
+   \   00017C 4F           CLR       A
+   \   00017D 8D ......    CALLF     tm1650_displayW
+   \   000181 20 1D        JRA       L:??main_15
+    128                    }
+    129                    else
+    130                    {
+    131                      tm1650_displayW(0, LED7CodeL[SUM / 100 % 100]);
+   \                     ??main_14:
+   \   000183 90AE 0064    LDW       Y, #0x64
+   \   000187 BE ..        LDW       X, S:?w4
+   \   000189 8D ......    CALLF     L:?sdiv16_x_x_y
+   \   00018D 90AE 0064    LDW       Y, #0x64
+   \   000191 8D ......    CALLF     L:?smod16_y_x_y
+   \   000195 93           LDW       X, Y
+   \   000196 D6 ....      LD        A, (L:LED7CodeL,X)
+   \   000199 B7 ..        LD        S:?b0, A
+   \   00019B 4F           CLR       A
+   \   00019C 8D ......    CALLF     tm1650_displayW
+    132                    }
+    133                    tm1650_displayW(1, (LED7CodeL[SUM / 10 % 10]) | 0x80);
    \                     ??main_15:
-   \   0001AE 7212 5000    BSET      L:0x5000, #0x1
-    146              }
-    147          
-    148              // ÂºÄÂêØÂä†Ê∏©
-    149              if (TEM_STATUS)
+   \   0001A0 90AE 000A    LDW       Y, #0xa
+   \   0001A4 BE ..        LDW       X, S:?w4
+   \   0001A6 8D ......    CALLF     L:?sdiv16_x_x_y
+   \   0001AA 90AE 000A    LDW       Y, #0xa
+   \   0001AE 8D ......    CALLF     L:?smod16_y_x_y
+   \   0001B2 93           LDW       X, Y
+   \   0001B3 D6 ....      LD        A, (L:LED7CodeL,X)
+   \   0001B6 AA 80        OR        A, #0x80
+   \   0001B8 B7 ..        LD        S:?b0, A
+   \   0001BA A6 01        LD        A, #0x1
+   \   0001BC 8D ......    CALLF     tm1650_displayW
+    134                    tm1650_displayW(2, LED7CodeL[SUM % 10]);
+   \   0001C0 90AE 000A    LDW       Y, #0xa
+   \   0001C4 BE ..        LDW       X, S:?w4
+   \   0001C6 8D ......    CALLF     L:?smod16_y_x_y
+   \   0001CA 93           LDW       X, Y
+   \   0001CB D6 ....      LD        A, (L:LED7CodeL,X)
+   \   0001CE B7 ..        LD        S:?b0, A
+   \   0001D0 A6 02        LD        A, #0x2
+   \   0001D2 8D ......    CALLF     tm1650_displayW
+    135                  }
+    136                }
+    137                x++;
+   \                     ??main_8:
+   \   0001D6 3C ..        INC       S:?b10
+    138                x = (x > 10) ? 0 : x;
+   \   0001D8 B6 ..        LD        A, S:?b10
+   \   0001DA A1 0B        CP        A, #0xb
+   \   0001DC 25 04        JRC       L:??main_16
+   \   0001DE 3F ..        CLR       S:?b10
+   \   0001E0 20 00        JRA       L:??main_3
+    139              }
+    140          
+    141              // LED ÂºÄÂêØÁä∂ÊÄÅ
+    142              if (LED_STATUS)
    \                     ??main_16:
-   \   0001B2 C6 ....      LD        A, L:TEM_STATUS
-   \   0001B5 4D           TNZ       A
-   \   0001B6 27 3F        JREQ      L:??main_17
-    150              {
-    151                if (SYSTEM_RUN)
-   \   0001B8 C6 ....      LD        A, L:SYSTEM_RUN
-   \   0001BB 4D           TNZ       A
-   \   0001BC 27 09        JREQ      L:??main_18
-    152                {
-    153                  delay_ms(500);
-   \   0001BE AE 01F4      LDW       X, #0x1f4
-   \   0001C1 8D ......    CALLF     delay_ms
-   \   0001C5 20 21        JRA       L:??main_19
-    154                }
-    155                else
-    156                {
-    157                  if (SUM < TEM_SUM)
-   \                     ??main_18:
-   \   0001C7 BE ..        LDW       X, S:?w4
-   \   0001C9 C3 ....      CPW       X, L:TEM_SUM
-   \   0001CC 2E 0E        JRSGE     L:??main_20
-    158                  {
-    159                    SW_EN;
-   \   0001CE 7216 500A    BSET      L:0x500a, #0x3
-    160                    TEM_LED_EN;
-   \   0001D2 721B 500A    BRES      L:0x500a, #0x5
-   \   0001D6 721C 500A    BSET      L:0x500a, #0x6
-   \   0001DA 20 0C        JRA       L:??main_19
-    161                  }
-    162                  else
-    163                  {
-    164                    SW_CL;
-   \                     ??main_20:
-   \   0001DC 7217 500A    BRES      L:0x500a, #0x3
-    165                    TEM_LED_CL;
-   \   0001E0 721A 500A    BSET      L:0x500a, #0x5
-   \   0001E4 721D 500A    BRES      L:0x500a, #0x6
-    166                  }
-    167                }
-    168                FAN_LED_EN;
-   \                     ??main_19:
-   \   0001E8 721D 500F    BRES      L:0x500f, #0x6
-    169                TIM2_SetCompare3(FAN_PWM_NUM);
-   \   0001EC C6 ....      LD        A, L:FAN_PWM_NUM
-   \   0001EF 5F           CLRW      X
-   \   0001F0 97           LD        XL, A
-   \   0001F1 8D ......    CALLF     TIM2_SetCompare3
-   \   0001F5 20 15        JRA       L:??main_21
-    170              }
-    171              else
-    172              {
-    173                SW_CL;
+   \                     ??main_3:
+   \   0001E2 C6 ....      LD        A, L:LED_STATUS
+   \   0001E5 4D           TNZ       A
+   \   0001E6 27 06        JREQ      L:??main_17
+    143              {
+    144                LED_LED_EN;
+   \   0001E8 7213 5000    BRES      L:0x5000, #0x1
+   \   0001EC 20 04        JRA       L:??main_18
+    145              }
+    146              else
+    147              {
+    148                LED_LED_CL;
    \                     ??main_17:
-   \   0001F7 7217 500A    BRES      L:0x500a, #0x3
-    174                TEM_LED_CL;
-   \   0001FB 721A 500A    BSET      L:0x500a, #0x5
-   \   0001FF 721D 500A    BRES      L:0x500a, #0x6
-    175                FAN_LED_CL;
-   \   000203 721C 500F    BSET      L:0x500f, #0x6
-    176                TIM2_SetCompare3(0);
-   \   000207 5F           CLRW      X
-   \   000208 8D ......    CALLF     TIM2_SetCompare3
-    177              }
-    178          
-    179              SYSTEM_RUN = FALSE;
-   \                     ??main_21:
-   \   00020C 725F ....    CLR       L:SYSTEM_RUN
-    180          
-    181              // Êç¢È£é
-    182              if (HF_STATUS)
-   \   000210 C6 ....      LD        A, L:HF_STATUS
-   \   000213 4D           TNZ       A
-   \   000214 27 25        JREQ      L:??main_22
-    183              {
-    184                if ((SUM - TEM_SUM) > 10 && !IT_HF_STATUS)
-   \   000216 BE ..        LDW       X, S:?w4
-   \   000218 72B0 ....    SUBW      X, L:TEM_SUM
-   \   00021C A3 000B      CPW       X, #0xb
-   \   00021F 2F 0A        JRSLT     L:??main_23
-   \   000221 C6 ....      LD        A, L:IT_HF_STATUS
-   \   000224 4D           TNZ       A
-   \   000225 26 04        JRNE      L:??main_23
-    185                {
-    186                  IT_HF_STATUS = TRUE;
-   \   000227 35 01 ....   MOV       L:IT_HF_STATUS, #0x1
-    187                }
-    188                if (IT_HF_STATUS)
-   \                     ??main_23:
-   \   00022B C6 ....      LD        A, L:IT_HF_STATUS
-   \   00022E 4D           TNZ       A
-   \   00022F 27 06        JREQ      L:??main_24
-    189                {
-    190                  HF_EN;
-   \   000231 7214 5000    BSET      L:0x5000, #0x2
-   \   000235 20 04        JRA       L:??main_22
-    191                }
-    192                else
-    193                {
-    194                  HF_CL;
-   \                     ??main_24:
-   \   000237 7215 5000    BRES      L:0x5000, #0x2
-    195                }
-    196              }
-    197          
-    198              // ÂåπÈÖçÊåâÈîÆ
-    199              u8 KEY = tm1650_displaykeyR();
+   \   0001EE 7212 5000    BSET      L:0x5000, #0x1
+    149              }
+    150          
+    151              // ÂºÄÂêØÂä†Ê∏©
+    152              if (TEM_STATUS)
+   \                     ??main_18:
+   \   0001F2 C6 ....      LD        A, L:TEM_STATUS
+   \   0001F5 4D           TNZ       A
+   \   0001F6 27 3F        JREQ      L:??main_19
+    153              {
+    154                if (SYSTEM_RUN)
+   \   0001F8 C6 ....      LD        A, L:SYSTEM_RUN
+   \   0001FB 4D           TNZ       A
+   \   0001FC 27 09        JREQ      L:??main_20
+    155                {
+    156                  delay_ms(500);
+   \   0001FE AE 01F4      LDW       X, #0x1f4
+   \   000201 8D ......    CALLF     delay_ms
+   \   000205 20 21        JRA       L:??main_21
+    157                }
+    158                else
+    159                {
+    160                  if (SUM < TEM_SUM)
+   \                     ??main_20:
+   \   000207 BE ..        LDW       X, S:?w4
+   \   000209 C3 ....      CPW       X, L:TEM_SUM
+   \   00020C 2E 0E        JRSGE     L:??main_22
+    161                  {
+    162                    SW_EN;
+   \   00020E 7216 500A    BSET      L:0x500a, #0x3
+    163                    TEM_LED_EN;
+   \   000212 721B 500A    BRES      L:0x500a, #0x5
+   \   000216 721C 500A    BSET      L:0x500a, #0x6
+   \   00021A 20 0C        JRA       L:??main_21
+    164                  }
+    165                  else
+    166                  {
+    167                    SW_CL;
    \                     ??main_22:
-   \   00023B 8D ......    CALLF     tm1650_displaykeyR
-   \   00023F B7 ..        LD        S:?b10, A
-    200              btn_down(KEY);
-   \   000241 B6 ..        LD        A, S:?b10
-   \   000243 8D ......    CALLF     btn_down
-   \   000247 CC ....      JP        L:??main_0
-   \   00024A              REQUIRE _A_PC_ODR
-   \   00024A              REQUIRE _A_PA_ODR
-   \   00024A              REQUIRE _A_PD_ODR
-    201            }
-    202          }
-    203          
+   \   00021C 7217 500A    BRES      L:0x500a, #0x3
+    168                    TEM_LED_CL;
+   \   000220 721A 500A    BSET      L:0x500a, #0x5
+   \   000224 721D 500A    BRES      L:0x500a, #0x6
+    169                  }
+    170                }
+    171                FAN_LED_EN;
+   \                     ??main_21:
+   \   000228 721D 500F    BRES      L:0x500f, #0x6
+    172                TIM2_SetCompare3(FAN_PWM_NUM);
+   \   00022C C6 ....      LD        A, L:FAN_PWM_NUM
+   \   00022F 5F           CLRW      X
+   \   000230 97           LD        XL, A
+   \   000231 8D ......    CALLF     TIM2_SetCompare3
+   \   000235 20 15        JRA       L:??main_23
+    173              }
+    174              else
+    175              {
+    176                SW_CL;
+   \                     ??main_19:
+   \   000237 7217 500A    BRES      L:0x500a, #0x3
+    177                TEM_LED_CL;
+   \   00023B 721A 500A    BSET      L:0x500a, #0x5
+   \   00023F 721D 500A    BRES      L:0x500a, #0x6
+    178                FAN_LED_CL;
+   \   000243 721C 500F    BSET      L:0x500f, #0x6
+    179                TIM2_SetCompare3(0);
+   \   000247 5F           CLRW      X
+   \   000248 8D ......    CALLF     TIM2_SetCompare3
+    180              }
+    181          
+    182              SYSTEM_RUN = FALSE;
+   \                     ??main_23:
+   \   00024C 725F ....    CLR       L:SYSTEM_RUN
+    183          
+    184              // Êç¢È£é
+    185              if (HF_STATUS)
+   \   000250 C6 ....      LD        A, L:HF_STATUS
+   \   000253 4D           TNZ       A
+   \   000254 27 25        JREQ      L:??main_24
+    186              {
+    187                if ((SUM - TEM_SUM) > 10 && !IT_HF_STATUS)
+   \   000256 BE ..        LDW       X, S:?w4
+   \   000258 72B0 ....    SUBW      X, L:TEM_SUM
+   \   00025C A3 000B      CPW       X, #0xb
+   \   00025F 2F 0A        JRSLT     L:??main_25
+   \   000261 C6 ....      LD        A, L:IT_HF_STATUS
+   \   000264 4D           TNZ       A
+   \   000265 26 04        JRNE      L:??main_25
+    188                {
+    189                  IT_HF_STATUS = TRUE;
+   \   000267 35 01 ....   MOV       L:IT_HF_STATUS, #0x1
+    190                }
+    191                if (IT_HF_STATUS)
+   \                     ??main_25:
+   \   00026B C6 ....      LD        A, L:IT_HF_STATUS
+   \   00026E 4D           TNZ       A
+   \   00026F 27 06        JREQ      L:??main_26
+    192                {
+    193                  HF_EN;
+   \   000271 7214 5000    BSET      L:0x5000, #0x2
+   \   000275 20 04        JRA       L:??main_24
+    194                }
+    195                else
+    196                {
+    197                  HF_CL;
+   \                     ??main_26:
+   \   000277 7215 5000    BRES      L:0x5000, #0x2
+    198                }
+    199              }
+    200          
+    201              // ÂåπÈÖçÊåâÈîÆ
+    202              u8 KEY = tm1650_displaykeyR();
+   \                     ??main_24:
+   \   00027B 8D ......    CALLF     tm1650_displaykeyR
+   \   00027F B7 ..        LD        S:?b10, A
+    203              btn_down(KEY);
+   \   000281 B6 ..        LD        A, S:?b10
+   \   000283 8D ......    CALLF     btn_down
+   \   000287 CC ....      JP        L:??main_0
+   \   00028A              REQUIRE _A_PC_ODR
+   \   00028A              REQUIRE _A_PA_ODR
+   \   00028A              REQUIRE _A_PD_ODR
+    204            }
+    205          }
+    206          
 
    \                                 In section .far_func.text, align 1
-    204          void assert_failed(u8 *file, u32 line)
-    205          {
-    206            /* User can add his own implementation to report the file name and line number,
-    207               ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-    208          
-    209            /* Infinite loop */
-    210            // while (1)
-    211            // {
-    212            // }
-    213          }
+    207          void assert_failed(u8 *file, u32 line)
+    208          {
+    209            /* User can add his own implementation to report the file name and line number,
+    210               ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+    211          
+    212            /* Infinite loop */
+    213            // while (1)
+    214            // {
+    215            // }
+    216          }
    \                     assert_failed:
    \   000000 87           RETF
-    214          
-    215          /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+    217          
+    218          /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 
    Section sizes:
 
@@ -583,16 +607,16 @@ e:\Nas\µÁ¬∑\±£Œ¬œ‰\YZW-S803-EE22- KF7620-∑÷ÃÂ\C\User\main.c
        1  _A_PD_ODR
        1  assert_failed
        5  btn
-     586  main
+     650  main
 
  
- 587 bytes in section .far_func.text
+ 651 bytes in section .far_func.text
   12 bytes in section .near.bss
   41 bytes in section .near.data
    3 bytes in section .near.noinit   (abs)
  
- 587 bytes of CODE memory
+ 651 bytes of CODE memory
   53 bytes of DATA memory (+ 3 bytes shared)
 
 Errors: none
-Warnings: 259
+Warnings: 281

@@ -24,7 +24,7 @@
     },
     "linker": {
         "output-format": "elf",
-        "linker-config": "lnkstm8s003f3.icf",
+        "linker-config": "lnkstm8s005k6.icf",
         "auto-search-runtime-lib": true,
         "use-C_SPY-debug-lib": true,
         "config-defines": [

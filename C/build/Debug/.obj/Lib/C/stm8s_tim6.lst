@@ -1,0 +1,536 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 19/Jan/2024  20:41:00
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\Lib\C\stm8s_tim6.c
+#    Command line =  
+#        -f "e:\Nas\µçÂ·\±£ÎÂÏä\YZW-S805-EE22(Rev1.0) -
+#        KF7620\C\build\Debug\.obj\Lib\C\stm8s_tim6.args.txt" (--silent -lCN
+#        .\build\Debug\.obj\Lib\C\stm8s_tim6.lst -I d:/IAR/STM8/stm8/inc -I
+#        d:/IAR/STM8/stm8/lib -I Lib/H -I Lib/C -I User -D STM8S005
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\.obj\Lib\C\stm8s_tim6.o .\Lib\C\stm8s_tim6.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\.obj\Lib\C\stm8s_tim6.lst
+#    Object file  =  .\build\Debug\.obj\Lib\C\stm8s_tim6.o
+#
+###############################################################################
+
+e:\Nas\µçÂ·\±£ÎÂÏä\YZW-S805-EE22(Rev1.0) - KF7620\C\Lib\C\stm8s_tim6.c
+      1          /**
+      2            ******************************************************************************
+      3            * @file    stm8s_tim6.c
+      4            * @author  MCD Application Team
+      5            * @version V2.3.0
+      6            * @date    16-June-2017
+      7            * @brief   This file contains all the functions for the TIM6 peripheral.
+      8             ******************************************************************************
+      9            * @attention
+     10            *
+     11            * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
+     12            *
+     13            * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+     14            * You may not use this file except in compliance with the License.
+     15            * You may obtain a copy of the License at:
+     16            *
+     17            *        http://www.st.com/software_license_agreement_liberty_v2
+     18            *
+     19            * Unless required by applicable law or agreed to in writing, software 
+     20            * distributed under the License is distributed on an "AS IS" BASIS, 
+     21            * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     22            * See the License for the specific language governing permissions and
+     23            * limitations under the License.
+     24            *
+     25            ******************************************************************************
+     26            */
+     27          
+     28          
+     29          /* Includes ------------------------------------------------------------------*/
+     30          #include "stm8s_tim6.h"
+     31          
+     32          /** @addtogroup STM8S_StdPeriph_Driver
+     33            * @{
+     34            */
+     35          /* Private typedef -----------------------------------------------------------*/
+     36          /* Private define ------------------------------------------------------------*/
+     37          /* Private typedef -----------------------------------------------------------*/
+     38          /* Private define ------------------------------------------------------------*/
+     39          /* Private macro -------------------------------------------------------------*/
+     40          /* Private variables ---------------------------------------------------------*/
+     41          /* Private function prototypes -----------------------------------------------*/
+     42          /**
+     43            * @addtogroup TIM6_Public_Functions
+     44            * @{
+     45            */
+     46          
+     47          /**
+     48            * @brief  Deinitializes the TIM6 peripheral registers to their default reset values.
+     49            * @param  None
+     50            * @retval None
+     51            */
+     52          void TIM6_DeInit(void)
+     53          {
+     54            TIM6->CR1 	= TIM6_CR1_RESET_VALUE;
+     55            TIM6->CR2 	= TIM6_CR2_RESET_VALUE;
+     56            TIM6->SMCR 	= TIM6_SMCR_RESET_VALUE;
+     57            TIM6->IER 	= TIM6_IER_RESET_VALUE;
+     58            TIM6->CNTR 	= TIM6_CNTR_RESET_VALUE;
+     59            TIM6->PSCR	= TIM6_PSCR_RESET_VALUE;
+     60            TIM6->ARR 	= TIM6_ARR_RESET_VALUE;
+     61            TIM6->SR1 	= TIM6_SR1_RESET_VALUE;
+     62          }
+     63          
+     64          /**
+     65            * @brief  Initializes the TIM6 Time Base Unit according to the specified
+     66            * parameters.
+     67            * @param   TIM6_Prescaler : This parameter can be any of the @ref TIM6_Prescaler_TypeDef enumeration.
+     68            * @param   TIM6_Period : This parameter must be a value between 0x00 and 0xFF.
+     69            * @retval None
+     70            */
+     71          void TIM6_TimeBaseInit(TIM6_Prescaler_TypeDef TIM6_Prescaler,
+     72                                 uint8_t TIM6_Period)
+     73          {
+     74            /* Check TIM6 prescaler value */
+     75            assert_param(IS_TIM6_PRESCALER_OK(TIM6_Prescaler));
+     76            /* Set the Autoreload value */
+     77            TIM6->ARR = (uint8_t)(TIM6_Period);
+     78            /* Set the Prescaler value */
+     79            TIM6->PSCR = (uint8_t)(TIM6_Prescaler);
+     80          }
+     81          
+     82          /**
+     83            * @brief  Enables or disables the TIM6 peripheral.
+     84            * @param   NewState : The new state of the TIM6 peripheral.
+     85            * This parameter can be any of the @ref FunctionalState enumeration.
+     86            * @retval None
+     87            */
+     88          void TIM6_Cmd(FunctionalState NewState)
+     89          {
+     90            /* Check the parameters */
+     91            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+     92            
+     93            /* set or Reset the CEN Bit */
+     94            if (NewState == ENABLE)
+     95            {
+     96              TIM6->CR1 |= TIM6_CR1_CEN ;
+     97            }
+     98            else
+     99            {
+    100              TIM6->CR1 &= (uint8_t)(~TIM6_CR1_CEN) ;
+    101            }
+    102          }
+    103          
+    104          /**
+    105            * @brief  Enables or Disables the TIM6 Update event.
+    106            * @param   NewState : The new state of the TIM6 peripheral Preload register.
+    107            * This parameter can be any of the @ref FunctionalState enumeration.
+    108            * @retval None
+    109            */
+    110          void TIM6_UpdateDisableConfig(FunctionalState NewState)
+    111          {
+    112            /* Check the parameters */
+    113            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    114            
+    115            /* Set or Reset the UDIS Bit */
+    116            if (NewState == ENABLE)
+    117            {
+    118              TIM6->CR1 |= TIM6_CR1_UDIS ;
+    119            }
+    120            else
+    121            {
+    122              TIM6->CR1 &= (uint8_t)(~TIM6_CR1_UDIS) ;
+    123            }
+    124          }
+    125          
+    126          /**
+    127            * @brief  Selects the TIM6 Update Request Interrupt source.
+    128            * @param   TIM6_UpdateSource : Specifies the Update source.
+    129            * This parameter can be one of the @ref TIM6_UpdateSource_TypeDef enumeration.
+    130            * @retval None
+    131            */
+    132          void TIM6_UpdateRequestConfig(TIM6_UpdateSource_TypeDef TIM6_UpdateSource)
+    133          {
+    134            /* Check the parameters */
+    135            assert_param(IS_TIM6_UPDATE_SOURCE_OK(TIM6_UpdateSource));
+    136            
+    137            /* Set or Reset the URS Bit */
+    138            if (TIM6_UpdateSource == TIM6_UPDATESOURCE_REGULAR)
+    139            {
+    140              TIM6->CR1 |= TIM6_CR1_URS ;
+    141            }
+    142            else
+    143            {
+    144              TIM6->CR1 &= (uint8_t)(~TIM6_CR1_URS) ;
+    145            }
+    146          }
+    147          
+    148          /**
+    149            * @brief  Selects the TIM6’s One Pulse Mode.
+    150            * @param   TIM6_OPMode : Specifies the OPM Mode to be used.
+    151            * This parameter can be one of the @ref TIM6_OPMode_TypeDef enumeration.
+    152            * @retval None
+    153            */
+    154          void TIM6_SelectOnePulseMode(TIM6_OPMode_TypeDef TIM6_OPMode)
+    155          {
+    156            /* Check the parameters */
+    157            assert_param(IS_TIM6_OPM_MODE_OK(TIM6_OPMode));
+    158            
+    159            /* Set or Reset the OPM Bit */
+    160            if (TIM6_OPMode == TIM6_OPMODE_SINGLE)
+    161            {
+    162              TIM6->CR1 |= TIM6_CR1_OPM ;
+    163            }
+    164            else
+    165            {
+    166              TIM6->CR1 &= (uint8_t)(~TIM6_CR1_OPM) ;
+    167            }
+    168          }
+    169          
+    170          /**
+    171            * @brief  Configures the TIM6 Prescaler.
+    172            * @param   Prescaler : Specifies the Prescaler Register value
+    173            * This parameter can be one of the @ref TIM6_Prescaler_TypeDef enumeration.
+    174            * @param   TIM6_PSCReloadMode : Specifies the TIM6 Prescaler Reload mode.
+    175            * This parameter can be one of the @ref TIM6_PSCReloadMode_TypeDef enumeration.
+    176            * @retval None
+    177            */
+    178          void TIM6_PrescalerConfig(TIM6_Prescaler_TypeDef Prescaler,
+    179                                    TIM6_PSCReloadMode_TypeDef TIM6_PSCReloadMode)
+    180          {
+    181            /* Check the parameters */
+    182            assert_param(IS_TIM6_PRESCALER_RELOAD_OK(TIM6_PSCReloadMode));
+    183            assert_param(IS_TIM6_PRESCALER_OK(Prescaler));
+    184            
+    185            /* Set the Prescaler value */
+    186            TIM6->PSCR = (uint8_t)Prescaler;
+    187            
+    188            /* Set or reset the UG Bit */
+    189            if (TIM6_PSCReloadMode == TIM6_PSCRELOADMODE_IMMEDIATE)
+    190            {
+    191              TIM6->EGR |= TIM6_EGR_UG ;
+    192            }
+    193            else
+    194            {
+    195              TIM6->EGR &= (uint8_t)(~TIM6_EGR_UG) ;
+    196            }
+    197          }
+    198          
+    199          /**
+    200            * @brief  Enables or disables TIM6 peripheral Preload register on ARR.
+    201            * @param   NewState : The new state of the TIM6 peripheral Preload register.
+    202            * This parameter can be any of the @ref FunctionalState enumeration.
+    203            * @retval None
+    204            */
+    205          void TIM6_ARRPreloadConfig(FunctionalState NewState)
+    206          {
+    207            /* Check the parameters */
+    208            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    209            
+    210            /* Set or Reset the ARPE Bit */
+    211            if (NewState == ENABLE)
+    212            {
+    213              TIM6->CR1 |= TIM6_CR1_ARPE ;
+    214            }
+    215            else
+    216            {
+    217              TIM6->CR1 &= (uint8_t)(~TIM6_CR1_ARPE) ;
+    218            }
+    219          }
+    220          
+    221          /**
+    222            * @brief  Sets the TIM6 Counter Register value.
+    223            * @param   Counter : Specifies the Counter register new value.
+    224            * This parameter is between 0x00 and 0xFF.
+    225            * @retval None
+    226            */
+    227          void TIM6_SetCounter(uint8_t Counter)
+    228          {
+    229            /* Set the Counter Register value */
+    230            TIM6->CNTR = (uint8_t)(Counter);
+    231          }
+    232          
+    233          /**
+    234            * @brief  Sets the TIM6 Autoreload Register value.
+    235            * @param   Autoreload : Specifies the Autoreload register new value.
+    236            * This parameter is between 0x00 and 0xFF.
+    237            * @retval None
+    238            */
+    239          void TIM6_SetAutoreload(uint8_t Autoreload)
+    240          {
+    241            /* Set the Autoreload Register value */
+    242            TIM6->ARR = (uint8_t)(Autoreload);
+    243          }
+    244          
+    245          /**
+    246            * @brief  Gets the TIM6 Counter value.
+    247            * @param  None
+    248            * @retval uint8_t: Counter Register value.
+    249            */
+    250          uint8_t TIM6_GetCounter(void)
+    251          {
+    252            uint8_t tmpcntr=0;
+    253            tmpcntr = TIM6->CNTR;
+    254            /* Get the Counter Register value */
+    255            return ((uint8_t)tmpcntr);
+    256          }
+    257          
+    258          /**
+    259            * @brief  Gets the TIM6 Prescaler value.
+    260            * @param  None
+    261            * @retval TIM6_Prescaler_TypeDef : Prescaler Register configuration value.
+    262            */
+    263          TIM6_Prescaler_TypeDef TIM6_GetPrescaler(void)
+    264          {
+    265            /* Get the Prescaler Register value */
+    266            return ((TIM6_Prescaler_TypeDef)TIM6->PSCR);
+    267          }
+    268          
+    269          /**
+    270            * @brief  Enables or disables the specified TIM6 interrupts.
+    271            * @param   TIM6_IT : Specifies the TIM6 interrupts sources to be enabled or disabled.
+    272            * This parameter can be any combination of the @ref TIM6_IT_TypeDef enumeration.
+    273            * @param   NewState : The new state of the TIM6 peripheral.
+    274            * This parameter can be any of the @ref FunctionalState enumeration.
+    275            * @retval None
+    276            * @par Required preconditions:
+    277            * If QST option bit is enabled, the TIM6 Interrupt vector will be mapped on IRQ number 2 (irq0).
+    278            * Otherwise, it will be mapped on IRQ number 27 (irq25).
+    279            */
+    280          void TIM6_ITConfig(TIM6_IT_TypeDef TIM6_IT, FunctionalState NewState)
+    281          {
+    282            /* Check the parameters */
+    283            assert_param(IS_TIM6_IT_OK(TIM6_IT));
+    284            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    285            
+    286            if (NewState == ENABLE)
+    287            {
+    288              /* Enable the Interrupt sources */
+    289              TIM6->IER |= (uint8_t)TIM6_IT;
+    290            }
+    291            else
+    292            {
+    293              /* Disable the Interrupt sources */
+    294              TIM6->IER &= (uint8_t)(~(uint8_t)TIM6_IT);
+    295            }
+    296          }
+    297          
+    298          /**
+    299            * @brief  Clears the TIM’s pending flags.
+    300            * @param   TIM6_FLAG : Specifies the flag to clear.
+    301            * This parameter can be one of the @ref TIM6_FLAG_TypeDef enumeration.
+    302            * @retval None
+    303            */
+    304          void TIM6_ClearFlag(TIM6_FLAG_TypeDef TIM6_FLAG)
+    305          {
+    306            /* Check the parameters */
+    307            assert_param(IS_TIM6_CLEAR_FLAG_OK((uint8_t)TIM6_FLAG));
+    308            /* Clear the flags (rc_w0) clear this bit by writing 0. Writing ‘1’ has no effect*/
+    309            TIM6->SR1 &= (uint8_t)(~((uint8_t)TIM6_FLAG));
+    310          }
+    311          
+    312          /**
+    313            * @brief  Checks whether the TIM6 interrupt has occurred or not.
+    314            * @param   TIM6_IT : Specifies the TIM6 interrupt source to check.
+    315            * This parameter can be one of the @ref TIM6_IT_TypeDef enumeration.
+    316            * @retval ITStatus : The new state of the TIM6_IT.
+    317            * This parameter can be any of the @ref ITStatus enumeration.
+    318            */
+    319          ITStatus TIM6_GetITStatus(TIM6_IT_TypeDef TIM6_IT)
+    320          {
+    321            ITStatus bitstatus = RESET;
+    322            uint8_t itStatus = 0, itEnable = 0;
+    323            
+    324            /* Check the parameters */
+    325            assert_param(IS_TIM6_GET_IT_OK(TIM6_IT));
+    326            
+    327            itStatus = (uint8_t)(TIM6->SR1 & (uint8_t)TIM6_IT);
+    328            
+    329            itEnable = (uint8_t)(TIM6->IER & (uint8_t)TIM6_IT);
+    330            
+    331            if ((itStatus != (uint8_t)RESET ) && (itEnable != (uint8_t)RESET ))
+    332            {
+    333              bitstatus = (ITStatus)SET;
+    334            }
+    335            else
+    336            {
+    337              bitstatus = (ITStatus)RESET;
+    338            }
+    339            return ((ITStatus)bitstatus);
+    340          }
+    341          
+    342          /**
+    343            * @brief  Configures the TIM6 event to be generated by software.
+    344            * @param   TIM6_EventSource : Specifies the event source.
+    345            * This parameter can be one of the @ref TIM6_EventSource_TypeDef enumeration.
+    346            * @retval None
+    347            */
+    348          void TIM6_GenerateEvent(TIM6_EventSource_TypeDef TIM6_EventSource)
+    349          {
+    350            /* Check the parameters */
+    351            assert_param(IS_TIM6_EVENT_SOURCE_OK((uint8_t)TIM6_EventSource));
+    352            
+    353            /* Set the event sources */
+    354            TIM6->EGR |= (uint8_t)TIM6_EventSource;
+    355          }
+    356          
+    357          /**
+    358            * @brief  Checks whether the specified TIM6 flag is set or not.
+    359            * @param   TIM6_FLAG : Specifies the flag to check.
+    360            * This parameter can be one of the @ref TIM6_FLAG_TypeDef enumeration.
+    361            * @retval FlagStatus : The new state of TIM6_FLAG.
+    362            * This parameter can be any of the @ref FlagStatus enumeration.
+    363            */
+    364          FlagStatus TIM6_GetFlagStatus(TIM6_FLAG_TypeDef TIM6_FLAG)
+    365          {
+    366            volatile FlagStatus bitstatus = RESET;
+    367            
+    368            /* Check the parameters */
+    369            assert_param(IS_TIM6_GET_FLAG_OK(TIM6_FLAG));
+    370            
+    371            if ((TIM6->SR1 & (uint8_t)TIM6_FLAG)  != 0)
+    372            {
+    373              bitstatus = SET;
+    374            }
+    375            else
+    376            {
+    377              bitstatus = RESET;
+    378            }
+    379            return ((FlagStatus)bitstatus);
+    380          }
+    381          
+    382          /**
+    383            * @brief  Clears the TIM6's interrupt pending bits.
+    384            * @param   TIM6_IT : Specifies the pending bit to clear.
+    385            * This parameter can be one of the @ref TIM6_IT_TypeDef enumeration.
+    386            * @retval None
+    387            */
+    388          void TIM6_ClearITPendingBit(TIM6_IT_TypeDef TIM6_IT)
+    389          {
+    390            /* Check the parameters */
+    391            assert_param(IS_TIM6_IT_OK(TIM6_IT));
+    392            
+    393            /* Clear the IT pending Bit */
+    394            TIM6->SR1 &= (uint8_t)(~(uint8_t)TIM6_IT);
+    395          }
+    396          
+    397          /**
+    398            * @brief  Selects the TIM6 Trigger Output Mode.
+    399            * @param   TIM6_TRGOSource : Specifies the Trigger Output source.
+    400            * This parameter can be one of the @ref TIM6_TRGOSource_TypeDef enumeration.
+    401            * @retval None
+    402            */
+    403          void TIM6_SelectOutputTrigger(TIM6_TRGOSource_TypeDef TIM6_TRGOSource)
+    404          {
+    405            uint8_t tmpcr2 = 0;
+    406            
+    407            /* Check the parameters */
+    408            assert_param(IS_TIM6_TRGO_SOURCE_OK(TIM6_TRGOSource));
+    409            
+    410            tmpcr2 = TIM6->CR2;
+    411            
+    412            /* Reset the MMS Bits */
+    413            tmpcr2 &= (uint8_t)(~TIM6_CR2_MMS);
+    414            
+    415            /* Select the TRGO source */
+    416            tmpcr2 |=  (uint8_t)TIM6_TRGOSource;
+    417            
+    418            TIM6->CR2 = tmpcr2;
+    419          }
+    420          
+    421          /**
+    422            * @brief  Sets or Resets the TIM6 Master/Slave Mode.
+    423            * @param   NewState : The new state of the synchronization between TIM6 and its slaves (through TRGO).
+    424            * This parameter can be any of the @ref FunctionalState enumeration.
+    425            * @retval None
+    426            */
+    427          
+    428          void TIM6_SelectMasterSlaveMode(FunctionalState NewState)
+    429          {
+    430            /* Check the parameters */
+    431            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    432            
+    433            /* Set or Reset the MSM Bit */
+    434            if (NewState == ENABLE)
+    435            {
+    436              TIM6->SMCR |= TIM6_SMCR_MSM;
+    437            }
+    438            else
+    439            {
+    440              TIM6->SMCR &= (uint8_t)(~TIM6_SMCR_MSM);
+    441            }
+    442          }
+    443          
+    444          /**
+    445            * @brief  Selects the TIM6 Input Trigger source.
+    446            * @param   TIM6_InputTriggerSource : Specifies Input Trigger source.
+    447            * This parameter can be one of the @ref TIM6_TS_TypeDef enumeration.
+    448            * @retval None
+    449            */
+    450          void TIM6_SelectInputTrigger(TIM6_TS_TypeDef TIM6_InputTriggerSource)
+    451          {
+    452            uint8_t tmpsmcr = 0;
+    453            
+    454            /* Check the parameters */
+    455            assert_param(IS_TIM6_TRIGGER_SELECTION_OK(TIM6_InputTriggerSource));
+    456            
+    457            tmpsmcr = TIM6->SMCR;
+    458            
+    459            /* Select the Trigger Source */
+    460            tmpsmcr &= (uint8_t)(~TIM6_SMCR_TS);
+    461            tmpsmcr |= (uint8_t)TIM6_InputTriggerSource;
+    462            
+    463            TIM6->SMCR = (uint8_t)tmpsmcr;
+    464          }
+    465          
+    466          /**
+    467            * @brief  Enables the TIM6 internal Clock.
+    468            * @param  None
+    469            * @retval None
+    470            */
+    471          void TIM6_InternalClockConfig(void)
+    472          {
+    473            /* Disable slave mode to clock the prescaler directly with the internal clock */
+    474            TIM6->SMCR &=  (uint8_t)(~TIM6_SMCR_SMS);
+    475          }
+    476          
+    477          /**
+    478            * @brief  Selects the TIM6 Slave Mode.
+    479            * @param   TIM6_SlaveMode : Specifies the TIM6 Slave Mode.
+    480            * This parameter can be one of the @ref TIM6_SlaveMode_TypeDef enumeration.
+    481            * @retval None
+    482            */
+    483          void TIM6_SelectSlaveMode(TIM6_SlaveMode_TypeDef TIM6_SlaveMode)
+    484          {
+    485            uint8_t tmpsmcr = 0;
+    486            
+    487            /* Check the parameters */
+    488            assert_param(IS_TIM6_SLAVE_MODE_OK(TIM6_SlaveMode));
+    489            
+    490            tmpsmcr = TIM6->SMCR;
+    491            
+    492            /* Reset the SMS Bits */
+    493            tmpsmcr &= (uint8_t)(~TIM6_SMCR_SMS);
+    494            
+    495            /* Select the Slave Mode */
+    496            tmpsmcr |= (uint8_t)TIM6_SlaveMode;
+    497            
+    498            TIM6->SMCR = tmpsmcr;
+    499          }
+    500          
+    501          /**
+    502            * @}
+    503            */
+    504            
+    505          /**
+    506            * @}
+    507            */
+    508            
+    509          
+    510          /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+Errors: 30
+Warnings: none

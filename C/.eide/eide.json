@@ -1,5 +1,5 @@
 {
-  "name": "STM8S003",
+  "name": "STM8S005",
   "type": "C51",
   "dependenceList": [],
   "srcDirs": [
@@ -21,15 +21,14 @@
   "targets": {
     "Debug": {
       "excludeList": [
+        "Readme/stm8s_delay.c",
         "Lib/C/stm8s_adc2.c",
         "Lib/C/stm8s_can.c",
-        "Lib/C/stm8s_tim3.c",
+        "Lib/C/stm8s_uart1.c",
         "Lib/C/stm8s_tim5.c",
-        "Lib/C/stm8s_tim6.c",
-        "Lib/C/stm8s_uart2.c",
-        "Lib/C/stm8s_uart3.c",
         "Lib/C/stm8s_uart4.c",
-        "Readme/stm8s_delay.c"
+        "Lib/C/stm8s_uart3.c",
+        "Lib/C/stm8s_tim6.c"
       ],
       "toolchain": "IAR_STM8",
       "compileConfig": {
@@ -37,7 +36,7 @@
       },
       "uploader": "STVP",
       "uploadConfig": {
-        "deviceName": "STM8S003F3",
+        "deviceName": "STM8S005K6",
         "bin": "",
         "eepromFile": "null",
         "optionByteFile": "null"
@@ -52,11 +51,13 @@
       },
       "custom_dep": {
         "name": "default",
-        "incList": [],
+        "incList": [
+          "d:/IAR/STM8/stm8/inc"
+        ],
         "libList": [],
         "sourceDirList": [],
         "defineList": [
-          "STM8S003"
+          "STM8S005"
         ]
       }
     }

@@ -1,0 +1,2439 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 19/Jan/2024  20:42:43
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\Lib\C\stm8s_tim3.c
+#    Command line =  
+#        -f "e:\Nas\µçÂ·\±£ÎÂÏä\YZW-S805-EE22(Rev1.0) -
+#        KF7620\C\build\Debug\.obj\Lib\C\stm8s_tim3.args.txt" (--silent -lCN
+#        .\build\Debug\.obj\Lib\C\stm8s_tim3.lst -I d:/IAR/STM8/stm8/inc -I
+#        d:/IAR/STM8/stm8/lib -I Lib/H -I Lib/C -I User -D STM8S005
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\.obj\Lib\C\stm8s_tim3.o .\Lib\C\stm8s_tim3.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\.obj\Lib\C\stm8s_tim3.lst
+#    Object file  =  .\build\Debug\.obj\Lib\C\stm8s_tim3.o
+#
+###############################################################################
+
+e:\Nas\µçÂ·\±£ÎÂÏä\YZW-S805-EE22(Rev1.0) - KF7620\C\Lib\C\stm8s_tim3.c
+      1          /**
+      2            ******************************************************************************
+      3            * @file    stm8s_tim3.c
+      4            * @author  MCD Application Team
+      5            * @version V2.3.0
+      6            * @date    16-June-2017
+      7            * @brief   This file contains all the functions for the TIM3 peripheral.
+      8             ******************************************************************************
+      9            * @attention
+     10            *
+     11            * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
+     12            *
+     13            * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+     14            * You may not use this file except in compliance with the License.
+     15            * You may obtain a copy of the License at:
+     16            *
+     17            *        http://www.st.com/software_license_agreement_liberty_v2
+     18            *
+     19            * Unless required by applicable law or agreed to in writing, software 
+     20            * distributed under the License is distributed on an "AS IS" BASIS, 
+     21            * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     22            * See the License for the specific language governing permissions and
+     23            * limitations under the License.
+     24            *
+     25            ******************************************************************************
+     26            */
+     27          
+     28          /* Includes ------------------------------------------------------------------*/
+     29          #include "stm8s_tim3.h"
+     30          
+     31          /** @addtogroup STM8S_StdPeriph_Driver
+     32            * @{
+     33            */
+     34          /* Private typedef -----------------------------------------------------------*/
+     35          /* Private define ------------------------------------------------------------*/
+     36          /* Private macro -------------------------------------------------------------*/
+     37          /* Private variables ---------------------------------------------------------*/
+     38          /* Private function prototypes -----------------------------------------------*/
+     39          static void TI1_Config(uint8_t TIM3_ICPolarity, uint8_t TIM3_ICSelection, uint8_t TIM3_ICFilter);
+     40          static void TI2_Config(uint8_t TIM3_ICPolarity, uint8_t TIM3_ICSelection, uint8_t TIM3_ICFilter);
+     41          /**
+     42            * @addtogroup TIM3_Public_Functions
+     43            * @{
+     44            */
+     45          
+     46          /**
+     47            * @brief  Deinitializes the TIM3 peripheral registers to their default reset values.
+     48            * @param  None
+     49            * @retval None
+     50            */
+
+   \                                 In section .far_func.text, align 1
+     51          void TIM3_DeInit(void)
+     52          {
+     53            TIM3->CR1 = (uint8_t)TIM3_CR1_RESET_VALUE;
+   \                     TIM3_DeInit:
+   \   000000 725F 5320    CLR       L:0x5320
+     54            TIM3->IER = (uint8_t)TIM3_IER_RESET_VALUE;
+   \   000004 725F 5321    CLR       L:0x5321
+     55            TIM3->SR2 = (uint8_t)TIM3_SR2_RESET_VALUE;
+   \   000008 725F 5323    CLR       L:0x5323
+     56            
+     57            /* Disable channels */
+     58            TIM3->CCER1 = (uint8_t)TIM3_CCER1_RESET_VALUE;
+   \   00000C 725F 5327    CLR       L:0x5327
+     59            
+     60            /* Then reset channel registers: it also works if lock level is equal to 2 or 3 */
+     61            TIM3->CCER1 = (uint8_t)TIM3_CCER1_RESET_VALUE;
+   \   000010 725F 5327    CLR       L:0x5327
+     62            TIM3->CCMR1 = (uint8_t)TIM3_CCMR1_RESET_VALUE;
+   \   000014 725F 5325    CLR       L:0x5325
+     63            TIM3->CCMR2 = (uint8_t)TIM3_CCMR2_RESET_VALUE;
+   \   000018 725F 5326    CLR       L:0x5326
+     64            TIM3->CNTRH = (uint8_t)TIM3_CNTRH_RESET_VALUE;
+   \   00001C 725F 5328    CLR       L:0x5328
+     65            TIM3->CNTRL = (uint8_t)TIM3_CNTRL_RESET_VALUE;
+   \   000020 725F 5329    CLR       L:0x5329
+     66            TIM3->PSCR = (uint8_t)TIM3_PSCR_RESET_VALUE;
+   \   000024 725F 532A    CLR       L:0x532a
+     67            TIM3->ARRH  = (uint8_t)TIM3_ARRH_RESET_VALUE;
+   \   000028 35 FF 532B   MOV       L:0x532b, #0xff
+     68            TIM3->ARRL  = (uint8_t)TIM3_ARRL_RESET_VALUE;
+   \   00002C 35 FF 532C   MOV       L:0x532c, #0xff
+     69            TIM3->CCR1H = (uint8_t)TIM3_CCR1H_RESET_VALUE;
+   \   000030 725F 532D    CLR       L:0x532d
+     70            TIM3->CCR1L = (uint8_t)TIM3_CCR1L_RESET_VALUE;
+   \   000034 725F 532E    CLR       L:0x532e
+     71            TIM3->CCR2H = (uint8_t)TIM3_CCR2H_RESET_VALUE;
+   \   000038 725F 532F    CLR       L:0x532f
+     72            TIM3->CCR2L = (uint8_t)TIM3_CCR2L_RESET_VALUE;
+   \   00003C 725F 5330    CLR       L:0x5330
+     73            TIM3->SR1 = (uint8_t)TIM3_SR1_RESET_VALUE;
+   \   000040 725F 5322    CLR       L:0x5322
+     74          }
+   \   000044 87           RETF
+     75          
+     76          /**
+     77            * @brief  Initializes the TIM3 Time Base Unit according to the specified parameters.
+     78            * @param    TIM3_Prescaler specifies the Prescaler from TIM3_Prescaler_TypeDef.
+     79            * @param    TIM3_Period specifies the Period value.
+     80            * @retval None
+     81            */
+
+   \                                 In section .far_func.text, align 1
+     82          void TIM3_TimeBaseInit( TIM3_Prescaler_TypeDef TIM3_Prescaler,
+     83                                  uint16_t TIM3_Period)
+     84          {
+   \                     TIM3_TimeBaseInit:
+   \   000000 B7 ..        LD        S:?b0, A
+     85            /* Set the Prescaler value */
+     86            TIM3->PSCR = (uint8_t)(TIM3_Prescaler);
+   \   000002 B6 ..        LD        A, S:?b0
+   \   000004 C7 532A      LD        L:0x532a, A
+     87            /* Set the Autoreload value */
+     88            TIM3->ARRH = (uint8_t)(TIM3_Period >> 8);
+   \   000007 9E           LD        A, XH
+   \   000008 C7 532B      LD        L:0x532b, A
+     89            TIM3->ARRL = (uint8_t)(TIM3_Period);
+   \   00000B 9F           LD        A, XL
+   \   00000C C7 532C      LD        L:0x532c, A
+     90          }
+   \   00000F 87           RETF
+     91          
+     92          /**
+     93            * @brief  Initializes the TIM3 Channel1 according to the specified parameters.
+     94            * @param   TIM3_OCMode specifies the Output Compare mode  from @ref TIM3_OCMode_TypeDef.
+     95            * @param   TIM3_OutputState specifies the Output State  from @ref TIM3_OutputState_TypeDef.
+     96            * @param   TIM3_Pulse specifies the Pulse width  value.
+     97            * @param   TIM3_OCPolarity specifies the Output Compare Polarity  from @ref TIM3_OCPolarity_TypeDef.
+     98            * @retval None
+     99            */
+
+   \                                 In section .far_func.text, align 1
+    100          void TIM3_OC1Init(TIM3_OCMode_TypeDef TIM3_OCMode,
+    101                            TIM3_OutputState_TypeDef TIM3_OutputState,
+    102                            uint16_t TIM3_Pulse,
+    103                            TIM3_OCPolarity_TypeDef TIM3_OCPolarity)
+    104          {
+   \                     TIM3_OC1Init:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 8D ......    CALLF     L:?push_w6
+   \   000008 3B ....      PUSH      S:?b10
+   \   00000B B7 ..        LD        S:?b8, A
+   \   00000D 45 .. ..     MOV       S:?b9, S:?b0
+   \   000010 BF ..        LDW       S:?w6, X
+   \   000012 45 .. ..     MOV       S:?b10, S:?b1
+    105            /* Check the parameters */
+    106            assert_param(IS_TIM3_OC_MODE_OK(TIM3_OCMode));
+   \   000015 3D ..        TNZ       S:?b8
+   \   000017 27 2D        JREQ      L:??TIM3_OC1Init_0
+   \   000019 B6 ..        LD        A, S:?b8
+   \   00001B A1 10        CP        A, #0x10
+   \   00001D 27 27        JREQ      L:??TIM3_OC1Init_0
+   \   00001F B6 ..        LD        A, S:?b8
+   \   000021 A1 20        CP        A, #0x20
+   \   000023 27 21        JREQ      L:??TIM3_OC1Init_0
+   \   000025 B6 ..        LD        A, S:?b8
+   \   000027 A1 30        CP        A, #0x30
+   \   000029 27 1B        JREQ      L:??TIM3_OC1Init_0
+   \   00002B B6 ..        LD        A, S:?b8
+   \   00002D A1 60        CP        A, #0x60
+   \   00002F 27 15        JREQ      L:??TIM3_OC1Init_0
+   \   000031 B6 ..        LD        A, S:?b8
+   \   000033 A1 70        CP        A, #0x70
+   \   000035 27 0F        JREQ      L:??TIM3_OC1Init_0
+   \   000037 AE 006A      LDW       X, #0x6a
+   \   00003A BF ..        LDW       S:?w1, X
+   \   00003C 5F           CLRW      X
+   \   00003D BF ..        LDW       S:?w0, X
+   \   00003F AE ....      LDW       X, #?_0
+   \   000042 8D ......    CALLF     assert_failed
+    107            assert_param(IS_TIM3_OUTPUT_STATE_OK(TIM3_OutputState));
+   \                     ??TIM3_OC1Init_0:
+   \   000046 3D ..        TNZ       S:?b9
+   \   000048 27 15        JREQ      L:??TIM3_OC1Init_1
+   \   00004A B6 ..        LD        A, S:?b9
+   \   00004C A1 11        CP        A, #0x11
+   \   00004E 27 0F        JREQ      L:??TIM3_OC1Init_1
+   \   000050 AE 006B      LDW       X, #0x6b
+   \   000053 BF ..        LDW       S:?w1, X
+   \   000055 5F           CLRW      X
+   \   000056 BF ..        LDW       S:?w0, X
+   \   000058 AE ....      LDW       X, #?_0
+   \   00005B 8D ......    CALLF     assert_failed
+    108            assert_param(IS_TIM3_OC_POLARITY_OK(TIM3_OCPolarity));
+   \                     ??TIM3_OC1Init_1:
+   \   00005F 3D ..        TNZ       S:?b10
+   \   000061 27 15        JREQ      L:??TIM3_OC1Init_2
+   \   000063 B6 ..        LD        A, S:?b10
+   \   000065 A1 22        CP        A, #0x22
+   \   000067 27 0F        JREQ      L:??TIM3_OC1Init_2
+   \   000069 AE 006C      LDW       X, #0x6c
+   \   00006C BF ..        LDW       S:?w1, X
+   \   00006E 5F           CLRW      X
+   \   00006F BF ..        LDW       S:?w0, X
+   \   000071 AE ....      LDW       X, #?_0
+   \   000074 8D ......    CALLF     assert_failed
+    109            
+    110            /* Disable the Channel 1: Reset the CCE Bit, Set the Output State , the Output Polarity */
+    111            TIM3->CCER1 &= (uint8_t)(~( TIM3_CCER1_CC1E | TIM3_CCER1_CC1P));
+   \                     ??TIM3_OC1Init_2:
+   \   000078 C6 5327      LD        A, L:0x5327
+   \   00007B A4 FC        AND       A, #0xfc
+   \   00007D C7 5327      LD        L:0x5327, A
+    112            /* Set the Output State &  Set the Output Polarity  */
+    113            TIM3->CCER1 |= (uint8_t)((uint8_t)(TIM3_OutputState  & TIM3_CCER1_CC1E   ) | (uint8_t)(TIM3_OCPolarity   & TIM3_CCER1_CC1P   ));
+   \   000080 B6 ..        LD        A, S:?b10
+   \   000082 A4 02        AND       A, #0x2
+   \   000084 88           PUSH      A
+   \   000085 B6 ..        LD        A, S:?b9
+   \   000087 A4 01        AND       A, #0x1
+   \   000089 B7 ..        LD        S:?b1, A
+   \   00008B 84           POP       A
+   \   00008C BA ..        OR        A, S:?b1
+   \   00008E CA 5327      OR        A, L:0x5327
+   \   000091 C7 5327      LD        L:0x5327, A
+    114            
+    115            /* Reset the Output Compare Bits & Set the Output Compare Mode */
+    116            TIM3->CCMR1 = (uint8_t)((uint8_t)(TIM3->CCMR1 & (uint8_t)(~TIM3_CCMR_OCM)) | (uint8_t)TIM3_OCMode);
+   \   000094 C6 5325      LD        A, L:0x5325
+   \   000097 A4 8F        AND       A, #0x8f
+   \   000099 BA ..        OR        A, S:?b8
+   \   00009B C7 5325      LD        L:0x5325, A
+    117            
+    118            /* Set the Pulse value */
+    119            TIM3->CCR1H = (uint8_t)(TIM3_Pulse >> 8);
+   \   00009E B6 ..        LD        A, S:?b12
+   \   0000A0 C7 532D      LD        L:0x532d, A
+    120            TIM3->CCR1L = (uint8_t)(TIM3_Pulse);
+   \   0000A3 B6 ..        LD        A, S:?b13
+   \   0000A5 C7 532E      LD        L:0x532e, A
+    121          }
+   \   0000A8 32 ....      POP       S:?b10
+   \   0000AB 8D ......    CALLF     L:?pop_w6
+   \   0000AF AC ......    JPF       L:?epilogue_w4
+    122          
+    123          /**
+    124            * @brief  Initializes the TIM3 Channel2 according to the specified parameters.
+    125            * @param   TIM3_OCMode specifies the Output Compare mode  from @ref TIM3_OCMode_TypeDef.
+    126            * @param   TIM3_OutputState specifies the Output State  from @ref TIM3_OutputState_TypeDef.
+    127            * @param   TIM3_Pulse specifies the Pulse width  value.
+    128            * @param   TIM3_OCPolarity specifies the Output Compare Polarity  from @ref TIM3_OCPolarity_TypeDef.
+    129            * @retval None
+    130            */
+
+   \                                 In section .far_func.text, align 1
+    131          void TIM3_OC2Init(TIM3_OCMode_TypeDef TIM3_OCMode,
+    132                            TIM3_OutputState_TypeDef TIM3_OutputState,
+    133                            uint16_t TIM3_Pulse,
+    134                            TIM3_OCPolarity_TypeDef TIM3_OCPolarity)
+    135          {
+   \                     TIM3_OC2Init:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 8D ......    CALLF     L:?push_w6
+   \   000008 3B ....      PUSH      S:?b10
+   \   00000B B7 ..        LD        S:?b8, A
+   \   00000D 45 .. ..     MOV       S:?b9, S:?b0
+   \   000010 BF ..        LDW       S:?w6, X
+   \   000012 45 .. ..     MOV       S:?b10, S:?b1
+    136            /* Check the parameters */
+    137            assert_param(IS_TIM3_OC_MODE_OK(TIM3_OCMode));
+   \   000015 3D ..        TNZ       S:?b8
+   \   000017 27 2D        JREQ      L:??TIM3_OC2Init_0
+   \   000019 B6 ..        LD        A, S:?b8
+   \   00001B A1 10        CP        A, #0x10
+   \   00001D 27 27        JREQ      L:??TIM3_OC2Init_0
+   \   00001F B6 ..        LD        A, S:?b8
+   \   000021 A1 20        CP        A, #0x20
+   \   000023 27 21        JREQ      L:??TIM3_OC2Init_0
+   \   000025 B6 ..        LD        A, S:?b8
+   \   000027 A1 30        CP        A, #0x30
+   \   000029 27 1B        JREQ      L:??TIM3_OC2Init_0
+   \   00002B B6 ..        LD        A, S:?b8
+   \   00002D A1 60        CP        A, #0x60
+   \   00002F 27 15        JREQ      L:??TIM3_OC2Init_0
+   \   000031 B6 ..        LD        A, S:?b8
+   \   000033 A1 70        CP        A, #0x70
+   \   000035 27 0F        JREQ      L:??TIM3_OC2Init_0
+   \   000037 AE 0089      LDW       X, #0x89
+   \   00003A BF ..        LDW       S:?w1, X
+   \   00003C 5F           CLRW      X
+   \   00003D BF ..        LDW       S:?w0, X
+   \   00003F AE ....      LDW       X, #?_0
+   \   000042 8D ......    CALLF     assert_failed
+    138            assert_param(IS_TIM3_OUTPUT_STATE_OK(TIM3_OutputState));
+   \                     ??TIM3_OC2Init_0:
+   \   000046 3D ..        TNZ       S:?b9
+   \   000048 27 15        JREQ      L:??TIM3_OC2Init_1
+   \   00004A B6 ..        LD        A, S:?b9
+   \   00004C A1 11        CP        A, #0x11
+   \   00004E 27 0F        JREQ      L:??TIM3_OC2Init_1
+   \   000050 AE 008A      LDW       X, #0x8a
+   \   000053 BF ..        LDW       S:?w1, X
+   \   000055 5F           CLRW      X
+   \   000056 BF ..        LDW       S:?w0, X
+   \   000058 AE ....      LDW       X, #?_0
+   \   00005B 8D ......    CALLF     assert_failed
+    139            assert_param(IS_TIM3_OC_POLARITY_OK(TIM3_OCPolarity));
+   \                     ??TIM3_OC2Init_1:
+   \   00005F 3D ..        TNZ       S:?b10
+   \   000061 27 15        JREQ      L:??TIM3_OC2Init_2
+   \   000063 B6 ..        LD        A, S:?b10
+   \   000065 A1 22        CP        A, #0x22
+   \   000067 27 0F        JREQ      L:??TIM3_OC2Init_2
+   \   000069 AE 008B      LDW       X, #0x8b
+   \   00006C BF ..        LDW       S:?w1, X
+   \   00006E 5F           CLRW      X
+   \   00006F BF ..        LDW       S:?w0, X
+   \   000071 AE ....      LDW       X, #?_0
+   \   000074 8D ......    CALLF     assert_failed
+    140            
+    141            
+    142            /* Disable the Channel 1: Reset the CCE Bit, Set the Output State, the Output Polarity */
+    143            TIM3->CCER1 &= (uint8_t)(~( TIM3_CCER1_CC2E |  TIM3_CCER1_CC2P ));
+   \                     ??TIM3_OC2Init_2:
+   \   000078 C6 5327      LD        A, L:0x5327
+   \   00007B A4 CF        AND       A, #0xcf
+   \   00007D C7 5327      LD        L:0x5327, A
+    144            /* Set the Output State & Set the Output Polarity */
+    145            TIM3->CCER1 |= (uint8_t)((uint8_t)(TIM3_OutputState  & TIM3_CCER1_CC2E   ) | (uint8_t)(TIM3_OCPolarity   & TIM3_CCER1_CC2P ));
+   \   000080 B6 ..        LD        A, S:?b10
+   \   000082 A4 20        AND       A, #0x20
+   \   000084 88           PUSH      A
+   \   000085 B6 ..        LD        A, S:?b9
+   \   000087 A4 10        AND       A, #0x10
+   \   000089 B7 ..        LD        S:?b1, A
+   \   00008B 84           POP       A
+   \   00008C BA ..        OR        A, S:?b1
+   \   00008E CA 5327      OR        A, L:0x5327
+   \   000091 C7 5327      LD        L:0x5327, A
+    146            
+    147            
+    148            /* Reset the Output Compare Bits & Set the Output Compare Mode */
+    149            TIM3->CCMR2 = (uint8_t)((uint8_t)(TIM3->CCMR2 & (uint8_t)(~TIM3_CCMR_OCM)) | (uint8_t)TIM3_OCMode);
+   \   000094 C6 5326      LD        A, L:0x5326
+   \   000097 A4 8F        AND       A, #0x8f
+   \   000099 BA ..        OR        A, S:?b8
+   \   00009B C7 5326      LD        L:0x5326, A
+    150            
+    151            
+    152            /* Set the Pulse value */
+    153            TIM3->CCR2H = (uint8_t)(TIM3_Pulse >> 8);
+   \   00009E B6 ..        LD        A, S:?b12
+   \   0000A0 C7 532F      LD        L:0x532f, A
+    154            TIM3->CCR2L = (uint8_t)(TIM3_Pulse);
+   \   0000A3 B6 ..        LD        A, S:?b13
+   \   0000A5 C7 5330      LD        L:0x5330, A
+    155          }
+   \   0000A8 32 ....      POP       S:?b10
+   \   0000AB 8D ......    CALLF     L:?pop_w6
+   \   0000AF AC ......    JPF       L:?epilogue_w4
+    156          
+    157          /**
+    158            * @brief  Initializes the TIM3 peripheral according to the specified parameters.
+    159            * @param    TIM3_Channel specifies the Input Capture Channel from @ref TIM3_Channel_TypeDef.
+    160            * @param   TIM3_ICPolarity specifies the Input Capture Polarity from @ref TIM3_ICPolarity_TypeDef.
+    161            * @param   TIM3_ICSelection specifies the Input Capture Selection from @ref TIM3_ICSelection_TypeDef.
+    162            * @param   TIM3_ICPrescaler specifies the Input Capture Prescaler from @ref TIM3_ICPSC_TypeDef.
+    163            * @param   TIM3_ICFilter specifies the Input Capture Filter value (value can be an integer from 0x00 to 0x0F).
+    164            * @retval None
+    165            */
+
+   \                                 In section .far_func.text, align 1
+    166          void TIM3_ICInit(TIM3_Channel_TypeDef TIM3_Channel,
+    167                           TIM3_ICPolarity_TypeDef TIM3_ICPolarity,
+    168                           TIM3_ICSelection_TypeDef TIM3_ICSelection,
+    169                           TIM3_ICPSC_TypeDef TIM3_ICPrescaler,
+    170                           uint8_t TIM3_ICFilter)
+    171          {
+   \                     TIM3_ICInit:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 3B ....      PUSH      S:?b12
+   \   000007 B7 ..        LD        S:?b8, A
+   \   000009 45 .. ..     MOV       S:?b9, S:?b0
+   \   00000C 45 .. ..     MOV       S:?b11, S:?b1
+   \   00000F 45 .. ..     MOV       S:?b10, S:?b2
+   \   000012 45 .. ..     MOV       S:?b12, S:?b3
+    172            /* Check the parameters */
+    173            assert_param(IS_TIM3_CHANNEL_OK(TIM3_Channel));
+   \   000015 3D ..        TNZ       S:?b8
+   \   000017 27 15        JREQ      L:??TIM3_ICInit_0
+   \   000019 B6 ..        LD        A, S:?b8
+   \   00001B A1 01        CP        A, #0x1
+   \   00001D 27 0F        JREQ      L:??TIM3_ICInit_0
+   \   00001F AE 00AD      LDW       X, #0xad
+   \   000022 BF ..        LDW       S:?w1, X
+   \   000024 5F           CLRW      X
+   \   000025 BF ..        LDW       S:?w0, X
+   \   000027 AE ....      LDW       X, #?_0
+   \   00002A 8D ......    CALLF     assert_failed
+    174            assert_param(IS_TIM3_IC_POLARITY_OK(TIM3_ICPolarity));
+   \                     ??TIM3_ICInit_0:
+   \   00002E 3D ..        TNZ       S:?b9
+   \   000030 27 15        JREQ      L:??TIM3_ICInit_1
+   \   000032 B6 ..        LD        A, S:?b9
+   \   000034 A1 44        CP        A, #0x44
+   \   000036 27 0F        JREQ      L:??TIM3_ICInit_1
+   \   000038 AE 00AE      LDW       X, #0xae
+   \   00003B BF ..        LDW       S:?w1, X
+   \   00003D 5F           CLRW      X
+   \   00003E BF ..        LDW       S:?w0, X
+   \   000040 AE ....      LDW       X, #?_0
+   \   000043 8D ......    CALLF     assert_failed
+    175            assert_param(IS_TIM3_IC_SELECTION_OK(TIM3_ICSelection));
+   \                     ??TIM3_ICInit_1:
+   \   000047 B6 ..        LD        A, S:?b11
+   \   000049 A1 01        CP        A, #0x1
+   \   00004B 27 1B        JREQ      L:??TIM3_ICInit_2
+   \   00004D B6 ..        LD        A, S:?b11
+   \   00004F A1 02        CP        A, #0x2
+   \   000051 27 15        JREQ      L:??TIM3_ICInit_2
+   \   000053 B6 ..        LD        A, S:?b11
+   \   000055 A1 03        CP        A, #0x3
+   \   000057 27 0F        JREQ      L:??TIM3_ICInit_2
+   \   000059 AE 00AF      LDW       X, #0xaf
+   \   00005C BF ..        LDW       S:?w1, X
+   \   00005E 5F           CLRW      X
+   \   00005F BF ..        LDW       S:?w0, X
+   \   000061 AE ....      LDW       X, #?_0
+   \   000064 8D ......    CALLF     assert_failed
+    176            assert_param(IS_TIM3_IC_PRESCALER_OK(TIM3_ICPrescaler));
+   \                     ??TIM3_ICInit_2:
+   \   000068 3D ..        TNZ       S:?b10
+   \   00006A 27 21        JREQ      L:??TIM3_ICInit_3
+   \   00006C B6 ..        LD        A, S:?b10
+   \   00006E A1 04        CP        A, #0x4
+   \   000070 27 1B        JREQ      L:??TIM3_ICInit_3
+   \   000072 B6 ..        LD        A, S:?b10
+   \   000074 A1 08        CP        A, #0x8
+   \   000076 27 15        JREQ      L:??TIM3_ICInit_3
+   \   000078 B6 ..        LD        A, S:?b10
+   \   00007A A1 0C        CP        A, #0xc
+   \   00007C 27 0F        JREQ      L:??TIM3_ICInit_3
+   \   00007E AE 00B0      LDW       X, #0xb0
+   \   000081 BF ..        LDW       S:?w1, X
+   \   000083 5F           CLRW      X
+   \   000084 BF ..        LDW       S:?w0, X
+   \   000086 AE ....      LDW       X, #?_0
+   \   000089 8D ......    CALLF     assert_failed
+    177            assert_param(IS_TIM3_IC_FILTER_OK(TIM3_ICFilter));
+   \                     ??TIM3_ICInit_3:
+   \   00008D B6 ..        LD        A, S:?b12
+   \   00008F A1 10        CP        A, #0x10
+   \   000091 25 0F        JRC       L:??TIM3_ICInit_4
+   \   000093 AE 00B1      LDW       X, #0xb1
+   \   000096 BF ..        LDW       S:?w1, X
+   \   000098 5F           CLRW      X
+   \   000099 BF ..        LDW       S:?w0, X
+   \   00009B AE ....      LDW       X, #?_0
+   \   00009E 8D ......    CALLF     assert_failed
+    178            
+    179            if (TIM3_Channel != TIM3_CHANNEL_2)
+   \                     ??TIM3_ICInit_4:
+   \   0000A2 B6 ..        LD        A, S:?b8
+   \   0000A4 A1 01        CP        A, #0x1
+   \   0000A6 27 14        JREQ      L:??TIM3_ICInit_5
+    180            {
+    181              /* TI1 Configuration */
+    182              TI1_Config((uint8_t)TIM3_ICPolarity,
+    183                         (uint8_t)TIM3_ICSelection,
+    184                         (uint8_t)TIM3_ICFilter);
+   \   0000A8 45 .. ..     MOV       S:?b1, S:?b12
+   \   0000AB 45 .. ..     MOV       S:?b0, S:?b11
+   \   0000AE B6 ..        LD        A, S:?b9
+   \   0000B0 8D ......    CALLF     TI1_Config
+    185              
+    186              /* Set the Input Capture Prescaler value */
+    187              TIM3_SetIC1Prescaler(TIM3_ICPrescaler);
+   \   0000B4 B6 ..        LD        A, S:?b10
+   \   0000B6 8D ......    CALLF     TIM3_SetIC1Prescaler
+   \   0000BA 20 12        JRA       L:??TIM3_ICInit_6
+    188            }
+    189            else
+    190            {
+    191              /* TI2 Configuration */
+    192              TI2_Config((uint8_t)TIM3_ICPolarity,
+    193                         (uint8_t)TIM3_ICSelection,
+    194                         (uint8_t)TIM3_ICFilter);
+   \                     ??TIM3_ICInit_5:
+   \   0000BC 45 .. ..     MOV       S:?b1, S:?b12
+   \   0000BF 45 .. ..     MOV       S:?b0, S:?b11
+   \   0000C2 B6 ..        LD        A, S:?b9
+   \   0000C4 8D ......    CALLF     TI2_Config
+    195              
+    196              /* Set the Input Capture Prescaler value */
+    197              TIM3_SetIC2Prescaler(TIM3_ICPrescaler);
+   \   0000C8 B6 ..        LD        A, S:?b10
+   \   0000CA 8D ......    CALLF     TIM3_SetIC2Prescaler
+    198            }
+    199          }
+   \                     ??TIM3_ICInit_6:
+   \   0000CE 32 ....      POP       S:?b12
+   \   0000D1 AC ......    JPF       L:?epilogue_l2
+    200          
+    201          /**
+    202            * @brief  Configures the TIM3 peripheral in PWM Input Mode according to the specified parameters.
+    203            * @param    TIM3_Channel specifies the Input Capture Channel from @ref TIM3_Channel_TypeDef.
+    204            * @param   TIM3_ICPolarity specifies the Input Capture Polarity from @ref TIM3_ICPolarity_TypeDef.
+    205            * @param   TIM3_ICSelection specifies the Input Capture Selection from @ref TIM3_ICSelection_TypeDef.
+    206            * @param   TIM3_ICPrescaler specifies the Input Capture Prescaler from @ref TIM3_ICPSC_TypeDef.
+    207            * @param   TIM3_ICFilter specifies the Input Capture Filter value (value can be an integer from 0x00 to 0x0F).
+    208            * @retval None
+    209            */
+
+   \                                 In section .far_func.text, align 1
+    210          void TIM3_PWMIConfig(TIM3_Channel_TypeDef TIM3_Channel,
+    211                               TIM3_ICPolarity_TypeDef TIM3_ICPolarity,
+    212                               TIM3_ICSelection_TypeDef TIM3_ICSelection,
+    213                               TIM3_ICPSC_TypeDef TIM3_ICPrescaler,
+    214                               uint8_t TIM3_ICFilter)
+    215          {
+   \                     TIM3_PWMIConfig:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 8D ......    CALLF     L:?push_w6
+   \   000008 3B ....      PUSH      S:?b14
+   \   00000B B7 ..        LD        S:?b12, A
+   \   00000D 45 .. ..     MOV       S:?b8, S:?b0
+   \   000010 45 .. ..     MOV       S:?b10, S:?b1
+   \   000013 45 .. ..     MOV       S:?b9, S:?b2
+   \   000016 45 .. ..     MOV       S:?b11, S:?b3
+    216            uint8_t icpolarity = (uint8_t)TIM3_ICPOLARITY_RISING;
+   \   000019 3F ..        CLR       S:?b14
+    217            uint8_t icselection = (uint8_t)TIM3_ICSELECTION_DIRECTTI;
+   \   00001B 35 01 ....   MOV       S:?b13, #0x1
+    218            
+    219            /* Check the parameters */
+    220            assert_param(IS_TIM3_PWMI_CHANNEL_OK(TIM3_Channel));
+   \   00001F 3D ..        TNZ       S:?b12
+   \   000021 27 15        JREQ      L:??TIM3_PWMIConfig_0
+   \   000023 B6 ..        LD        A, S:?b12
+   \   000025 A1 01        CP        A, #0x1
+   \   000027 27 0F        JREQ      L:??TIM3_PWMIConfig_0
+   \   000029 AE 00DC      LDW       X, #0xdc
+   \   00002C BF ..        LDW       S:?w1, X
+   \   00002E 5F           CLRW      X
+   \   00002F BF ..        LDW       S:?w0, X
+   \   000031 AE ....      LDW       X, #?_0
+   \   000034 8D ......    CALLF     assert_failed
+    221            assert_param(IS_TIM3_IC_POLARITY_OK(TIM3_ICPolarity));
+   \                     ??TIM3_PWMIConfig_0:
+   \   000038 3D ..        TNZ       S:?b8
+   \   00003A 27 15        JREQ      L:??TIM3_PWMIConfig_1
+   \   00003C B6 ..        LD        A, S:?b8
+   \   00003E A1 44        CP        A, #0x44
+   \   000040 27 0F        JREQ      L:??TIM3_PWMIConfig_1
+   \   000042 AE 00DD      LDW       X, #0xdd
+   \   000045 BF ..        LDW       S:?w1, X
+   \   000047 5F           CLRW      X
+   \   000048 BF ..        LDW       S:?w0, X
+   \   00004A AE ....      LDW       X, #?_0
+   \   00004D 8D ......    CALLF     assert_failed
+    222            assert_param(IS_TIM3_IC_SELECTION_OK(TIM3_ICSelection));
+   \                     ??TIM3_PWMIConfig_1:
+   \   000051 B6 ..        LD        A, S:?b10
+   \   000053 A1 01        CP        A, #0x1
+   \   000055 27 1B        JREQ      L:??TIM3_PWMIConfig_2
+   \   000057 B6 ..        LD        A, S:?b10
+   \   000059 A1 02        CP        A, #0x2
+   \   00005B 27 15        JREQ      L:??TIM3_PWMIConfig_2
+   \   00005D B6 ..        LD        A, S:?b10
+   \   00005F A1 03        CP        A, #0x3
+   \   000061 27 0F        JREQ      L:??TIM3_PWMIConfig_2
+   \   000063 AE 00DE      LDW       X, #0xde
+   \   000066 BF ..        LDW       S:?w1, X
+   \   000068 5F           CLRW      X
+   \   000069 BF ..        LDW       S:?w0, X
+   \   00006B AE ....      LDW       X, #?_0
+   \   00006E 8D ......    CALLF     assert_failed
+    223            assert_param(IS_TIM3_IC_PRESCALER_OK(TIM3_ICPrescaler));
+   \                     ??TIM3_PWMIConfig_2:
+   \   000072 3D ..        TNZ       S:?b9
+   \   000074 27 21        JREQ      L:??TIM3_PWMIConfig_3
+   \   000076 B6 ..        LD        A, S:?b9
+   \   000078 A1 04        CP        A, #0x4
+   \   00007A 27 1B        JREQ      L:??TIM3_PWMIConfig_3
+   \   00007C B6 ..        LD        A, S:?b9
+   \   00007E A1 08        CP        A, #0x8
+   \   000080 27 15        JREQ      L:??TIM3_PWMIConfig_3
+   \   000082 B6 ..        LD        A, S:?b9
+   \   000084 A1 0C        CP        A, #0xc
+   \   000086 27 0F        JREQ      L:??TIM3_PWMIConfig_3
+   \   000088 AE 00DF      LDW       X, #0xdf
+   \   00008B BF ..        LDW       S:?w1, X
+   \   00008D 5F           CLRW      X
+   \   00008E BF ..        LDW       S:?w0, X
+   \   000090 AE ....      LDW       X, #?_0
+   \   000093 8D ......    CALLF     assert_failed
+    224            
+    225            /* Select the Opposite Input Polarity */
+    226            if (TIM3_ICPolarity != TIM3_ICPOLARITY_FALLING)
+   \                     ??TIM3_PWMIConfig_3:
+   \   000097 B6 ..        LD        A, S:?b8
+   \   000099 A1 44        CP        A, #0x44
+   \   00009B 27 06        JREQ      L:??TIM3_PWMIConfig_4
+    227            {
+    228              icpolarity = (uint8_t)TIM3_ICPOLARITY_FALLING;
+   \   00009D A6 44        LD        A, #0x44
+   \   00009F B7 ..        LD        S:?b14, A
+   \   0000A1 20 02        JRA       L:??TIM3_PWMIConfig_5
+    229            }
+    230            else
+    231            {
+    232              icpolarity = (uint8_t)TIM3_ICPOLARITY_RISING;
+   \                     ??TIM3_PWMIConfig_4:
+   \   0000A3 3F ..        CLR       S:?b14
+    233            }
+    234            
+    235            /* Select the Opposite Input */
+    236            if (TIM3_ICSelection == TIM3_ICSELECTION_DIRECTTI)
+   \                     ??TIM3_PWMIConfig_5:
+   \   0000A5 B6 ..        LD        A, S:?b10
+   \   0000A7 A1 01        CP        A, #0x1
+   \   0000A9 26 06        JRNE      L:??TIM3_PWMIConfig_6
+    237            {
+    238              icselection = (uint8_t)TIM3_ICSELECTION_INDIRECTTI;
+   \   0000AB A6 02        LD        A, #0x2
+   \   0000AD B7 ..        LD        S:?b13, A
+   \   0000AF 20 04        JRA       L:??TIM3_PWMIConfig_7
+    239            }
+    240            else
+    241            {
+    242              icselection = (uint8_t)TIM3_ICSELECTION_DIRECTTI;
+   \                     ??TIM3_PWMIConfig_6:
+   \   0000B1 A6 01        LD        A, #0x1
+   \   0000B3 B7 ..        LD        S:?b13, A
+    243            }
+    244            
+    245            if (TIM3_Channel != TIM3_CHANNEL_2)
+   \                     ??TIM3_PWMIConfig_7:
+   \   0000B5 B6 ..        LD        A, S:?b12
+   \   0000B7 A1 01        CP        A, #0x1
+   \   0000B9 27 26        JREQ      L:??TIM3_PWMIConfig_8
+    246            {
+    247              /* TI1 Configuration */
+    248              TI1_Config((uint8_t)TIM3_ICPolarity, (uint8_t)TIM3_ICSelection,
+    249                         (uint8_t)TIM3_ICFilter);
+   \   0000BB 45 .. ..     MOV       S:?b1, S:?b11
+   \   0000BE 45 .. ..     MOV       S:?b0, S:?b10
+   \   0000C1 B6 ..        LD        A, S:?b8
+   \   0000C3 8D ......    CALLF     TI1_Config
+    250              
+    251              /* Set the Input Capture Prescaler value */
+    252              TIM3_SetIC1Prescaler(TIM3_ICPrescaler);
+   \   0000C7 B6 ..        LD        A, S:?b9
+   \   0000C9 8D ......    CALLF     TIM3_SetIC1Prescaler
+    253              
+    254              /* TI2 Configuration */
+    255              TI2_Config(icpolarity, icselection, TIM3_ICFilter);
+   \   0000CD 45 .. ..     MOV       S:?b1, S:?b11
+   \   0000D0 45 .. ..     MOV       S:?b0, S:?b13
+   \   0000D3 B6 ..        LD        A, S:?b14
+   \   0000D5 8D ......    CALLF     TI2_Config
+    256              
+    257              /* Set the Input Capture Prescaler value */
+    258              TIM3_SetIC2Prescaler(TIM3_ICPrescaler);
+   \   0000D9 B6 ..        LD        A, S:?b9
+   \   0000DB 8D ......    CALLF     TIM3_SetIC2Prescaler
+   \   0000DF 20 24        JRA       L:??TIM3_PWMIConfig_9
+    259            }
+    260            else
+    261            {
+    262              /* TI2 Configuration */
+    263              TI2_Config((uint8_t)TIM3_ICPolarity, (uint8_t)TIM3_ICSelection,
+    264                         (uint8_t)TIM3_ICFilter);
+   \                     ??TIM3_PWMIConfig_8:
+   \   0000E1 45 .. ..     MOV       S:?b1, S:?b11
+   \   0000E4 45 .. ..     MOV       S:?b0, S:?b10
+   \   0000E7 B6 ..        LD        A, S:?b8
+   \   0000E9 8D ......    CALLF     TI2_Config
+    265              
+    266              /* Set the Input Capture Prescaler value */
+    267              TIM3_SetIC2Prescaler(TIM3_ICPrescaler);
+   \   0000ED B6 ..        LD        A, S:?b9
+   \   0000EF 8D ......    CALLF     TIM3_SetIC2Prescaler
+    268              
+    269              /* TI1 Configuration */
+    270              TI1_Config(icpolarity, icselection, TIM3_ICFilter);
+   \   0000F3 45 .. ..     MOV       S:?b1, S:?b11
+   \   0000F6 45 .. ..     MOV       S:?b0, S:?b13
+   \   0000F9 B6 ..        LD        A, S:?b14
+   \   0000FB 8D ......    CALLF     TI1_Config
+    271              
+    272              /* Set the Input Capture Prescaler value */
+    273              TIM3_SetIC1Prescaler(TIM3_ICPrescaler);
+   \   0000FF B6 ..        LD        A, S:?b9
+   \   000101 8D ......    CALLF     TIM3_SetIC1Prescaler
+    274            }
+    275          }
+   \                     ??TIM3_PWMIConfig_9:
+   \   000105 32 ....      POP       S:?b14
+   \   000108 AC ......    JPF       L:?epilogue_l2_w6
+    276          
+    277          /**
+    278            * @brief  Enables or disables the TIM3 peripheral.
+    279            * @param   NewState new state of the TIM3 peripheral. This parameter can
+    280            * be ENABLE or DISABLE.
+    281            * @retval None
+    282            */
+
+   \                                 In section .far_func.text, align 1
+    283          void TIM3_Cmd(FunctionalState NewState)
+    284          {
+   \                     TIM3_Cmd:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    285            /* Check the parameters */
+    286            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM3_Cmd_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??TIM3_Cmd_0
+   \   00000F AE 011E      LDW       X, #0x11e
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    287            
+    288            /* set or Reset the CEN Bit */
+    289            if (NewState != DISABLE)
+   \                     ??TIM3_Cmd_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM3_Cmd_1
+    290            {
+    291              TIM3->CR1 |= (uint8_t)TIM3_CR1_CEN;
+   \   000022 7210 5320    BSET      L:0x5320, #0x0
+   \   000026 20 04        JRA       L:??TIM3_Cmd_2
+    292            }
+    293            else
+    294            {
+    295              TIM3->CR1 &= (uint8_t)(~TIM3_CR1_CEN);
+   \                     ??TIM3_Cmd_1:
+   \   000028 7211 5320    BRES      L:0x5320, #0x0
+    296            }
+    297          }
+   \                     ??TIM3_Cmd_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    298          
+    299          /**
+    300            * @brief  Enables or disables the specified TIM3 interrupts.
+    301            * @param   NewState new state of the TIM3 peripheral.
+    302            * This parameter can be: ENABLE or DISABLE.
+    303            * @param   TIM3_IT specifies the TIM3 interrupts sources to be enabled or disabled.
+    304            * This parameter can be any combination of the following values:
+    305            *                       - TIM3_IT_UPDATE: TIM3 update Interrupt source
+    306            *                       - TIM3_IT_CC1: TIM3 Capture Compare 1 Interrupt source
+    307            *                       - TIM3_IT_CC2: TIM3 Capture Compare 2 Interrupt source
+    308            *                       - TIM3_IT_CC3: TIM3 Capture Compare 3 Interrupt source
+    309            * @param   NewState new state of the TIM3 peripheral.  * @retval None
+    310            */
+
+   \                                 In section .far_func.text, align 1
+    311          void TIM3_ITConfig(TIM3_IT_TypeDef TIM3_IT, FunctionalState NewState)
+    312          {
+   \                     TIM3_ITConfig:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 B7 ..        LD        S:?b9, A
+   \   000006 45 .. ..     MOV       S:?b8, S:?b0
+    313            /* Check the parameters */
+    314            assert_param(IS_TIM3_IT_OK(TIM3_IT));
+   \   000009 3D ..        TNZ       S:?b9
+   \   00000B 27 06        JREQ      L:??TIM3_ITConfig_0
+   \   00000D B6 ..        LD        A, S:?b9
+   \   00000F A1 08        CP        A, #0x8
+   \   000011 25 0F        JRC       L:??TIM3_ITConfig_1
+   \                     ??TIM3_ITConfig_0:
+   \   000013 AE 013A      LDW       X, #0x13a
+   \   000016 BF ..        LDW       S:?w1, X
+   \   000018 5F           CLRW      X
+   \   000019 BF ..        LDW       S:?w0, X
+   \   00001B AE ....      LDW       X, #?_0
+   \   00001E 8D ......    CALLF     assert_failed
+    315            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \                     ??TIM3_ITConfig_1:
+   \   000022 3D ..        TNZ       S:?b8
+   \   000024 27 15        JREQ      L:??TIM3_ITConfig_2
+   \   000026 B6 ..        LD        A, S:?b8
+   \   000028 A1 01        CP        A, #0x1
+   \   00002A 27 0F        JREQ      L:??TIM3_ITConfig_2
+   \   00002C AE 013B      LDW       X, #0x13b
+   \   00002F BF ..        LDW       S:?w1, X
+   \   000031 5F           CLRW      X
+   \   000032 BF ..        LDW       S:?w0, X
+   \   000034 AE ....      LDW       X, #?_0
+   \   000037 8D ......    CALLF     assert_failed
+    316            
+    317            if (NewState != DISABLE)
+   \                     ??TIM3_ITConfig_2:
+   \   00003B 3D ..        TNZ       S:?b8
+   \   00003D 27 0A        JREQ      L:??TIM3_ITConfig_3
+    318            {
+    319              /* Enable the Interrupt sources */
+    320              TIM3->IER |= (uint8_t)TIM3_IT;
+   \   00003F C6 5321      LD        A, L:0x5321
+   \   000042 BA ..        OR        A, S:?b9
+   \   000044 C7 5321      LD        L:0x5321, A
+   \   000047 20 09        JRA       L:??TIM3_ITConfig_4
+    321            }
+    322            else
+    323            {
+    324              /* Disable the Interrupt sources */
+    325              TIM3->IER &= (uint8_t)(~TIM3_IT);
+   \                     ??TIM3_ITConfig_3:
+   \   000049 B6 ..        LD        A, S:?b9
+   \   00004B 43           CPL       A
+   \   00004C C4 5321      AND       A, L:0x5321
+   \   00004F C7 5321      LD        L:0x5321, A
+    326            }
+    327          }
+   \                     ??TIM3_ITConfig_4:
+   \   000052 AC ......    JPF       L:?epilogue_w4
+    328          
+    329          /**
+    330            * @brief  Enables or Disables the TIM3 Update event.
+    331            * @param   NewState new state of the TIM3 peripheral Preload register. This parameter can
+    332            * be ENABLE or DISABLE.
+    333            * @retval None
+    334            */
+
+   \                                 In section .far_func.text, align 1
+    335          void TIM3_UpdateDisableConfig(FunctionalState NewState)
+    336          {
+   \                     TIM3_UpdateDisableConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    337            /* Check the parameters */
+    338            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM3_UpdateDisableConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??TIM3_UpdateDisableConfig_0
+   \   00000F AE 0152      LDW       X, #0x152
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    339            
+    340            /* Set or Reset the UDIS Bit */
+    341            if (NewState != DISABLE)
+   \                     ??TIM3_UpdateDisableConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM3_UpdateDisableConfig_1
+    342            {
+    343              TIM3->CR1 |= TIM3_CR1_UDIS;
+   \   000022 7212 5320    BSET      L:0x5320, #0x1
+   \   000026 20 04        JRA       L:??TIM3_UpdateDisableConfig_2
+    344            }
+    345            else
+    346            {
+    347              TIM3->CR1 &= (uint8_t)(~TIM3_CR1_UDIS);
+   \                     ??TIM3_UpdateDisableConfig_1:
+   \   000028 7213 5320    BRES      L:0x5320, #0x1
+    348            }
+    349          }
+   \                     ??TIM3_UpdateDisableConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    350          
+    351          /**
+    352            * @brief  Selects the TIM3 Update Request Interrupt source.
+    353            * @param   TIM3_UpdateSource specifies the Update source.
+    354            * This parameter can be one of the following values
+    355            *                       - TIM3_UPDATESOURCE_REGULAR
+    356            *                       - TIM3_UPDATESOURCE_GLOBAL
+    357            * @retval None
+    358            */
+
+   \                                 In section .far_func.text, align 1
+    359          void TIM3_UpdateRequestConfig(TIM3_UpdateSource_TypeDef TIM3_UpdateSource)
+    360          {
+   \                     TIM3_UpdateRequestConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    361            /* Check the parameters */
+    362            assert_param(IS_TIM3_UPDATE_SOURCE_OK(TIM3_UpdateSource));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM3_UpdateRequestConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??TIM3_UpdateRequestConfig_0
+   \   00000F AE 016A      LDW       X, #0x16a
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    363            
+    364            /* Set or Reset the URS Bit */
+    365            if (TIM3_UpdateSource != TIM3_UPDATESOURCE_GLOBAL)
+   \                     ??TIM3_UpdateRequestConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM3_UpdateRequestConfig_1
+    366            {
+    367              TIM3->CR1 |= TIM3_CR1_URS;
+   \   000022 7214 5320    BSET      L:0x5320, #0x2
+   \   000026 20 04        JRA       L:??TIM3_UpdateRequestConfig_2
+    368            }
+    369            else
+    370            {
+    371              TIM3->CR1 &= (uint8_t)(~TIM3_CR1_URS);
+   \                     ??TIM3_UpdateRequestConfig_1:
+   \   000028 7215 5320    BRES      L:0x5320, #0x2
+    372            }
+    373          }
+   \                     ??TIM3_UpdateRequestConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    374          
+    375          /**
+    376            * @brief  Selects the TIM3’s One Pulse Mode.
+    377            * @param   TIM3_OPMode specifies the OPM Mode to be used.
+    378            * This parameter can be one of the following values
+    379            *                    - TIM3_OPMODE_SINGLE
+    380            *                    - TIM3_OPMODE_REPETITIVE
+    381            * @retval None
+    382            */
+
+   \                                 In section .far_func.text, align 1
+    383          void TIM3_SelectOnePulseMode(TIM3_OPMode_TypeDef TIM3_OPMode)
+    384          {
+   \                     TIM3_SelectOnePulseMode:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    385            /* Check the parameters */
+    386            assert_param(IS_TIM3_OPM_MODE_OK(TIM3_OPMode));
+   \   000005 B6 ..        LD        A, S:?b8
+   \   000007 A1 01        CP        A, #0x1
+   \   000009 27 13        JREQ      L:??TIM3_SelectOnePulseMode_0
+   \   00000B 3D ..        TNZ       S:?b8
+   \   00000D 27 0F        JREQ      L:??TIM3_SelectOnePulseMode_0
+   \   00000F AE 0182      LDW       X, #0x182
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    387            
+    388            /* Set or Reset the OPM Bit */
+    389            if (TIM3_OPMode != TIM3_OPMODE_REPETITIVE)
+   \                     ??TIM3_SelectOnePulseMode_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM3_SelectOnePulseMode_1
+    390            {
+    391              TIM3->CR1 |= TIM3_CR1_OPM;
+   \   000022 7216 5320    BSET      L:0x5320, #0x3
+   \   000026 20 04        JRA       L:??TIM3_SelectOnePulseMode_2
+    392            }
+    393            else
+    394            {
+    395              TIM3->CR1 &= (uint8_t)(~TIM3_CR1_OPM);
+   \                     ??TIM3_SelectOnePulseMode_1:
+   \   000028 7217 5320    BRES      L:0x5320, #0x3
+    396            }
+    397          }
+   \                     ??TIM3_SelectOnePulseMode_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    398          
+    399          /**
+    400            * @brief  Configures the TIM3 Prescaler.
+    401            * @param   Prescaler specifies the Prescaler Register value
+    402            * This parameter can be one of the following values
+    403            *                       -  TIM3_PRESCALER_1
+    404            *                       -  TIM3_PRESCALER_2
+    405            *                       -  TIM3_PRESCALER_4
+    406            *                       -  TIM3_PRESCALER_8
+    407            *                       -  TIM3_PRESCALER_16
+    408            *                       -  TIM3_PRESCALER_32
+    409            *                       -  TIM3_PRESCALER_64
+    410            *                       -  TIM3_PRESCALER_128
+    411            *                       -  TIM3_PRESCALER_256
+    412            *                       -  TIM3_PRESCALER_512
+    413            *                       -  TIM3_PRESCALER_1024
+    414            *                       -  TIM3_PRESCALER_2048
+    415            *                       -  TIM3_PRESCALER_4096
+    416            *                       -  TIM3_PRESCALER_8192
+    417            *                       -  TIM3_PRESCALER_16384
+    418            *                       -  TIM3_PRESCALER_32768
+    419            * @param   TIM3_PSCReloadMode specifies the TIM3 Prescaler Reload mode.
+    420            * This parameter can be one of the following values
+    421            *                       - TIM3_PSCRELOADMODE_IMMEDIATE: The Prescaler is loaded
+    422            *                         immediately.
+    423            *                       - TIM3_PSCRELOADMODE_UPDATE: The Prescaler is loaded at
+    424            *                         the update event.
+    425            * @retval None
+    426            */
+
+   \                                 In section .far_func.text, align 1
+    427          void TIM3_PrescalerConfig(TIM3_Prescaler_TypeDef Prescaler,
+    428                                    TIM3_PSCReloadMode_TypeDef TIM3_PSCReloadMode)
+    429          {
+   \                     TIM3_PrescalerConfig:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 B7 ..        LD        S:?b9, A
+   \   000006 45 .. ..     MOV       S:?b8, S:?b0
+    430            /* Check the parameters */
+    431            assert_param(IS_TIM3_PRESCALER_RELOAD_OK(TIM3_PSCReloadMode));
+   \   000009 3D ..        TNZ       S:?b8
+   \   00000B 27 15        JREQ      L:??TIM3_PrescalerConfig_0
+   \   00000D B6 ..        LD        A, S:?b8
+   \   00000F A1 01        CP        A, #0x1
+   \   000011 27 0F        JREQ      L:??TIM3_PrescalerConfig_0
+   \   000013 AE 01AF      LDW       X, #0x1af
+   \   000016 BF ..        LDW       S:?w1, X
+   \   000018 5F           CLRW      X
+   \   000019 BF ..        LDW       S:?w0, X
+   \   00001B AE ....      LDW       X, #?_0
+   \   00001E 8D ......    CALLF     assert_failed
+    432            assert_param(IS_TIM3_PRESCALER_OK(Prescaler));
+   \                     ??TIM3_PrescalerConfig_0:
+   \   000022 3D ..        TNZ       S:?b9
+   \   000024 27 69        JREQ      L:??TIM3_PrescalerConfig_1
+   \   000026 B6 ..        LD        A, S:?b9
+   \   000028 A1 01        CP        A, #0x1
+   \   00002A 27 63        JREQ      L:??TIM3_PrescalerConfig_1
+   \   00002C B6 ..        LD        A, S:?b9
+   \   00002E A1 02        CP        A, #0x2
+   \   000030 27 5D        JREQ      L:??TIM3_PrescalerConfig_1
+   \   000032 B6 ..        LD        A, S:?b9
+   \   000034 A1 03        CP        A, #0x3
+   \   000036 27 57        JREQ      L:??TIM3_PrescalerConfig_1
+   \   000038 B6 ..        LD        A, S:?b9
+   \   00003A A1 04        CP        A, #0x4
+   \   00003C 27 51        JREQ      L:??TIM3_PrescalerConfig_1
+   \   00003E B6 ..        LD        A, S:?b9
+   \   000040 A1 05        CP        A, #0x5
+   \   000042 27 4B        JREQ      L:??TIM3_PrescalerConfig_1
+   \   000044 B6 ..        LD        A, S:?b9
+   \   000046 A1 06        CP        A, #0x6
+   \   000048 27 45        JREQ      L:??TIM3_PrescalerConfig_1
+   \   00004A B6 ..        LD        A, S:?b9
+   \   00004C A1 07        CP        A, #0x7
+   \   00004E 27 3F        JREQ      L:??TIM3_PrescalerConfig_1
+   \   000050 B6 ..        LD        A, S:?b9
+   \   000052 A1 08        CP        A, #0x8
+   \   000054 27 39        JREQ      L:??TIM3_PrescalerConfig_1
+   \   000056 B6 ..        LD        A, S:?b9
+   \   000058 A1 09        CP        A, #0x9
+   \   00005A 27 33        JREQ      L:??TIM3_PrescalerConfig_1
+   \   00005C B6 ..        LD        A, S:?b9
+   \   00005E A1 0A        CP        A, #0xa
+   \   000060 27 2D        JREQ      L:??TIM3_PrescalerConfig_1
+   \   000062 B6 ..        LD        A, S:?b9
+   \   000064 A1 0B        CP        A, #0xb
+   \   000066 27 27        JREQ      L:??TIM3_PrescalerConfig_1
+   \   000068 B6 ..        LD        A, S:?b9
+   \   00006A A1 0C        CP        A, #0xc
+   \   00006C 27 21        JREQ      L:??TIM3_PrescalerConfig_1
+   \   00006E B6 ..        LD        A, S:?b9
+   \   000070 A1 0D        CP        A, #0xd
+   \   000072 27 1B        JREQ      L:??TIM3_PrescalerConfig_1
+   \   000074 B6 ..        LD        A, S:?b9
+   \   000076 A1 0E        CP        A, #0xe
+   \   000078 27 15        JREQ      L:??TIM3_PrescalerConfig_1
+   \   00007A B6 ..        LD        A, S:?b9
+   \   00007C A1 0F        CP        A, #0xf
+   \   00007E 27 0F        JREQ      L:??TIM3_PrescalerConfig_1
+   \   000080 AE 01B0      LDW       X, #0x1b0
+   \   000083 BF ..        LDW       S:?w1, X
+   \   000085 5F           CLRW      X
+   \   000086 BF ..        LDW       S:?w0, X
+   \   000088 AE ....      LDW       X, #?_0
+   \   00008B 8D ......    CALLF     assert_failed
+    433            
+    434            /* Set the Prescaler value */
+    435            TIM3->PSCR = (uint8_t)Prescaler;
+   \                     ??TIM3_PrescalerConfig_1:
+   \   00008F B6 ..        LD        A, S:?b9
+   \   000091 C7 532A      LD        L:0x532a, A
+    436            
+    437            /* Set or reset the UG Bit */
+    438            TIM3->EGR = (uint8_t)TIM3_PSCReloadMode;
+   \   000094 B6 ..        LD        A, S:?b8
+   \   000096 C7 5324      LD        L:0x5324, A
+    439          }
+   \   000099 AC ......    JPF       L:?epilogue_w4
+    440          
+    441          /**
+    442            * @brief  Forces the TIM3 Channel1 output waveform to active or inactive level.
+    443            * @param   TIM3_ForcedAction specifies the forced Action to be set to the output waveform.
+    444            * This parameter can be one of the following values:
+    445            *                       - TIM3_FORCEDACTION_ACTIVE: Force active level on OC1REF
+    446            *                       - TIM3_FORCEDACTION_INACTIVE: Force inactive level on
+    447            *                         OC1REF.
+    448            * @retval None
+    449            */
+
+   \                                 In section .far_func.text, align 1
+    450          void TIM3_ForcedOC1Config(TIM3_ForcedAction_TypeDef TIM3_ForcedAction)
+    451          {
+   \                     TIM3_ForcedOC1Config:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    452            /* Check the parameters */
+    453            assert_param(IS_TIM3_FORCED_ACTION_OK(TIM3_ForcedAction));
+   \   000005 B6 ..        LD        A, S:?b8
+   \   000007 A1 50        CP        A, #0x50
+   \   000009 27 15        JREQ      L:??TIM3_ForcedOC1Config_0
+   \   00000B B6 ..        LD        A, S:?b8
+   \   00000D A1 40        CP        A, #0x40
+   \   00000F 27 0F        JREQ      L:??TIM3_ForcedOC1Config_0
+   \   000011 AE 01C5      LDW       X, #0x1c5
+   \   000014 BF ..        LDW       S:?w1, X
+   \   000016 5F           CLRW      X
+   \   000017 BF ..        LDW       S:?w0, X
+   \   000019 AE ....      LDW       X, #?_0
+   \   00001C 8D ......    CALLF     assert_failed
+    454            
+    455            /* Reset the OCM Bits & Configure the Forced output Mode */
+    456            TIM3->CCMR1 =  (uint8_t)((uint8_t)(TIM3->CCMR1 & (uint8_t)(~TIM3_CCMR_OCM))  | (uint8_t)TIM3_ForcedAction);
+   \                     ??TIM3_ForcedOC1Config_0:
+   \   000020 C6 5325      LD        A, L:0x5325
+   \   000023 A4 8F        AND       A, #0x8f
+   \   000025 BA ..        OR        A, S:?b8
+   \   000027 C7 5325      LD        L:0x5325, A
+    457          }
+   \   00002A 32 ....      POP       S:?b8
+   \   00002D 87           RETF
+    458          
+    459          /**
+    460            * @brief  Forces the TIM3 Channel2 output waveform to active or inactive level.
+    461            * @param   TIM3_ForcedAction specifies the forced Action to be set to the output waveform.
+    462            * This parameter can be one of the following values:
+    463            *                       - TIM3_FORCEDACTION_ACTIVE: Force active level on OC2REF
+    464            *                       - TIM3_FORCEDACTION_INACTIVE: Force inactive level on
+    465            *                         OC2REF.
+    466            * @retval None
+    467            */
+
+   \                                 In section .far_func.text, align 1
+    468          void TIM3_ForcedOC2Config(TIM3_ForcedAction_TypeDef TIM3_ForcedAction)
+    469          {
+   \                     TIM3_ForcedOC2Config:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    470            /* Check the parameters */
+    471            assert_param(IS_TIM3_FORCED_ACTION_OK(TIM3_ForcedAction));
+   \   000005 B6 ..        LD        A, S:?b8
+   \   000007 A1 50        CP        A, #0x50
+   \   000009 27 15        JREQ      L:??TIM3_ForcedOC2Config_0
+   \   00000B B6 ..        LD        A, S:?b8
+   \   00000D A1 40        CP        A, #0x40
+   \   00000F 27 0F        JREQ      L:??TIM3_ForcedOC2Config_0
+   \   000011 AE 01D7      LDW       X, #0x1d7
+   \   000014 BF ..        LDW       S:?w1, X
+   \   000016 5F           CLRW      X
+   \   000017 BF ..        LDW       S:?w0, X
+   \   000019 AE ....      LDW       X, #?_0
+   \   00001C 8D ......    CALLF     assert_failed
+    472            
+    473            /* Reset the OCM Bits & Configure the Forced output Mode */
+    474            TIM3->CCMR2 =  (uint8_t)((uint8_t)(TIM3->CCMR2 & (uint8_t)(~TIM3_CCMR_OCM)) | (uint8_t)TIM3_ForcedAction);
+   \                     ??TIM3_ForcedOC2Config_0:
+   \   000020 C6 5326      LD        A, L:0x5326
+   \   000023 A4 8F        AND       A, #0x8f
+   \   000025 BA ..        OR        A, S:?b8
+   \   000027 C7 5326      LD        L:0x5326, A
+    475          }
+   \   00002A 32 ....      POP       S:?b8
+   \   00002D 87           RETF
+    476          
+    477          /**
+    478            * @brief  Enables or disables TIM3 peripheral Preload register on ARR.
+    479            * @param   NewState new state of the TIM3 peripheral Preload register.
+    480            * This parameter can be ENABLE or DISABLE.
+    481            * @retval None
+    482            */
+
+   \                                 In section .far_func.text, align 1
+    483          void TIM3_ARRPreloadConfig(FunctionalState NewState)
+    484          {
+   \                     TIM3_ARRPreloadConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    485            /* Check the parameters */
+    486            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM3_ARRPreloadConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??TIM3_ARRPreloadConfig_0
+   \   00000F AE 01E6      LDW       X, #0x1e6
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    487            
+    488            /* Set or Reset the ARPE Bit */
+    489            if (NewState != DISABLE)
+   \                     ??TIM3_ARRPreloadConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM3_ARRPreloadConfig_1
+    490            {
+    491              TIM3->CR1 |= TIM3_CR1_ARPE;
+   \   000022 721E 5320    BSET      L:0x5320, #0x7
+   \   000026 20 04        JRA       L:??TIM3_ARRPreloadConfig_2
+    492            }
+    493            else
+    494            {
+    495              TIM3->CR1 &= (uint8_t)(~TIM3_CR1_ARPE);
+   \                     ??TIM3_ARRPreloadConfig_1:
+   \   000028 721F 5320    BRES      L:0x5320, #0x7
+    496            }
+    497          }
+   \                     ??TIM3_ARRPreloadConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    498          
+    499          /**
+    500            * @brief  Enables or disables the TIM3 peripheral Preload Register on CCR1.
+    501            * @param   NewState new state of the Capture Compare Preload register.
+    502            * This parameter can be ENABLE or DISABLE.
+    503            * @retval None
+    504            */
+
+   \                                 In section .far_func.text, align 1
+    505          void TIM3_OC1PreloadConfig(FunctionalState NewState)
+    506          {
+   \                     TIM3_OC1PreloadConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    507            /* Check the parameters */
+    508            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM3_OC1PreloadConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??TIM3_OC1PreloadConfig_0
+   \   00000F AE 01FC      LDW       X, #0x1fc
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    509            
+    510            /* Set or Reset the OC1PE Bit */
+    511            if (NewState != DISABLE)
+   \                     ??TIM3_OC1PreloadConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM3_OC1PreloadConfig_1
+    512            {
+    513              TIM3->CCMR1 |= TIM3_CCMR_OCxPE;
+   \   000022 7216 5325    BSET      L:0x5325, #0x3
+   \   000026 20 04        JRA       L:??TIM3_OC1PreloadConfig_2
+    514            }
+    515            else
+    516            {
+    517              TIM3->CCMR1 &= (uint8_t)(~TIM3_CCMR_OCxPE);
+   \                     ??TIM3_OC1PreloadConfig_1:
+   \   000028 7217 5325    BRES      L:0x5325, #0x3
+    518            }
+    519          }
+   \                     ??TIM3_OC1PreloadConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    520          
+    521          /**
+    522            * @brief  Enables or disables the TIM3 peripheral Preload Register on CCR2.
+    523            * @param   NewState new state of the Capture Compare Preload register.
+    524            * This parameter can be ENABLE or DISABLE.
+    525            * @retval None
+    526            */
+
+   \                                 In section .far_func.text, align 1
+    527          void TIM3_OC2PreloadConfig(FunctionalState NewState)
+    528          {
+   \                     TIM3_OC2PreloadConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    529            /* Check the parameters */
+    530            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM3_OC2PreloadConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??TIM3_OC2PreloadConfig_0
+   \   00000F AE 0212      LDW       X, #0x212
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    531            
+    532            /* Set or Reset the OC2PE Bit */
+    533            if (NewState != DISABLE)
+   \                     ??TIM3_OC2PreloadConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM3_OC2PreloadConfig_1
+    534            {
+    535              TIM3->CCMR2 |= TIM3_CCMR_OCxPE;
+   \   000022 7216 5326    BSET      L:0x5326, #0x3
+   \   000026 20 04        JRA       L:??TIM3_OC2PreloadConfig_2
+    536            }
+    537            else
+    538            {
+    539              TIM3->CCMR2 &= (uint8_t)(~TIM3_CCMR_OCxPE);
+   \                     ??TIM3_OC2PreloadConfig_1:
+   \   000028 7217 5326    BRES      L:0x5326, #0x3
+    540            }
+    541          }
+   \                     ??TIM3_OC2PreloadConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    542          
+    543          /**
+    544            * @brief  Configures the TIM3 event to be generated by software.
+    545            * @param   TIM3_EventSource specifies the event source.
+    546            * This parameter can be one of the following values:
+    547            *                       - TIM3_EVENTSOURCE_UPDATE: TIM3 update Event source
+    548            *                       - TIM3_EVENTSOURCE_CC1: TIM3 Capture Compare 1 Event source
+    549            *                       - TIM3_EVENTSOURCE_CC2: TIM3 Capture Compare 2 Event source
+    550            * @retval None
+    551            */
+
+   \                                 In section .far_func.text, align 1
+    552          void TIM3_GenerateEvent(TIM3_EventSource_TypeDef TIM3_EventSource)
+    553          {
+   \                     TIM3_GenerateEvent:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    554            /* Check the parameters */
+    555            assert_param(IS_TIM3_EVENT_SOURCE_OK(TIM3_EventSource));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 26 0F        JRNE      L:??TIM3_GenerateEvent_0
+   \   000009 AE 022B      LDW       X, #0x22b
+   \   00000C BF ..        LDW       S:?w1, X
+   \   00000E 5F           CLRW      X
+   \   00000F BF ..        LDW       S:?w0, X
+   \   000011 AE ....      LDW       X, #?_0
+   \   000014 8D ......    CALLF     assert_failed
+    556            
+    557            /* Set the event sources */
+    558            TIM3->EGR = (uint8_t)TIM3_EventSource;
+   \                     ??TIM3_GenerateEvent_0:
+   \   000018 B6 ..        LD        A, S:?b8
+   \   00001A C7 5324      LD        L:0x5324, A
+    559          }
+   \   00001D 32 ....      POP       S:?b8
+   \   000020 87           RETF
+    560          
+    561          /**
+    562            * @brief  Configures the TIM3 Channel 1 polarity.
+    563            * @param   TIM3_OCPolarity specifies the OC1 Polarity.
+    564            * This parameter can be one of the following values:
+    565            *                       - TIM3_OCPOLARITY_LOW: Output Compare active low
+    566            *                       - TIM3_OCPOLARITY_HIGH: Output Compare active high
+    567            * @retval None
+    568            */
+
+   \                                 In section .far_func.text, align 1
+    569          void TIM3_OC1PolarityConfig(TIM3_OCPolarity_TypeDef TIM3_OCPolarity)
+    570          {
+   \                     TIM3_OC1PolarityConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    571            /* Check the parameters */
+    572            assert_param(IS_TIM3_OC_POLARITY_OK(TIM3_OCPolarity));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM3_OC1PolarityConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 22        CP        A, #0x22
+   \   00000D 27 0F        JREQ      L:??TIM3_OC1PolarityConfig_0
+   \   00000F AE 023C      LDW       X, #0x23c
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    573            
+    574            /* Set or Reset the CC1P Bit */
+    575            if (TIM3_OCPolarity != TIM3_OCPOLARITY_HIGH)
+   \                     ??TIM3_OC1PolarityConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM3_OC1PolarityConfig_1
+    576            {
+    577              TIM3->CCER1 |= TIM3_CCER1_CC1P;
+   \   000022 7212 5327    BSET      L:0x5327, #0x1
+   \   000026 20 04        JRA       L:??TIM3_OC1PolarityConfig_2
+    578            }
+    579            else
+    580            {
+    581              TIM3->CCER1 &= (uint8_t)(~TIM3_CCER1_CC1P);
+   \                     ??TIM3_OC1PolarityConfig_1:
+   \   000028 7213 5327    BRES      L:0x5327, #0x1
+    582            }
+    583          }
+   \                     ??TIM3_OC1PolarityConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    584          
+    585          /**
+    586            * @brief  Configures the TIM3 Channel 2 polarity.
+    587            * @param   TIM3_OCPolarity specifies the OC2 Polarity.
+    588            * This parameter can be one of the following values:
+    589            *                       - TIM3_OCPOLARITY_LOW: Output Compare active low
+    590            *                       - TIM3_OCPOLARITY_HIGH: Output Compare active high
+    591            * @retval None
+    592            */
+
+   \                                 In section .far_func.text, align 1
+    593          void TIM3_OC2PolarityConfig(TIM3_OCPolarity_TypeDef TIM3_OCPolarity)
+    594          {
+   \                     TIM3_OC2PolarityConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    595            /* Check the parameters */
+    596            assert_param(IS_TIM3_OC_POLARITY_OK(TIM3_OCPolarity));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM3_OC2PolarityConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 22        CP        A, #0x22
+   \   00000D 27 0F        JREQ      L:??TIM3_OC2PolarityConfig_0
+   \   00000F AE 0254      LDW       X, #0x254
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    597            
+    598            /* Set or Reset the CC2P Bit */
+    599            if (TIM3_OCPolarity != TIM3_OCPOLARITY_HIGH)
+   \                     ??TIM3_OC2PolarityConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM3_OC2PolarityConfig_1
+    600            {
+    601              TIM3->CCER1 |= TIM3_CCER1_CC2P;
+   \   000022 721A 5327    BSET      L:0x5327, #0x5
+   \   000026 20 04        JRA       L:??TIM3_OC2PolarityConfig_2
+    602            }
+    603            else
+    604            {
+    605              TIM3->CCER1 &= (uint8_t)(~TIM3_CCER1_CC2P);
+   \                     ??TIM3_OC2PolarityConfig_1:
+   \   000028 721B 5327    BRES      L:0x5327, #0x5
+    606            }
+    607          }
+   \                     ??TIM3_OC2PolarityConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    608          
+    609          /**
+    610            * @brief  Enables or disables the TIM3 Capture Compare Channel x.
+    611            * @param   TIM3_Channel specifies the TIM3 Channel.
+    612            * This parameter can be one of the following values:
+    613            *                       - TIM3_CHANNEL_1: TIM3 Channel1
+    614            *                       - TIM3_CHANNEL_2: TIM3 Channel2
+    615            * @param   NewState specifies the TIM3 Channel CCxE bit new state.
+    616            * This parameter can be: ENABLE or DISABLE.
+    617            * @retval None
+    618            */
+
+   \                                 In section .far_func.text, align 1
+    619          void TIM3_CCxCmd(TIM3_Channel_TypeDef TIM3_Channel, FunctionalState NewState)
+    620          {
+   \                     TIM3_CCxCmd:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 B7 ..        LD        S:?b9, A
+   \   000006 45 .. ..     MOV       S:?b8, S:?b0
+    621            /* Check the parameters */
+    622            assert_param(IS_TIM3_CHANNEL_OK(TIM3_Channel));
+   \   000009 3D ..        TNZ       S:?b9
+   \   00000B 27 15        JREQ      L:??TIM3_CCxCmd_0
+   \   00000D B6 ..        LD        A, S:?b9
+   \   00000F A1 01        CP        A, #0x1
+   \   000011 27 0F        JREQ      L:??TIM3_CCxCmd_0
+   \   000013 AE 026E      LDW       X, #0x26e
+   \   000016 BF ..        LDW       S:?w1, X
+   \   000018 5F           CLRW      X
+   \   000019 BF ..        LDW       S:?w0, X
+   \   00001B AE ....      LDW       X, #?_0
+   \   00001E 8D ......    CALLF     assert_failed
+    623            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \                     ??TIM3_CCxCmd_0:
+   \   000022 3D ..        TNZ       S:?b8
+   \   000024 27 15        JREQ      L:??TIM3_CCxCmd_1
+   \   000026 B6 ..        LD        A, S:?b8
+   \   000028 A1 01        CP        A, #0x1
+   \   00002A 27 0F        JREQ      L:??TIM3_CCxCmd_1
+   \   00002C AE 026F      LDW       X, #0x26f
+   \   00002F BF ..        LDW       S:?w1, X
+   \   000031 5F           CLRW      X
+   \   000032 BF ..        LDW       S:?w0, X
+   \   000034 AE ....      LDW       X, #?_0
+   \   000037 8D ......    CALLF     assert_failed
+    624            
+    625            if (TIM3_Channel == TIM3_CHANNEL_1)
+   \                     ??TIM3_CCxCmd_1:
+   \   00003B 3D ..        TNZ       S:?b9
+   \   00003D 26 10        JRNE      L:??TIM3_CCxCmd_2
+    626            {
+    627              /* Set or Reset the CC1E Bit */
+    628              if (NewState != DISABLE)
+   \   00003F 3D ..        TNZ       S:?b8
+   \   000041 27 06        JREQ      L:??TIM3_CCxCmd_3
+    629              {
+    630                TIM3->CCER1 |= TIM3_CCER1_CC1E;
+   \   000043 7210 5327    BSET      L:0x5327, #0x0
+   \   000047 20 14        JRA       L:??TIM3_CCxCmd_4
+    631              }
+    632              else
+    633              {
+    634                TIM3->CCER1 &= (uint8_t)(~TIM3_CCER1_CC1E);
+   \                     ??TIM3_CCxCmd_3:
+   \   000049 7211 5327    BRES      L:0x5327, #0x0
+   \   00004D 20 0E        JRA       L:??TIM3_CCxCmd_4
+    635              }
+    636              
+    637            }
+    638            else
+    639            {
+    640              /* Set or Reset the CC2E Bit */
+    641              if (NewState != DISABLE)
+   \                     ??TIM3_CCxCmd_2:
+   \   00004F 3D ..        TNZ       S:?b8
+   \   000051 27 06        JREQ      L:??TIM3_CCxCmd_5
+    642              {
+    643                TIM3->CCER1 |= TIM3_CCER1_CC2E;
+   \   000053 7218 5327    BSET      L:0x5327, #0x4
+   \   000057 20 04        JRA       L:??TIM3_CCxCmd_4
+    644              }
+    645              else
+    646              {
+    647                TIM3->CCER1 &= (uint8_t)(~TIM3_CCER1_CC2E);
+   \                     ??TIM3_CCxCmd_5:
+   \   000059 7219 5327    BRES      L:0x5327, #0x4
+    648              }
+    649            }
+    650          }
+   \                     ??TIM3_CCxCmd_4:
+   \   00005D AC ......    JPF       L:?epilogue_w4
+    651          
+    652          /**
+    653            * @brief  Selects the TIM3 Output Compare Mode. This function disables the
+    654            * selected channel before changing the Output Compare Mode. User has to
+    655            * enable this channel using TIM3_CCxCmd and TIM3_CCxNCmd functions.
+    656            * @param   TIM3_Channel specifies the TIM3 Channel.
+    657            * This parameter can be one of the following values:
+    658            *                       - TIM3_CHANNEL_1: TIM3 Channel1
+    659            *                       - TIM3_CHANNEL_2: TIM3 Channel2
+    660            * @param   TIM3_OCMode specifies the TIM3 Output Compare Mode.
+    661            * This parameter can be one of the following values:
+    662            *                       - TIM3_OCMODE_TIMING
+    663            *                       - TIM3_OCMODE_ACTIVE
+    664            *                       - TIM3_OCMODE_TOGGLE
+    665            *                       - TIM3_OCMODE_PWM1
+    666            *                       - TIM3_OCMODE_PWM2
+    667            *                       - TIM3_FORCEDACTION_ACTIVE
+    668            *                       - TIM3_FORCEDACTION_INACTIVE
+    669            * @retval None
+    670            */
+
+   \                                 In section .far_func.text, align 1
+    671          void TIM3_SelectOCxM(TIM3_Channel_TypeDef TIM3_Channel, TIM3_OCMode_TypeDef TIM3_OCMode)
+    672          {
+   \                     TIM3_SelectOCxM:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 B7 ..        LD        S:?b8, A
+   \   000006 45 .. ..     MOV       S:?b9, S:?b0
+    673            /* Check the parameters */
+    674            assert_param(IS_TIM3_CHANNEL_OK(TIM3_Channel));
+   \   000009 3D ..        TNZ       S:?b8
+   \   00000B 27 15        JREQ      L:??TIM3_SelectOCxM_0
+   \   00000D B6 ..        LD        A, S:?b8
+   \   00000F A1 01        CP        A, #0x1
+   \   000011 27 0F        JREQ      L:??TIM3_SelectOCxM_0
+   \   000013 AE 02A2      LDW       X, #0x2a2
+   \   000016 BF ..        LDW       S:?w1, X
+   \   000018 5F           CLRW      X
+   \   000019 BF ..        LDW       S:?w0, X
+   \   00001B AE ....      LDW       X, #?_0
+   \   00001E 8D ......    CALLF     assert_failed
+    675            assert_param(IS_TIM3_OCM_OK(TIM3_OCMode));
+   \                     ??TIM3_SelectOCxM_0:
+   \   000022 3D ..        TNZ       S:?b9
+   \   000024 27 39        JREQ      L:??TIM3_SelectOCxM_1
+   \   000026 B6 ..        LD        A, S:?b9
+   \   000028 A1 10        CP        A, #0x10
+   \   00002A 27 33        JREQ      L:??TIM3_SelectOCxM_1
+   \   00002C B6 ..        LD        A, S:?b9
+   \   00002E A1 20        CP        A, #0x20
+   \   000030 27 2D        JREQ      L:??TIM3_SelectOCxM_1
+   \   000032 B6 ..        LD        A, S:?b9
+   \   000034 A1 30        CP        A, #0x30
+   \   000036 27 27        JREQ      L:??TIM3_SelectOCxM_1
+   \   000038 B6 ..        LD        A, S:?b9
+   \   00003A A1 60        CP        A, #0x60
+   \   00003C 27 21        JREQ      L:??TIM3_SelectOCxM_1
+   \   00003E B6 ..        LD        A, S:?b9
+   \   000040 A1 70        CP        A, #0x70
+   \   000042 27 1B        JREQ      L:??TIM3_SelectOCxM_1
+   \   000044 B6 ..        LD        A, S:?b9
+   \   000046 A1 50        CP        A, #0x50
+   \   000048 27 15        JREQ      L:??TIM3_SelectOCxM_1
+   \   00004A B6 ..        LD        A, S:?b9
+   \   00004C A1 40        CP        A, #0x40
+   \   00004E 27 0F        JREQ      L:??TIM3_SelectOCxM_1
+   \   000050 AE 02A3      LDW       X, #0x2a3
+   \   000053 BF ..        LDW       S:?w1, X
+   \   000055 5F           CLRW      X
+   \   000056 BF ..        LDW       S:?w0, X
+   \   000058 AE ....      LDW       X, #?_0
+   \   00005B 8D ......    CALLF     assert_failed
+    676            
+    677            if (TIM3_Channel == TIM3_CHANNEL_1)
+   \                     ??TIM3_SelectOCxM_1:
+   \   00005F 3D ..        TNZ       S:?b8
+   \   000061 26 10        JRNE      L:??TIM3_SelectOCxM_2
+    678            {
+    679              /* Disable the Channel 1: Reset the CCE Bit */
+    680              TIM3->CCER1 &= (uint8_t)(~TIM3_CCER1_CC1E);
+   \   000063 7211 5327    BRES      L:0x5327, #0x0
+    681              
+    682              /* Reset the Output Compare Bits & Set the Output Compare Mode */
+    683              TIM3->CCMR1 = (uint8_t)((uint8_t)(TIM3->CCMR1 & (uint8_t)(~TIM3_CCMR_OCM)) | (uint8_t)TIM3_OCMode);
+   \   000067 C6 5325      LD        A, L:0x5325
+   \   00006A A4 8F        AND       A, #0x8f
+   \   00006C BA ..        OR        A, S:?b9
+   \   00006E C7 5325      LD        L:0x5325, A
+   \   000071 20 0E        JRA       L:??TIM3_SelectOCxM_3
+    684            }
+    685            else
+    686            {
+    687              /* Disable the Channel 2: Reset the CCE Bit */
+    688              TIM3->CCER1 &= (uint8_t)(~TIM3_CCER1_CC2E);
+   \                     ??TIM3_SelectOCxM_2:
+   \   000073 7219 5327    BRES      L:0x5327, #0x4
+    689              
+    690              /* Reset the Output Compare Bits & Set the Output Compare Mode */
+    691              TIM3->CCMR2 = (uint8_t)((uint8_t)(TIM3->CCMR2 & (uint8_t)(~TIM3_CCMR_OCM)) | (uint8_t)TIM3_OCMode);
+   \   000077 C6 5326      LD        A, L:0x5326
+   \   00007A A4 8F        AND       A, #0x8f
+   \   00007C BA ..        OR        A, S:?b9
+   \   00007E C7 5326      LD        L:0x5326, A
+    692            }
+    693          }
+   \                     ??TIM3_SelectOCxM_3:
+   \   000081 AC ......    JPF       L:?epilogue_w4
+    694          
+    695          /**
+    696            * @brief  Sets the TIM3 Counter Register value.
+    697            * @param   Counter specifies the Counter register new value.
+    698            * This parameter is between 0x0000 and 0xFFFF.
+    699            * @retval None
+    700            */
+
+   \                                 In section .far_func.text, align 1
+    701          void TIM3_SetCounter(uint16_t Counter)
+    702          {
+    703            /* Set the Counter Register value */
+    704            TIM3->CNTRH = (uint8_t)(Counter >> 8);
+   \                     TIM3_SetCounter:
+   \   000000 9E           LD        A, XH
+   \   000001 C7 5328      LD        L:0x5328, A
+    705            TIM3->CNTRL = (uint8_t)(Counter);
+   \   000004 9F           LD        A, XL
+   \   000005 C7 5329      LD        L:0x5329, A
+    706          }
+   \   000008 87           RETF
+    707          
+    708          /**
+    709            * @brief  Sets the TIM3 Autoreload Register value.
+    710            * @param   Autoreload specifies the Autoreload register new value.
+    711            * This parameter is between 0x0000 and 0xFFFF.
+    712            * @retval None
+    713            */
+
+   \                                 In section .far_func.text, align 1
+    714          void TIM3_SetAutoreload(uint16_t Autoreload)
+    715          {
+    716            /* Set the Autoreload Register value */
+    717            TIM3->ARRH = (uint8_t)(Autoreload >> 8);
+   \                     TIM3_SetAutoreload:
+   \   000000 9E           LD        A, XH
+   \   000001 C7 532B      LD        L:0x532b, A
+    718            TIM3->ARRL = (uint8_t)(Autoreload);
+   \   000004 9F           LD        A, XL
+   \   000005 C7 532C      LD        L:0x532c, A
+    719          }
+   \   000008 87           RETF
+    720          
+    721          /**
+    722            * @brief  Sets the TIM3 Capture Compare1 Register value.
+    723            * @param   Compare1 specifies the Capture Compare1 register new value.
+    724            * This parameter is between 0x0000 and 0xFFFF.
+    725            * @retval None
+    726            */
+
+   \                                 In section .far_func.text, align 1
+    727          void TIM3_SetCompare1(uint16_t Compare1)
+    728          {
+    729            /* Set the Capture Compare1 Register value */
+    730            TIM3->CCR1H = (uint8_t)(Compare1 >> 8);
+   \                     TIM3_SetCompare1:
+   \   000000 9E           LD        A, XH
+   \   000001 C7 532D      LD        L:0x532d, A
+    731            TIM3->CCR1L = (uint8_t)(Compare1);
+   \   000004 9F           LD        A, XL
+   \   000005 C7 532E      LD        L:0x532e, A
+    732          }
+   \   000008 87           RETF
+    733          
+    734          /**
+    735            * @brief  Sets the TIM3 Capture Compare2 Register value.
+    736            * @param   Compare2 specifies the Capture Compare2 register new value.
+    737            * This parameter is between 0x0000 and 0xFFFF.
+    738            * @retval None
+    739            */
+
+   \                                 In section .far_func.text, align 1
+    740          void TIM3_SetCompare2(uint16_t Compare2)
+    741          {
+    742            /* Set the Capture Compare2 Register value */
+    743            TIM3->CCR2H = (uint8_t)(Compare2 >> 8);
+   \                     TIM3_SetCompare2:
+   \   000000 9E           LD        A, XH
+   \   000001 C7 532F      LD        L:0x532f, A
+    744            TIM3->CCR2L = (uint8_t)(Compare2);
+   \   000004 9F           LD        A, XL
+   \   000005 C7 5330      LD        L:0x5330, A
+    745          }
+   \   000008 87           RETF
+    746          
+    747          /**
+    748            * @brief  Sets the TIM3 Input Capture 1 prescaler.
+    749            * @param   TIM3_IC1Prescaler specifies the Input Capture prescaler new value
+    750            * This parameter can be one of the following values:
+    751            *                       - TIM3_ICPSC_DIV1: no prescaler
+    752            *                       - TIM3_ICPSC_DIV2: capture is done once every 2 events
+    753            *                       - TIM3_ICPSC_DIV4: capture is done once every 4 events
+    754            *                       - TIM3_ICPSC_DIV8: capture is done once every 8 events
+    755            * @retval None
+    756            */
+
+   \                                 In section .far_func.text, align 1
+    757          void TIM3_SetIC1Prescaler(TIM3_ICPSC_TypeDef TIM3_IC1Prescaler)
+    758          {
+   \                     TIM3_SetIC1Prescaler:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    759            /* Check the parameters */
+    760            assert_param(IS_TIM3_IC_PRESCALER_OK(TIM3_IC1Prescaler));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 21        JREQ      L:??TIM3_SetIC1Prescaler_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 04        CP        A, #0x4
+   \   00000D 27 1B        JREQ      L:??TIM3_SetIC1Prescaler_0
+   \   00000F B6 ..        LD        A, S:?b8
+   \   000011 A1 08        CP        A, #0x8
+   \   000013 27 15        JREQ      L:??TIM3_SetIC1Prescaler_0
+   \   000015 B6 ..        LD        A, S:?b8
+   \   000017 A1 0C        CP        A, #0xc
+   \   000019 27 0F        JREQ      L:??TIM3_SetIC1Prescaler_0
+   \   00001B AE 02F8      LDW       X, #0x2f8
+   \   00001E BF ..        LDW       S:?w1, X
+   \   000020 5F           CLRW      X
+   \   000021 BF ..        LDW       S:?w0, X
+   \   000023 AE ....      LDW       X, #?_0
+   \   000026 8D ......    CALLF     assert_failed
+    761            
+    762            /* Reset the IC1PSC Bits & Set the IC1PSC value */
+    763            TIM3->CCMR1 = (uint8_t)((uint8_t)(TIM3->CCMR1 & (uint8_t)(~TIM3_CCMR_ICxPSC)) | (uint8_t)TIM3_IC1Prescaler);
+   \                     ??TIM3_SetIC1Prescaler_0:
+   \   00002A C6 5325      LD        A, L:0x5325
+   \   00002D A4 F3        AND       A, #0xf3
+   \   00002F BA ..        OR        A, S:?b8
+   \   000031 C7 5325      LD        L:0x5325, A
+    764          }
+   \   000034 32 ....      POP       S:?b8
+   \   000037 87           RETF
+    765          
+    766          /**
+    767            * @brief  Sets the TIM3 Input Capture 2 prescaler.
+    768            * @param   TIM3_IC2Prescaler specifies the Input Capture prescaler new value
+    769            * This parameter can be one of the following values:
+    770            *                       - TIM3_ICPSC_DIV1: no prescaler
+    771            *                       - TIM3_ICPSC_DIV2: capture is done once every 2 events
+    772            *                       - TIM3_ICPSC_DIV4: capture is done once every 4 events
+    773            *                       - TIM3_ICPSC_DIV8: capture is done once every 8 events
+    774            * @retval None
+    775            */
+
+   \                                 In section .far_func.text, align 1
+    776          void TIM3_SetIC2Prescaler(TIM3_ICPSC_TypeDef TIM3_IC2Prescaler)
+    777          {
+   \                     TIM3_SetIC2Prescaler:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    778            /* Check the parameters */
+    779            assert_param(IS_TIM3_IC_PRESCALER_OK(TIM3_IC2Prescaler));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 21        JREQ      L:??TIM3_SetIC2Prescaler_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 04        CP        A, #0x4
+   \   00000D 27 1B        JREQ      L:??TIM3_SetIC2Prescaler_0
+   \   00000F B6 ..        LD        A, S:?b8
+   \   000011 A1 08        CP        A, #0x8
+   \   000013 27 15        JREQ      L:??TIM3_SetIC2Prescaler_0
+   \   000015 B6 ..        LD        A, S:?b8
+   \   000017 A1 0C        CP        A, #0xc
+   \   000019 27 0F        JREQ      L:??TIM3_SetIC2Prescaler_0
+   \   00001B AE 030B      LDW       X, #0x30b
+   \   00001E BF ..        LDW       S:?w1, X
+   \   000020 5F           CLRW      X
+   \   000021 BF ..        LDW       S:?w0, X
+   \   000023 AE ....      LDW       X, #?_0
+   \   000026 8D ......    CALLF     assert_failed
+    780            
+    781            /* Reset the IC1PSC Bits & Set the IC1PSC value */
+    782            TIM3->CCMR2 = (uint8_t)((uint8_t)(TIM3->CCMR2 & (uint8_t)(~TIM3_CCMR_ICxPSC)) | (uint8_t)TIM3_IC2Prescaler);
+   \                     ??TIM3_SetIC2Prescaler_0:
+   \   00002A C6 5326      LD        A, L:0x5326
+   \   00002D A4 F3        AND       A, #0xf3
+   \   00002F BA ..        OR        A, S:?b8
+   \   000031 C7 5326      LD        L:0x5326, A
+    783          }
+   \   000034 32 ....      POP       S:?b8
+   \   000037 87           RETF
+    784          
+    785          /**
+    786            * @brief  Gets the TIM3 Input Capture 1 value.
+    787            * @param  None
+    788            * @retval Capture Compare 1 Register value.
+    789            */
+
+   \                                 In section .far_func.text, align 1
+    790          uint16_t TIM3_GetCapture1(void)
+    791          {
+    792            /* Get the Capture 1 Register value */
+    793            uint16_t tmpccr1 = 0;
+   \                     TIM3_GetCapture1:
+   \   000000 905F         CLRW      Y
+    794            uint8_t tmpccr1l=0, tmpccr1h=0;
+   \   000002 3F ..        CLR       S:?b1
+   \   000004 3F ..        CLR       S:?b0
+    795            
+    796            tmpccr1h = TIM3->CCR1H;
+   \   000006 C6 532D      LD        A, L:0x532d
+   \   000009 B7 ..        LD        S:?b0, A
+    797            tmpccr1l = TIM3->CCR1L;
+   \   00000B C6 532E      LD        A, L:0x532e
+   \   00000E B7 ..        LD        S:?b1, A
+    798            
+    799            tmpccr1 = (uint16_t)(tmpccr1l);
+   \   000010 5F           CLRW      X
+   \   000011 B6 ..        LD        A, S:?b1
+   \   000013 97           LD        XL, A
+   \   000014 9093         LDW       Y, X
+    800            tmpccr1 |= (uint16_t)((uint16_t)tmpccr1h << 8);
+   \   000016 5F           CLRW      X
+   \   000017 B6 ..        LD        A, S:?b0
+   \   000019 97           LD        XL, A
+   \   00001A 4F           CLR       A
+   \   00001B 02           RLWA      X, A
+   \   00001C BF ..        LDW       S:?w1, X
+   \   00001E 9001         RRWA      Y, A
+   \   000020 BA ..        OR        A, S:?b3
+   \   000022 9001         RRWA      Y, A
+   \   000024 BA ..        OR        A, S:?b2
+   \   000026 9001         RRWA      Y, A
+    801            /* Get the Capture 1 Register value */
+    802            return (uint16_t)tmpccr1;
+   \   000028 93           LDW       X, Y
+   \   000029 87           RETF
+    803          }
+    804          
+    805          /**
+    806            * @brief  Gets the TIM3 Input Capture 2 value.
+    807            * @param  None
+    808            * @retval Capture Compare 2 Register value.
+    809            */
+
+   \                                 In section .far_func.text, align 1
+    810          uint16_t TIM3_GetCapture2(void)
+    811          {
+    812            /* Get the Capture 2 Register value */
+    813            uint16_t tmpccr2 = 0;
+   \                     TIM3_GetCapture2:
+   \   000000 905F         CLRW      Y
+    814            uint8_t tmpccr2l=0, tmpccr2h=0;
+   \   000002 3F ..        CLR       S:?b1
+   \   000004 3F ..        CLR       S:?b0
+    815            
+    816            tmpccr2h = TIM3->CCR2H;
+   \   000006 C6 532F      LD        A, L:0x532f
+   \   000009 B7 ..        LD        S:?b0, A
+    817            tmpccr2l = TIM3->CCR2L;
+   \   00000B C6 5330      LD        A, L:0x5330
+   \   00000E B7 ..        LD        S:?b1, A
+    818            
+    819            tmpccr2 = (uint16_t)(tmpccr2l);
+   \   000010 5F           CLRW      X
+   \   000011 B6 ..        LD        A, S:?b1
+   \   000013 97           LD        XL, A
+   \   000014 9093         LDW       Y, X
+    820            tmpccr2 |= (uint16_t)((uint16_t)tmpccr2h << 8);
+   \   000016 5F           CLRW      X
+   \   000017 B6 ..        LD        A, S:?b0
+   \   000019 97           LD        XL, A
+   \   00001A 4F           CLR       A
+   \   00001B 02           RLWA      X, A
+   \   00001C BF ..        LDW       S:?w1, X
+   \   00001E 9001         RRWA      Y, A
+   \   000020 BA ..        OR        A, S:?b3
+   \   000022 9001         RRWA      Y, A
+   \   000024 BA ..        OR        A, S:?b2
+   \   000026 9001         RRWA      Y, A
+    821            /* Get the Capture 2 Register value */
+    822            return (uint16_t)tmpccr2;
+   \   000028 93           LDW       X, Y
+   \   000029 87           RETF
+    823          }
+    824          
+    825          /**
+    826            * @brief  Gets the TIM3 Counter value.
+    827            * @param  None
+    828            * @retval Counter Register value.
+    829            */
+
+   \                                 In section .far_func.text, align 1
+    830          uint16_t TIM3_GetCounter(void)
+    831          {
+    832            uint16_t tmpcntr = 0;
+   \                     TIM3_GetCounter:
+   \   000000 905F         CLRW      Y
+    833            
+    834            tmpcntr = ((uint16_t)TIM3->CNTRH << 8);
+   \   000002 C6 5328      LD        A, L:0x5328
+   \   000005 5F           CLRW      X
+   \   000006 97           LD        XL, A
+   \   000007 4F           CLR       A
+   \   000008 02           RLWA      X, A
+   \   000009 9093         LDW       Y, X
+    835            /* Get the Counter Register value */
+    836            return (uint16_t)( tmpcntr| (uint16_t)(TIM3->CNTRL));
+   \   00000B C6 5329      LD        A, L:0x5329
+   \   00000E 3F ..        CLR       S:?b0
+   \   000010 B7 ..        LD        S:?b1, A
+   \   000012 93           LDW       X, Y
+   \   000013 01           RRWA      X, A
+   \   000014 BA ..        OR        A, S:?b1
+   \   000016 01           RRWA      X, A
+   \   000017 BA ..        OR        A, S:?b0
+   \   000019 01           RRWA      X, A
+   \   00001A 87           RETF
+    837          }
+    838          
+    839          /**
+    840            * @brief  Gets the TIM3 Prescaler value.
+    841            * @param  None
+    842            * @retval Prescaler Register configuration value @ref TIM3_Prescaler_TypeDef.
+    843            */
+
+   \                                 In section .far_func.text, align 1
+    844          TIM3_Prescaler_TypeDef TIM3_GetPrescaler(void)
+    845          {
+    846            /* Get the Prescaler Register value */
+    847            return (TIM3_Prescaler_TypeDef)(TIM3->PSCR);
+   \                     TIM3_GetPrescaler:
+   \   000000 C6 532A      LD        A, L:0x532a
+   \   000003 87           RETF
+    848          }
+    849          
+    850          /**
+    851            * @brief  Checks whether the specified TIM3 flag is set or not.
+    852            * @param   TIM3_FLAG specifies the flag to check.
+    853            * This parameter can be one of the following values:
+    854            *                       - TIM3_FLAG_UPDATE: TIM3 update Flag
+    855            *                       - TIM3_FLAG_CC1: TIM3 Capture Compare 1 Flag
+    856            *                       - TIM3_FLAG_CC2: TIM3 Capture Compare 2 Flag
+    857            *                       - TIM3_FLAG_CC1OF: TIM3 Capture Compare 1 over capture Flag
+    858            *                       - TIM3_FLAG_CC2OF: TIM3 Capture Compare 2 over capture Flag
+    859            * @retval FlagStatus The new state of TIM3_FLAG (SET or RESET).
+    860            */
+
+   \                                 In section .far_func.text, align 1
+    861          FlagStatus TIM3_GetFlagStatus(TIM3_FLAG_TypeDef TIM3_FLAG)
+    862          {
+   \                     TIM3_GetFlagStatus:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 3B ....      PUSH      S:?b12
+   \   000007 BF ..        LDW       S:?w4, X
+    863            FlagStatus bitstatus = RESET;
+   \   000009 3F ..        CLR       S:?b10
+    864            uint8_t tim3_flag_l = 0, tim3_flag_h = 0;
+   \   00000B 3F ..        CLR       S:?b12
+   \   00000D 3F ..        CLR       S:?b11
+    865            
+    866            /* Check the parameters */
+    867            assert_param(IS_TIM3_GET_FLAG_OK(TIM3_FLAG));
+   \   00000F BE ..        LDW       X, S:?w4
+   \   000011 A3 0001      CPW       X, #0x1
+   \   000014 27 2B        JREQ      L:??TIM3_GetFlagStatus_0
+   \   000016 BE ..        LDW       X, S:?w4
+   \   000018 A3 0002      CPW       X, #0x2
+   \   00001B 27 24        JREQ      L:??TIM3_GetFlagStatus_0
+   \   00001D BE ..        LDW       X, S:?w4
+   \   00001F A3 0004      CPW       X, #0x4
+   \   000022 27 1D        JREQ      L:??TIM3_GetFlagStatus_0
+   \   000024 BE ..        LDW       X, S:?w4
+   \   000026 A3 0200      CPW       X, #0x200
+   \   000029 27 16        JREQ      L:??TIM3_GetFlagStatus_0
+   \   00002B BE ..        LDW       X, S:?w4
+   \   00002D A3 0400      CPW       X, #0x400
+   \   000030 27 0F        JREQ      L:??TIM3_GetFlagStatus_0
+   \   000032 AE 0363      LDW       X, #0x363
+   \   000035 BF ..        LDW       S:?w1, X
+   \   000037 5F           CLRW      X
+   \   000038 BF ..        LDW       S:?w0, X
+   \   00003A AE ....      LDW       X, #?_0
+   \   00003D 8D ......    CALLF     assert_failed
+    868            
+    869            tim3_flag_l = (uint8_t)(TIM3->SR1 & (uint8_t)TIM3_FLAG);
+   \                     ??TIM3_GetFlagStatus_0:
+   \   000041 B6 ..        LD        A, S:?b9
+   \   000043 C4 5322      AND       A, L:0x5322
+   \   000046 B7 ..        LD        S:?b12, A
+    870            tim3_flag_h = (uint8_t)((uint16_t)TIM3_FLAG >> 8);
+   \   000048 45 .. ..     MOV       S:?b11, S:?b8
+    871            
+    872            if (((tim3_flag_l) | (uint8_t)(TIM3->SR2 & tim3_flag_h)) != (uint8_t)RESET )
+   \   00004B C6 5323      LD        A, L:0x5323
+   \   00004E B4 ..        AND       A, S:?b11
+   \   000050 BA ..        OR        A, S:?b12
+   \   000052 A1 00        CP        A, #0x0
+   \   000054 27 06        JREQ      L:??TIM3_GetFlagStatus_1
+    873            {
+    874              bitstatus = SET;
+   \   000056 A6 01        LD        A, #0x1
+   \   000058 B7 ..        LD        S:?b10, A
+   \   00005A 20 02        JRA       L:??TIM3_GetFlagStatus_2
+    875            }
+    876            else
+    877            {
+    878              bitstatus = RESET;
+   \                     ??TIM3_GetFlagStatus_1:
+   \   00005C 3F ..        CLR       S:?b10
+    879            }
+    880            return (FlagStatus)bitstatus;
+   \                     ??TIM3_GetFlagStatus_2:
+   \   00005E B6 ..        LD        A, S:?b10
+   \   000060 32 ....      POP       S:?b12
+   \   000063 AC ......    JPF       L:?epilogue_l2
+    881          }
+    882          
+    883          /**
+    884            * @brief  Clears the TIM3’s pending flags.
+    885            * @param   TIM3_FLAG specifies the flag to clear.
+    886            * This parameter can be one of the following values:
+    887            *                       - TIM3_FLAG_UPDATE: TIM3 update Flag
+    888            *                       - TIM3_FLAG_CC1: TIM3 Capture Compare 1 Flag
+    889            *                       - TIM3_FLAG_CC2: TIM3 Capture Compare 2 Flag
+    890            *                       - TIM3_FLAG_CC1OF: TIM3 Capture Compare 1 over capture Flag
+    891            *                       - TIM3_FLAG_CC2OF: TIM3 Capture Compare 2 over capture Flag
+    892            * @retval None.
+    893            */
+
+   \                                 In section .far_func.text, align 1
+    894          void TIM3_ClearFlag(TIM3_FLAG_TypeDef TIM3_FLAG)
+    895          {
+   \                     TIM3_ClearFlag:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 BF ..        LDW       S:?w4, X
+    896            /* Check the parameters */
+    897            assert_param(IS_TIM3_CLEAR_FLAG_OK(TIM3_FLAG));
+   \   000006 BE ..        LDW       X, S:?w4
+   \   000008 02           RLWA      X, A
+   \   000009 A4 F9        AND       A, #0xf9
+   \   00000B 02           RLWA      X, A
+   \   00000C A4 F8        AND       A, #0xf8
+   \   00000E 02           RLWA      X, A
+   \   00000F 5D           TNZW      X
+   \   000010 26 05        JRNE      L:??TIM3_ClearFlag_0
+   \   000012 BE ..        LDW       X, S:?w4
+   \   000014 5D           TNZW      X
+   \   000015 26 0F        JRNE      L:??TIM3_ClearFlag_1
+   \                     ??TIM3_ClearFlag_0:
+   \   000017 AE 0381      LDW       X, #0x381
+   \   00001A BF ..        LDW       S:?w1, X
+   \   00001C 5F           CLRW      X
+   \   00001D BF ..        LDW       S:?w0, X
+   \   00001F AE ....      LDW       X, #?_0
+   \   000022 8D ......    CALLF     assert_failed
+    898            
+    899            /* Clear the flags (rc_w0) clear this bit by writing 0. Writing ‘1’ has no effect*/
+    900            TIM3->SR1 = (uint8_t)(~((uint8_t)(TIM3_FLAG)));
+   \                     ??TIM3_ClearFlag_1:
+   \   000026 B6 ..        LD        A, S:?b9
+   \   000028 43           CPL       A
+   \   000029 C7 5322      LD        L:0x5322, A
+    901            TIM3->SR2 = (uint8_t)(~((uint8_t)((uint16_t)TIM3_FLAG >> 8)));
+   \   00002C B6 ..        LD        A, S:?b8
+   \   00002E 43           CPL       A
+   \   00002F C7 5323      LD        L:0x5323, A
+    902          }
+   \   000032 AC ......    JPF       L:?epilogue_w4
+    903          
+    904          /**
+    905            * @brief  Checks whether the TIM3 interrupt has occurred or not.
+    906            * @param   TIM3_IT specifies the TIM3 interrupt source to check.
+    907            * This parameter can be one of the following values:
+    908            *                       - TIM3_IT_UPDATE: TIM3 update Interrupt source
+    909            *                       - TIM3_IT_CC1: TIM3 Capture Compare 1 Interrupt source
+    910            *                       - TIM3_IT_CC2: TIM3 Capture Compare 2 Interrupt source
+    911            * @retval ITStatus The new state of the TIM3_IT(SET or RESET).
+    912            */
+
+   \                                 In section .far_func.text, align 1
+    913          ITStatus TIM3_GetITStatus(TIM3_IT_TypeDef TIM3_IT)
+    914          {
+   \                     TIM3_GetITStatus:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 B7 ..        LD        S:?b11, A
+    915            ITStatus bitstatus = RESET;
+   \   000006 3F ..        CLR       S:?b8
+    916            uint8_t TIM3_itStatus = 0, TIM3_itEnable = 0;
+   \   000008 3F ..        CLR       S:?b9
+   \   00000A 3F ..        CLR       S:?b10
+    917            
+    918            /* Check the parameters */
+    919            assert_param(IS_TIM3_GET_IT_OK(TIM3_IT));
+   \   00000C B6 ..        LD        A, S:?b11
+   \   00000E A1 01        CP        A, #0x1
+   \   000010 27 1B        JREQ      L:??TIM3_GetITStatus_0
+   \   000012 B6 ..        LD        A, S:?b11
+   \   000014 A1 02        CP        A, #0x2
+   \   000016 27 15        JREQ      L:??TIM3_GetITStatus_0
+   \   000018 B6 ..        LD        A, S:?b11
+   \   00001A A1 04        CP        A, #0x4
+   \   00001C 27 0F        JREQ      L:??TIM3_GetITStatus_0
+   \   00001E AE 0397      LDW       X, #0x397
+   \   000021 BF ..        LDW       S:?w1, X
+   \   000023 5F           CLRW      X
+   \   000024 BF ..        LDW       S:?w0, X
+   \   000026 AE ....      LDW       X, #?_0
+   \   000029 8D ......    CALLF     assert_failed
+    920            
+    921            TIM3_itStatus = (uint8_t)(TIM3->SR1 & TIM3_IT);
+   \                     ??TIM3_GetITStatus_0:
+   \   00002D C6 5322      LD        A, L:0x5322
+   \   000030 B4 ..        AND       A, S:?b11
+   \   000032 B7 ..        LD        S:?b9, A
+    922            
+    923            TIM3_itEnable = (uint8_t)(TIM3->IER & TIM3_IT);
+   \   000034 C6 5321      LD        A, L:0x5321
+   \   000037 B4 ..        AND       A, S:?b11
+   \   000039 B7 ..        LD        S:?b10, A
+    924            
+    925            if ((TIM3_itStatus != (uint8_t)RESET ) && (TIM3_itEnable != (uint8_t)RESET ))
+   \   00003B 3D ..        TNZ       S:?b9
+   \   00003D 27 0A        JREQ      L:??TIM3_GetITStatus_1
+   \   00003F 3D ..        TNZ       S:?b10
+   \   000041 27 06        JREQ      L:??TIM3_GetITStatus_1
+    926            {
+    927              bitstatus = SET;
+   \   000043 A6 01        LD        A, #0x1
+   \   000045 B7 ..        LD        S:?b8, A
+   \   000047 20 02        JRA       L:??TIM3_GetITStatus_2
+    928            }
+    929            else
+    930            {
+    931              bitstatus = RESET;
+   \                     ??TIM3_GetITStatus_1:
+   \   000049 3F ..        CLR       S:?b8
+    932            }
+    933            return (ITStatus)(bitstatus);
+   \                     ??TIM3_GetITStatus_2:
+   \   00004B B6 ..        LD        A, S:?b8
+   \   00004D AC ......    JPF       L:?epilogue_l2
+    934          }
+    935          
+    936          /**
+    937            * @brief  Clears the TIM3's interrupt pending bits.
+    938            * @param   TIM3_IT specifies the pending bit to clear.
+    939            * This parameter can be one of the following values:
+    940            *                       - TIM3_IT_UPDATE: TIM3 update Interrupt source
+    941            *                       - TIM3_IT_CC1: TIM3 Capture Compare 1 Interrupt source
+    942            *                       - TIM3_IT_CC2: TIM3 Capture Compare 2 Interrupt source
+    943            * @retval None.
+    944            */
+
+   \                                 In section .far_func.text, align 1
+    945          void TIM3_ClearITPendingBit(TIM3_IT_TypeDef TIM3_IT)
+    946          {
+   \                     TIM3_ClearITPendingBit:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    947            /* Check the parameters */
+    948            assert_param(IS_TIM3_IT_OK(TIM3_IT));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 06        JREQ      L:??TIM3_ClearITPendingBit_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 08        CP        A, #0x8
+   \   00000D 25 0F        JRC       L:??TIM3_ClearITPendingBit_1
+   \                     ??TIM3_ClearITPendingBit_0:
+   \   00000F AE 03B4      LDW       X, #0x3b4
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    949            
+    950            /* Clear the IT pending Bit */
+    951            TIM3->SR1 = (uint8_t)(~TIM3_IT);
+   \                     ??TIM3_ClearITPendingBit_1:
+   \   00001E B6 ..        LD        A, S:?b8
+   \   000020 43           CPL       A
+   \   000021 C7 5322      LD        L:0x5322, A
+    952          }
+   \   000024 32 ....      POP       S:?b8
+   \   000027 87           RETF
+    953          
+    954          /**
+    955            * @brief  Configure the TI1 as Input.
+    956            * @param   TIM3_ICPolarity  The Input Polarity.
+    957            * This parameter can be one of the following values:
+    958            *                       - TIM3_ICPOLARITY_FALLING
+    959            *                       - TIM3_ICPOLARITY_RISING
+    960            * @param   TIM3_ICSelection specifies the input to be used.
+    961            * This parameter can be one of the following values:
+    962            *                       - TIM3_ICSELECTION_DIRECTTI: TIM3 Input 1 is selected to
+    963            *                         be connected to IC1.
+    964            *                       - TIM3_ICSELECTION_INDIRECTTI: TIM3 Input 1 is selected to
+    965            *                         be connected to IC2.
+    966            * @param   TIM3_ICFilter Specifies the Input Capture Filter.
+    967            * This parameter must be a value between 0x00 and 0x0F.
+    968            * @retval None
+    969            */
+
+   \                                 In section .far_func.text, align 1
+    970          static void TI1_Config(uint8_t TIM3_ICPolarity,
+    971                                 uint8_t TIM3_ICSelection,
+    972                                 uint8_t TIM3_ICFilter)
+    973          {
+   \                     TI1_Config:
+   \   000000 B7 ..        LD        S:?b2, A
+    974            /* Disable the Channel 1: Reset the CCE Bit */
+    975            TIM3->CCER1 &= (uint8_t)(~TIM3_CCER1_CC1E);
+   \   000002 7211 5327    BRES      L:0x5327, #0x0
+    976            
+    977            /* Select the Input and set the filter */
+    978            TIM3->CCMR1 = (uint8_t)((uint8_t)(TIM3->CCMR1 & (uint8_t)(~( TIM3_CCMR_CCxS | TIM3_CCMR_ICxF))) | (uint8_t)(( (TIM3_ICSelection)) | ((uint8_t)( TIM3_ICFilter << 4))));
+   \   000006 B6 ..        LD        A, S:?b1
+   \   000008 4E           SWAP      A
+   \   000009 A4 F0        AND       A, #0xf0
+   \   00000B BA ..        OR        A, S:?b0
+   \   00000D 88           PUSH      A
+   \   00000E C6 5325      LD        A, L:0x5325
+   \   000011 A4 0C        AND       A, #0xc
+   \   000013 B7 ..        LD        S:?b4, A
+   \   000015 84           POP       A
+   \   000016 BA ..        OR        A, S:?b4
+   \   000018 C7 5325      LD        L:0x5325, A
+    979            
+    980            /* Select the Polarity */
+    981            if (TIM3_ICPolarity != TIM3_ICPOLARITY_RISING)
+   \   00001B 3D ..        TNZ       S:?b2
+   \   00001D 27 06        JREQ      L:??TI1_Config_0
+    982            {
+    983              TIM3->CCER1 |= TIM3_CCER1_CC1P;
+   \   00001F 7212 5327    BSET      L:0x5327, #0x1
+   \   000023 20 04        JRA       L:??TI1_Config_1
+    984            }
+    985            else
+    986            {
+    987              TIM3->CCER1 &= (uint8_t)(~TIM3_CCER1_CC1P);
+   \                     ??TI1_Config_0:
+   \   000025 7213 5327    BRES      L:0x5327, #0x1
+    988            }
+    989            /* Set the CCE Bit */
+    990            TIM3->CCER1 |= TIM3_CCER1_CC1E;
+   \                     ??TI1_Config_1:
+   \   000029 7210 5327    BSET      L:0x5327, #0x0
+    991          }
+   \   00002D 87           RETF
+    992          
+    993          /**
+    994            * @brief  Configure the TI2 as Input.
+    995            * @param   TIM3_ICPolarity  The Input Polarity.
+    996            * This parameter can be one of the following values:
+    997            *                       - TIM3_ICPOLARITY_FALLING
+    998            *                       - TIM3_ICPOLARITY_RISING
+    999            * @param   TIM3_ICSelection specifies the input to be used.
+   1000            * This parameter can be one of the following values:
+   1001            *                       - TIM3_ICSELECTION_DIRECTTI: TIM3 Input 2 is selected to
+   1002            *                         be connected to IC2.
+   1003            *                       - TIM3_ICSELECTION_INDIRECTTI: TIM3 Input 2 is selected to
+   1004            *                         be connected to IC1.
+   1005            * @param   TIM3_ICFilter Specifies the Input Capture Filter.
+   1006            * This parameter must be a value between 0x00 and 0x0F.
+   1007            * @retval None
+   1008            */
+
+   \                                 In section .far_func.text, align 1
+   1009          static void TI2_Config(uint8_t TIM3_ICPolarity,
+   1010                                 uint8_t TIM3_ICSelection,
+   1011                                 uint8_t TIM3_ICFilter)
+   1012          {
+   \                     TI2_Config:
+   \   000000 B7 ..        LD        S:?b2, A
+   1013            /* Disable the Channel 2: Reset the CCE Bit */
+   1014            TIM3->CCER1 &=  (uint8_t)(~TIM3_CCER1_CC2E);
+   \   000002 7219 5327    BRES      L:0x5327, #0x4
+   1015            
+   1016            /* Select the Input and set the filter */
+   1017            TIM3->CCMR2 = (uint8_t)((uint8_t)(TIM3->CCMR2 & (uint8_t)(~( TIM3_CCMR_CCxS |
+   1018                                                                        TIM3_CCMR_ICxF    ))) | (uint8_t)(( (TIM3_ICSelection)) | 
+   1019                                                                                                          ((uint8_t)( TIM3_ICFilter << 4))));
+   \   000006 B6 ..        LD        A, S:?b1
+   \   000008 4E           SWAP      A
+   \   000009 A4 F0        AND       A, #0xf0
+   \   00000B BA ..        OR        A, S:?b0
+   \   00000D 88           PUSH      A
+   \   00000E C6 5326      LD        A, L:0x5326
+   \   000011 A4 0C        AND       A, #0xc
+   \   000013 B7 ..        LD        S:?b4, A
+   \   000015 84           POP       A
+   \   000016 BA ..        OR        A, S:?b4
+   \   000018 C7 5326      LD        L:0x5326, A
+   1020            
+   1021            /* Select the Polarity */
+   1022            if (TIM3_ICPolarity != TIM3_ICPOLARITY_RISING)
+   \   00001B 3D ..        TNZ       S:?b2
+   \   00001D 27 06        JREQ      L:??TI2_Config_0
+   1023            {
+   1024              TIM3->CCER1 |= TIM3_CCER1_CC2P;
+   \   00001F 721A 5327    BSET      L:0x5327, #0x5
+   \   000023 20 04        JRA       L:??TI2_Config_1
+   1025            }
+   1026            else
+   1027            {
+   1028              TIM3->CCER1 &= (uint8_t)(~TIM3_CCER1_CC2P);
+   \                     ??TI2_Config_0:
+   \   000025 721B 5327    BRES      L:0x5327, #0x5
+   1029            }
+   1030            
+   1031            /* Set the CCE Bit */
+   1032            TIM3->CCER1 |= TIM3_CCER1_CC2E;
+   \                     ??TI2_Config_1:
+   \   000029 7218 5327    BSET      L:0x5327, #0x4
+   1033          }
+   \   00002D 87           RETF
+
+   \                                 In section .near.rodata, align 1
+   \                     ?_0:
+   \   000000 2E 5C 4C 69  DC8 ".\\Lib\\C\\stm8s_tim3.c"
+   \          62 5C 43 5C 
+   1034          
+   1035          /**
+   1036            * @}
+   1037            */
+   1038            
+   1039            /**
+   1040            * @}
+   1041            */
+   1042            
+   1043          
+   1044          /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      21  ?_0
+      46  TI1_Config
+      46  TI2_Config
+      48  TIM3_ARRPreloadConfig
+      97  TIM3_CCxCmd
+      54  TIM3_ClearFlag
+      40  TIM3_ClearITPendingBit
+      48  TIM3_Cmd
+      69  TIM3_DeInit
+      46  TIM3_ForcedOC1Config
+      46  TIM3_ForcedOC2Config
+      33  TIM3_GenerateEvent
+      42  TIM3_GetCapture1
+      42  TIM3_GetCapture2
+      27  TIM3_GetCounter
+     103  TIM3_GetFlagStatus
+      81  TIM3_GetITStatus
+       4  TIM3_GetPrescaler
+     213  TIM3_ICInit
+      86  TIM3_ITConfig
+     179  TIM3_OC1Init
+      48  TIM3_OC1PolarityConfig
+      48  TIM3_OC1PreloadConfig
+     179  TIM3_OC2Init
+      48  TIM3_OC2PolarityConfig
+      48  TIM3_OC2PreloadConfig
+     268  TIM3_PWMIConfig
+     157  TIM3_PrescalerConfig
+     133  TIM3_SelectOCxM
+      48  TIM3_SelectOnePulseMode
+       9  TIM3_SetAutoreload
+       9  TIM3_SetCompare1
+       9  TIM3_SetCompare2
+       9  TIM3_SetCounter
+      56  TIM3_SetIC1Prescaler
+      56  TIM3_SetIC2Prescaler
+      16  TIM3_TimeBaseInit
+      48  TIM3_UpdateDisableConfig
+      48  TIM3_UpdateRequestConfig
+
+ 
+ 2 587 bytes in section .far_func.text
+    21 bytes in section .near.rodata
+ 
+ 2 587 bytes of CODE  memory
+    21 bytes of CONST memory
+
+Errors: none
+Warnings: none

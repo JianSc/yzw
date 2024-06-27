@@ -1,0 +1,1443 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 19/Jan/2024  20:40:26
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\Lib\C\stm8s_tim5.c
+#    Command line =  
+#        -f "e:\Nas\µçÂ·\±£ÎÂÏä\YZW-S805-EE22(Rev1.0) -
+#        KF7620\C\build\Debug\.obj\Lib\C\stm8s_tim5.args.txt" (--silent -lCN
+#        .\build\Debug\.obj\Lib\C\stm8s_tim5.lst -I d:/IAR/STM8/stm8/inc -I
+#        d:/IAR/STM8/stm8/lib -I Lib/H -I Lib/C -I User -D STM8S005
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\.obj\Lib\C\stm8s_tim5.o .\Lib\C\stm8s_tim5.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\.obj\Lib\C\stm8s_tim5.lst
+#    Object file  =  .\build\Debug\.obj\Lib\C\stm8s_tim5.o
+#
+###############################################################################
+
+e:\Nas\µçÂ·\±£ÎÂÏä\YZW-S805-EE22(Rev1.0) - KF7620\C\Lib\C\stm8s_tim5.c
+      1          /**
+      2            ******************************************************************************
+      3            * @file    stm8s_tim5.c
+      4            * @author  MCD Application Team
+      5            * @version V2.3.0
+      6            * @date    16-June-2017
+      7            * @brief   This file contains all the functions for the TIM5 peripheral.
+      8             ******************************************************************************
+      9            * @attention
+     10            *
+     11            * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
+     12            *
+     13            * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+     14            * You may not use this file except in compliance with the License.
+     15            * You may obtain a copy of the License at:
+     16            *
+     17            *        http://www.st.com/software_license_agreement_liberty_v2
+     18            *
+     19            * Unless required by applicable law or agreed to in writing, software 
+     20            * distributed under the License is distributed on an "AS IS" BASIS, 
+     21            * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     22            * See the License for the specific language governing permissions and
+     23            * limitations under the License.
+     24            *
+     25            ******************************************************************************
+     26            */
+     27          
+     28          /* Includes ------------------------------------------------------------------*/
+     29          #include "stm8s_tim5.h"
+     30          
+     31          /** @addtogroup STM8S_StdPeriph_Driver
+     32            * @{
+     33            */
+     34          /* Private typedef -----------------------------------------------------------*/
+     35          /* Private define ------------------------------------------------------------*/
+     36          /* Private macro -------------------------------------------------------------*/
+     37          /* Private variables ---------------------------------------------------------*/
+     38          /* Private function prototypes -----------------------------------------------*/
+     39          static void TI1_Config(uint8_t TIM5_ICPolarity, uint8_t TIM5_ICSelection, uint8_t TIM5_ICFilter);
+     40          static void TI2_Config(uint8_t TIM5_ICPolarity, uint8_t TIM5_ICSelection, uint8_t TIM5_ICFilter);
+     41          static void TI3_Config(uint8_t TIM5_ICPolarity, uint8_t TIM5_ICSelection, uint8_t TIM5_ICFilter);
+     42          /**
+     43            * @addtogroup TIM5_Public_Functions
+     44            * @{
+     45            */
+     46          
+     47          /**
+     48            * @brief  Deinitializes the TIM5 peripheral registers to their default reset values.
+     49            * @param  None
+     50            * @retval None
+     51            */
+     52          void TIM5_DeInit(void)
+     53          {
+     54            TIM5->CR1 = (uint8_t)TIM5_CR1_RESET_VALUE;
+     55            TIM5->CR2 = TIM5_CR2_RESET_VALUE;
+     56            TIM5->SMCR = TIM5_SMCR_RESET_VALUE;
+     57            TIM5->IER = (uint8_t)TIM5_IER_RESET_VALUE;
+     58            TIM5->SR2 = (uint8_t)TIM5_SR2_RESET_VALUE;
+     59            
+     60            /* Disable channels */
+     61            TIM5->CCER1 = (uint8_t)TIM5_CCER1_RESET_VALUE;
+     62            TIM5->CCER2 = (uint8_t)TIM5_CCER2_RESET_VALUE;
+     63            
+     64            /* Then reset channel registers: it also works if lock level is equal to 2 or 3 */
+     65            TIM5->CCER1 = (uint8_t)TIM5_CCER1_RESET_VALUE;
+     66            TIM5->CCER2 = (uint8_t)TIM5_CCER2_RESET_VALUE;
+     67            TIM5->CCMR1 = (uint8_t)TIM5_CCMR1_RESET_VALUE;
+     68            TIM5->CCMR2 = (uint8_t)TIM5_CCMR2_RESET_VALUE;
+     69            TIM5->CCMR3 = (uint8_t)TIM5_CCMR3_RESET_VALUE;
+     70            TIM5->CNTRH = (uint8_t)TIM5_CNTRH_RESET_VALUE;
+     71            TIM5->CNTRL = (uint8_t)TIM5_CNTRL_RESET_VALUE;
+     72            TIM5->PSCR	= (uint8_t)TIM5_PSCR_RESET_VALUE;
+     73            TIM5->ARRH 	= (uint8_t)TIM5_ARRH_RESET_VALUE;
+     74            TIM5->ARRL 	= (uint8_t)TIM5_ARRL_RESET_VALUE;
+     75            TIM5->CCR1H = (uint8_t)TIM5_CCR1H_RESET_VALUE;
+     76            TIM5->CCR1L = (uint8_t)TIM5_CCR1L_RESET_VALUE;
+     77            TIM5->CCR2H = (uint8_t)TIM5_CCR2H_RESET_VALUE;
+     78            TIM5->CCR2L = (uint8_t)TIM5_CCR2L_RESET_VALUE;
+     79            TIM5->CCR3H = (uint8_t)TIM5_CCR3H_RESET_VALUE;
+     80            TIM5->CCR3L = (uint8_t)TIM5_CCR3L_RESET_VALUE;
+     81            TIM5->SR1 = (uint8_t)TIM5_SR1_RESET_VALUE;
+     82          }
+     83          
+     84          /**
+     85            * @brief  Initializes the TIM5 Time Base Unit according to the specified parameters.
+     86            * @param    TIM5_Prescaler specifies the Prescaler from TIM5_Prescaler_TypeDef.
+     87            * @param    TIM5_Period specifies the Period value.
+     88            * @retval None
+     89            */
+     90          void TIM5_TimeBaseInit( TIM5_Prescaler_TypeDef TIM5_Prescaler,
+     91                                  uint16_t TIM5_Period)
+     92          {
+     93            /* Set the Prescaler value */
+     94            TIM5->PSCR = (uint8_t)(TIM5_Prescaler);
+     95            /* Set the Autoreload value */
+     96            TIM5->ARRH = (uint8_t)(TIM5_Period >> 8) ;
+     97            TIM5->ARRL = (uint8_t)(TIM5_Period);
+     98          }
+     99          
+    100          /**
+    101            * @brief  Initializes the TIM5 Channel1 according to the specified parameters.
+    102            * @param   TIM5_OCMode specifies the Output Compare mode  from @ref TIM5_OCMode_TypeDef.
+    103            * @param   TIM5_OutputState specifies the Output State  from @ref TIM5_OutputState_TypeDef.
+    104            * @param   TIM5_Pulse specifies the Pulse width  value.
+    105            * @param   TIM5_OCPolarity specifies the Output Compare Polarity  from @ref TIM5_OCPolarity_TypeDef.
+    106            * @retval None
+    107            */
+    108          void TIM5_OC1Init(TIM5_OCMode_TypeDef TIM5_OCMode,
+    109                            TIM5_OutputState_TypeDef TIM5_OutputState,
+    110                            uint16_t TIM5_Pulse,
+    111                            TIM5_OCPolarity_TypeDef TIM5_OCPolarity)
+    112          {
+    113            /* Check the parameters */
+    114            assert_param(IS_TIM5_OC_MODE_OK(TIM5_OCMode));
+    115            assert_param(IS_TIM5_OUTPUT_STATE_OK(TIM5_OutputState));
+    116            assert_param(IS_TIM5_OC_POLARITY_OK(TIM5_OCPolarity));
+    117            
+    118            /* Disable the Channel 1: Reset the CCE Bit, Set the Output State , the Output Polarity */
+    119            TIM5->CCER1 &= (uint8_t)(~( TIM5_CCER1_CC1E | TIM5_CCER1_CC1P));
+    120            /* Set the Output State &  Set the Output Polarity  */
+    121            TIM5->CCER1 |= (uint8_t)((uint8_t)(TIM5_OutputState & TIM5_CCER1_CC1E )| 
+    122                                     (uint8_t)(TIM5_OCPolarity & TIM5_CCER1_CC1P));
+    123            
+    124            /* Reset the Output Compare Bits  & Set the Output Compare Mode */
+    125            TIM5->CCMR1 = (uint8_t)((uint8_t)(TIM5->CCMR1 & (uint8_t)(~TIM5_CCMR_OCM)) | 
+    126                                    (uint8_t)TIM5_OCMode);
+    127            
+    128            /* Set the Pulse value */
+    129            TIM5->CCR1H = (uint8_t)(TIM5_Pulse >> 8);
+    130            TIM5->CCR1L = (uint8_t)(TIM5_Pulse);
+    131          }
+    132          
+    133          /**
+    134            * @brief  Initializes the TIM5 Channel2 according to the specified parameters.
+    135            * @param   TIM5_OCMode specifies the Output Compare mode  from @ref TIM5_OCMode_TypeDef.
+    136            * @param   TIM5_OutputState specifies the Output State  from @ref TIM5_OutputState_TypeDef.
+    137            * @param   TIM5_Pulse specifies the Pulse width  value.
+    138            * @param   TIM5_OCPolarity specifies the Output Compare Polarity  from @ref TIM5_OCPolarity_TypeDef.
+    139            * @retval None
+    140            */
+    141          void TIM5_OC2Init(TIM5_OCMode_TypeDef TIM5_OCMode,
+    142                            TIM5_OutputState_TypeDef TIM5_OutputState,
+    143                            uint16_t TIM5_Pulse,
+    144                            TIM5_OCPolarity_TypeDef TIM5_OCPolarity)
+    145          {
+    146            /* Check the parameters */
+    147            assert_param(IS_TIM5_OC_MODE_OK(TIM5_OCMode));
+    148            assert_param(IS_TIM5_OUTPUT_STATE_OK(TIM5_OutputState));
+    149            assert_param(IS_TIM5_OC_POLARITY_OK(TIM5_OCPolarity));
+    150            
+    151            /* Disable the Channel 1: Reset the CCE Bit, Set the Output State , the Output Polarity */
+    152            TIM5->CCER1 &= (uint8_t)(~( TIM5_CCER1_CC2E |  TIM5_CCER1_CC2P ));
+    153            /* Set the Output State & Set the Output Polarity  */
+    154            TIM5->CCER1 |= (uint8_t)((uint8_t)(TIM5_OutputState  & TIM5_CCER1_CC2E )| \
+    155              (uint8_t)(TIM5_OCPolarity & TIM5_CCER1_CC2P));
+    156            
+    157            
+    158            /* Reset the Output Compare Bits  & Set the Output Compare Mode */
+    159            TIM5->CCMR2 = (uint8_t)((uint8_t)(TIM5->CCMR2 & (uint8_t)(~TIM5_CCMR_OCM)) |
+    160                                    (uint8_t)TIM5_OCMode);
+    161            
+    162            /* Set the Pulse value */
+    163            TIM5->CCR2H = (uint8_t)(TIM5_Pulse >> 8);
+    164            TIM5->CCR2L = (uint8_t)(TIM5_Pulse);
+    165          }
+    166          
+    167          /**
+    168            * @brief  Initializes the TIM5 Channel3 according to the specified parameters.
+    169            * @param   TIM5_OCMode specifies the Output Compare mode from @ref TIM5_OCMode_TypeDef.
+    170            * @param   TIM5_OutputState specifies the Output State from @ref TIM5_OutputState_TypeDef.
+    171            * @param   TIM5_Pulse specifies the Pulse width value.
+    172            * @param   TIM5_OCPolarity specifies the Output Compare Polarity  from @ref TIM5_OCPolarity_TypeDef.
+    173            * @retval None
+    174            */
+    175          void TIM5_OC3Init(TIM5_OCMode_TypeDef TIM5_OCMode,
+    176                            TIM5_OutputState_TypeDef TIM5_OutputState,
+    177                            uint16_t TIM5_Pulse,
+    178                            TIM5_OCPolarity_TypeDef TIM5_OCPolarity)
+    179          {
+    180            /* Check the parameters */
+    181            assert_param(IS_TIM5_OC_MODE_OK(TIM5_OCMode));
+    182            assert_param(IS_TIM5_OUTPUT_STATE_OK(TIM5_OutputState));
+    183            assert_param(IS_TIM5_OC_POLARITY_OK(TIM5_OCPolarity));
+    184            /* Disable the Channel 1: Reset the CCE Bit, Set the Output State, the Output Polarity */
+    185            TIM5->CCER2 &= (uint8_t)(~( TIM5_CCER2_CC3E  | TIM5_CCER2_CC3P));
+    186            /* Set the Output State & Set the Output Polarity  */
+    187            TIM5->CCER2 |= (uint8_t)((uint8_t)(TIM5_OutputState  & TIM5_CCER2_CC3E   )|
+    188                                     (uint8_t)(TIM5_OCPolarity   & TIM5_CCER2_CC3P   ));
+    189            
+    190            /* Reset the Output Compare Bits  & Set the Output Compare Mode */
+    191            TIM5->CCMR3 = (uint8_t)((uint8_t)(TIM5->CCMR3 & (uint8_t)(~TIM5_CCMR_OCM)) | (uint8_t)TIM5_OCMode);
+    192            
+    193            /* Set the Pulse value */
+    194            TIM5->CCR3H = (uint8_t)(TIM5_Pulse >> 8);
+    195            TIM5->CCR3L = (uint8_t)(TIM5_Pulse);
+    196          }
+    197          
+    198          /**
+    199            * @brief  Initializes the TIM5 peripheral according to the specified parameters.
+    200            * @param    TIM5_Channel specifies the Input Capture Channel from @ref TIM5_Channel_TypeDef.
+    201            * @param   TIM5_ICPolarity specifies the Input Capture Polarity from @ref TIM5_ICPolarity_TypeDef.
+    202            * @param   TIM5_ICSelection specifies theInput Capture Selection from @ref TIM5_ICSelection_TypeDef.
+    203            * @param   TIM5_ICPrescaler specifies the Input Capture Prescaler from @ref TIM5_ICPSC_TypeDef.
+    204            * @param   TIM5_ICFilter specifies the Input Capture Filter value (value can be an integer from 0x00 to 0x0F).
+    205            * @retval None
+    206            */
+    207          void TIM5_ICInit(TIM5_Channel_TypeDef TIM5_Channel,
+    208                           TIM5_ICPolarity_TypeDef TIM5_ICPolarity,
+    209                           TIM5_ICSelection_TypeDef TIM5_ICSelection,
+    210                           TIM5_ICPSC_TypeDef TIM5_ICPrescaler,
+    211                           uint8_t TIM5_ICFilter)
+    212          {
+    213            /* Check the parameters */
+    214            assert_param(IS_TIM5_CHANNEL_OK(TIM5_Channel));
+    215            assert_param(IS_TIM5_IC_POLARITY_OK(TIM5_ICPolarity));
+    216            assert_param(IS_TIM5_IC_SELECTION_OK(TIM5_ICSelection));
+    217            assert_param(IS_TIM5_IC_PRESCALER_OK(TIM5_ICPrescaler));
+    218            assert_param(IS_TIM5_IC_FILTER_OK(TIM5_ICFilter));
+    219            
+    220            if (TIM5_Channel == TIM5_CHANNEL_1)
+    221            {
+    222              /* TI1 Configuration */
+    223              TI1_Config((uint8_t)TIM5_ICPolarity,
+    224                         (uint8_t)TIM5_ICSelection,
+    225                         (uint8_t)TIM5_ICFilter);
+    226              
+    227              /* Set the Input Capture Prescaler value */
+    228              TIM5_SetIC1Prescaler(TIM5_ICPrescaler);
+    229            }
+    230            else if (TIM5_Channel == TIM5_CHANNEL_2)
+    231            {
+    232              /* TI2 Configuration */
+    233              TI2_Config((uint8_t)TIM5_ICPolarity,
+    234                         (uint8_t)TIM5_ICSelection,
+    235                         (uint8_t)TIM5_ICFilter);
+    236              
+    237              /* Set the Input Capture Prescaler value */
+    238              TIM5_SetIC2Prescaler(TIM5_ICPrescaler);
+    239            }
+    240            else
+    241            {
+    242              /* TI3 Configuration */
+    243              TI3_Config((uint8_t)TIM5_ICPolarity,
+    244                         (uint8_t)TIM5_ICSelection,
+    245                         (uint8_t)TIM5_ICFilter);
+    246              
+    247              /* Set the Input Capture Prescaler value */
+    248              TIM5_SetIC3Prescaler(TIM5_ICPrescaler);
+    249            }
+    250          }
+    251          
+    252          /**
+    253            * @brief  Configures the TIM5 peripheral in PWM Input Mode according to the specified parameters.
+    254              * @param    TIM5_Channel specifies the Input Capture Channel from @ref TIM5_Channel_TypeDef.
+    255            * @param   TIM5_ICPolarity specifies the Input Capture Polarity from @ref TIM5_ICPolarity_TypeDef.
+    256            * @param   TIM5_ICSelection specifies theInput Capture Selection from @ref TIM5_ICSelection_TypeDef.
+    257            * @param   TIM5_ICPrescaler specifies the Input Capture Prescaler from @ref TIM5_ICPSC_TypeDef.
+    258            * @param   TIM5_ICFilter specifies the Input Capture Filter value (value can be an integer from 0x00 to 0x0F).
+    259            * @retval None
+    260            */
+    261          void TIM5_PWMIConfig(TIM5_Channel_TypeDef TIM5_Channel,
+    262                               TIM5_ICPolarity_TypeDef TIM5_ICPolarity,
+    263                               TIM5_ICSelection_TypeDef TIM5_ICSelection,
+    264                               TIM5_ICPSC_TypeDef TIM5_ICPrescaler,
+    265                               uint8_t TIM5_ICFilter)
+    266          {
+    267            uint8_t icpolarity = (uint8_t)TIM5_ICPOLARITY_RISING;
+    268            uint8_t icselection = (uint8_t)TIM5_ICSELECTION_DIRECTTI;
+    269            
+    270            /* Check the parameters */
+    271            assert_param(IS_TIM5_PWMI_CHANNEL_OK(TIM5_Channel));
+    272            assert_param(IS_TIM5_IC_POLARITY_OK(TIM5_ICPolarity));
+    273            assert_param(IS_TIM5_IC_SELECTION_OK(TIM5_ICSelection));
+    274            assert_param(IS_TIM5_IC_PRESCALER_OK(TIM5_ICPrescaler));
+    275            
+    276            /* Select the Opposite Input Polarity */
+    277            if (TIM5_ICPolarity != TIM5_ICPOLARITY_FALLING)
+    278            {
+    279              icpolarity = (uint8_t)TIM5_ICPOLARITY_FALLING;
+    280            }
+    281            else
+    282            {
+    283              icpolarity = (uint8_t)TIM5_ICPOLARITY_RISING;
+    284            }
+    285            
+    286            /* Select the Opposite Input */
+    287            if (TIM5_ICSelection == TIM5_ICSELECTION_DIRECTTI)
+    288            {
+    289              icselection = (uint8_t)TIM5_ICSELECTION_INDIRECTTI;
+    290            }
+    291            else
+    292            {
+    293              icselection = (uint8_t)TIM5_ICSELECTION_DIRECTTI;
+    294            }
+    295            
+    296            if (TIM5_Channel == TIM5_CHANNEL_1)
+    297            {
+    298              /* TI1 Configuration */
+    299              TI1_Config((uint8_t)TIM5_ICPolarity, (uint8_t)TIM5_ICSelection,
+    300                         (uint8_t)TIM5_ICFilter);
+    301              
+    302              /* Set the Input Capture Prescaler value */
+    303              TIM5_SetIC1Prescaler(TIM5_ICPrescaler);
+    304              
+    305              /* TI2 Configuration */
+    306              TI2_Config((uint8_t)icpolarity, (uint8_t)icselection, (uint8_t)TIM5_ICFilter);
+    307              
+    308              /* Set the Input Capture Prescaler value */
+    309              TIM5_SetIC2Prescaler(TIM5_ICPrescaler);
+    310            }
+    311            else
+    312            {
+    313              /* TI2 Configuration */
+    314              TI2_Config((uint8_t)TIM5_ICPolarity, (uint8_t)TIM5_ICSelection,
+    315                         (uint8_t)TIM5_ICFilter);
+    316              
+    317              /* Set the Input Capture Prescaler value */
+    318              TIM5_SetIC2Prescaler(TIM5_ICPrescaler);
+    319              
+    320              /* TI1 Configuration */
+    321              TI1_Config((uint8_t)icpolarity, (uint8_t)icselection, (uint8_t)TIM5_ICFilter);
+    322              
+    323              /* Set the Input Capture Prescaler value */
+    324              TIM5_SetIC1Prescaler(TIM5_ICPrescaler);
+    325            }
+    326          }
+    327          
+    328          /**
+    329            * @brief  Enables or disables the TIM5 peripheral.
+    330            * @param   NewState new state of the TIM5 peripheral.This parameter can
+    331            * be ENABLE or DISABLE.
+    332            * @retval None
+    333            */
+    334          void TIM5_Cmd(FunctionalState NewState)
+    335          {
+    336            /* Check the parameters */
+    337            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    338            
+    339            /* set or Reset the CEN Bit */
+    340            if (NewState != DISABLE)
+    341            {
+    342              TIM5->CR1 |= TIM5_CR1_CEN ;
+    343            }
+    344            else
+    345            {
+    346              TIM5->CR1 &= (uint8_t)(~TIM5_CR1_CEN) ;
+    347            }
+    348          }
+    349          
+    350          /**
+    351            * @brief  Enables or disables the specified TIM5 interrupts.
+    352            * @param   NewState new state of the TIM5 peripheral.
+    353            * This parameter can be: ENABLE or DISABLE.
+    354            * @param   TIM5_IT specifies the TIM5 interrupts sources to be enabled or disabled.
+    355            * This parameter can be any combination of the following values:
+    356            *                       - TIM5_IT_UPDATE: TIM5 update Interrupt source
+    357            *                       - TIM5_IT_CC1: TIM5 Capture Compare 1 Interrupt source
+    358            *                       - TIM5_IT_CC2: TIM5 Capture Compare 2 Interrupt source
+    359            *                       - TIM5_IT_CC3: TIM5 Capture Compare 3 Interrupt source
+    360            * @param   NewState new state of the TIM5 peripheral.
+    361            * @retval None
+    362            */
+    363          void TIM5_ITConfig(TIM5_IT_TypeDef TIM5_IT, FunctionalState NewState)
+    364          {
+    365            /* Check the parameters */
+    366            assert_param(IS_TIM5_IT_OK(TIM5_IT));
+    367            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    368            
+    369            if (NewState != DISABLE)
+    370            {
+    371              /* Enable the Interrupt sources */
+    372              TIM5->IER |= (uint8_t)TIM5_IT;
+    373            }
+    374            else
+    375            {
+    376              /* Disable the Interrupt sources */
+    377              TIM5->IER &= (uint8_t)(~TIM5_IT);
+    378            }
+    379          }
+    380          
+    381          /**
+    382            * @brief  Enables or Disables the TIM5 Update event.
+    383            * @param   NewState new state of the TIM5 peripheral Preload register.This parameter can
+    384            * be ENABLE or DISABLE.
+    385            * @retval None
+    386            */
+    387          void TIM5_UpdateDisableConfig(FunctionalState NewState)
+    388          {
+    389            /* Check the parameters */
+    390            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    391            
+    392            /* Set or Reset the UDIS Bit */
+    393            if (NewState != DISABLE)
+    394            {
+    395              TIM5->CR1 |= TIM5_CR1_UDIS ;
+    396            }
+    397            else
+    398            {
+    399              TIM5->CR1 &= (uint8_t)(~TIM5_CR1_UDIS) ;
+    400            }
+    401          }
+    402          
+    403          /**
+    404            * @brief  Selects the TIM5 Update Request Interrupt source.
+    405            * @param   TIM5_UpdateSource specifies the Update source.
+    406            * This parameter can be one of the following values
+    407            *                       - TIM5_UPDATESOURCE_REGULAR
+    408            *                       - TIM5_UPDATESOURCE_GLOBAL
+    409            * @retval None
+    410            */
+    411          void TIM5_UpdateRequestConfig(TIM5_UpdateSource_TypeDef TIM5_UpdateSource)
+    412          {
+    413            /* Check the parameters */
+    414            assert_param(IS_TIM5_UPDATE_SOURCE_OK(TIM5_UpdateSource));
+    415            
+    416            /* Set or Reset the URS Bit */
+    417            if (TIM5_UpdateSource != TIM5_UPDATESOURCE_GLOBAL)
+    418            {
+    419              TIM5->CR1 |= TIM5_CR1_URS ;
+    420            }
+    421            else
+    422            {
+    423              TIM5->CR1 &= (uint8_t)(~TIM5_CR1_URS) ;
+    424            }
+    425          }
+    426          
+    427          /**
+    428            * @brief  Selects the TIM5’s One Pulse Mode.
+    429            * @param   TIM5_OPMode specifies the OPM Mode to be used.
+    430            * This parameter can be one of the following values
+    431            *                    - TIM5_OPMODE_SINGLE
+    432            *                    - TIM5_OPMODE_REPETITIVE
+    433            * @retval None
+    434            */
+    435          void TIM5_SelectOnePulseMode(TIM5_OPMode_TypeDef TIM5_OPMode)
+    436          {
+    437            /* Check the parameters */
+    438            assert_param(IS_TIM5_OPM_MODE_OK(TIM5_OPMode));
+    439            
+    440            /* Set or Reset the OPM Bit */
+    441            if (TIM5_OPMode != TIM5_OPMODE_REPETITIVE)
+    442            {
+    443              TIM5->CR1 |= TIM5_CR1_OPM ;
+    444            }
+    445            else
+    446            {
+    447              TIM5->CR1 &= (uint8_t)(~TIM5_CR1_OPM) ;
+    448            }
+    449          }
+    450          
+    451          /**
+    452            * @brief  Configures the TIM5 Prescaler.
+    453            * @param   Prescaler specifies the Prescaler Register value
+    454            * This parameter can be one of the following values
+    455            *                       -  TIM5_PRESCALER_1
+    456            *                       -  TIM5_PRESCALER_2
+    457            *                       -  TIM5_PRESCALER_4
+    458            *                       -  TIM5_PRESCALER_8
+    459            *                       -  TIM5_PRESCALER_16
+    460            *                       -  TIM5_PRESCALER_32
+    461            *                       -  TIM5_PRESCALER_64
+    462            *                       -  TIM5_PRESCALER_128
+    463            *                       -  TIM5_PRESCALER_256
+    464            *                       -  TIM5_PRESCALER_512
+    465            *                       -  TIM5_PRESCALER_1024
+    466            *                       -  TIM5_PRESCALER_2048
+    467            *                       -  TIM5_PRESCALER_4096
+    468            *                       -  TIM5_PRESCALER_8192
+    469            *                       -  TIM5_PRESCALER_16384
+    470            *                       -  TIM5_PRESCALER_32768
+    471            * @param   TIM5_PSCReloadMode specifies the TIM5 Prescaler Reload mode.
+    472            * This parameter can be one of the following values
+    473            *                       - TIM5_PSCRELOADMODE_IMMEDIATE: The Prescaler is loaded
+    474            *                         immediately.
+    475            *                       - TIM5_PSCRELOADMODE_UPDATE: The Prescaler is loaded at
+    476            *                         the update event.
+    477            * @retval None
+    478            */
+    479          void TIM5_PrescalerConfig(TIM5_Prescaler_TypeDef Prescaler,
+    480                                    TIM5_PSCReloadMode_TypeDef TIM5_PSCReloadMode)
+    481          {
+    482            /* Check the parameters */
+    483            assert_param(IS_TIM5_PRESCALER_RELOAD_OK(TIM5_PSCReloadMode));
+    484            assert_param(IS_TIM5_PRESCALER_OK(Prescaler));
+    485            
+    486            /* Set the Prescaler value */
+    487            TIM5->PSCR = (uint8_t)Prescaler;
+    488            
+    489            /* Set or reset the UG Bit */
+    490            TIM5->EGR = (uint8_t)TIM5_PSCReloadMode ;
+    491          }
+    492          
+    493          /**
+    494            * @brief  Forces the TIM5 Channel1 output waveform to active or inactive level.
+    495            * @param   TIM5_ForcedAction specifies the forced Action to be set to the output waveform.
+    496            * This parameter can be one of the following values:
+    497            *                       - TIM5_FORCEDACTION_ACTIVE: Force active level on OC1REF
+    498            *                       - TIM5_FORCEDACTION_INACTIVE: Force inactive level on
+    499            *                         OC1REF.
+    500            * @retval None
+    501            */
+    502          void TIM5_ForcedOC1Config(TIM5_ForcedAction_TypeDef TIM5_ForcedAction)
+    503          {
+    504            /* Check the parameters */
+    505            assert_param(IS_TIM5_FORCED_ACTION_OK(TIM5_ForcedAction));
+    506            
+    507            /* Reset the OCM Bits */ /* Configure The Forced output Mode */
+    508            TIM5->CCMR1  =  (uint8_t)((uint8_t)(TIM5->CCMR1 & (uint8_t)(~TIM5_CCMR_OCM))
+    509                                      | (uint8_t)TIM5_ForcedAction);
+    510          }
+    511          
+    512          /**
+    513            * @brief  Forces the TIM5 Channel2 output waveform to active or inactive level.
+    514            * @param   TIM5_ForcedAction specifies the forced Action to be set to the output waveform.
+    515            * This parameter can be one of the following values:
+    516            *                       - TIM5_FORCEDACTION_ACTIVE: Force active level on OC2REF
+    517            *                       - TIM5_FORCEDACTION_INACTIVE: Force inactive level on
+    518            *                         OC2REF.
+    519            * @retval None
+    520            */
+    521          void TIM5_ForcedOC2Config(TIM5_ForcedAction_TypeDef TIM5_ForcedAction)
+    522          {
+    523            /* Check the parameters */
+    524            assert_param(IS_TIM5_FORCED_ACTION_OK(TIM5_ForcedAction));
+    525            
+    526            /* Reset the OCM Bits */ /* Configure The Forced output Mode */
+    527            TIM5->CCMR2  =  (uint8_t)((uint8_t)(TIM5->CCMR2 & (uint8_t)(~TIM5_CCMR_OCM))
+    528                                      | (uint8_t)TIM5_ForcedAction);
+    529          }
+    530          
+    531          /**
+    532            * @brief  Forces the TIM5 Channel3 output waveform to active or inactive level.
+    533            * @param   TIM5_ForcedAction specifies the forced Action to be set to the output waveform.
+    534            * This parameter can be one of the following values:
+    535            *                       - TIM5_FORCEDACTION_ACTIVE: Force active level on OC3REF
+    536            *                       - TIM5_FORCEDACTION_INACTIVE: Force inactive level on
+    537            *                         OC3REF.
+    538            * @retval None
+    539            */
+    540          void TIM5_ForcedOC3Config(TIM5_ForcedAction_TypeDef TIM5_ForcedAction)
+    541          {
+    542            /* Check the parameters */
+    543            assert_param(IS_TIM5_FORCED_ACTION_OK(TIM5_ForcedAction));
+    544            
+    545            /* Reset the OCM Bits */ /* Configure The Forced output Mode */
+    546            TIM5->CCMR3  =  (uint8_t)((uint8_t)(TIM5->CCMR3 & (uint8_t)(~TIM5_CCMR_OCM))  
+    547                                      | (uint8_t)TIM5_ForcedAction);
+    548          }
+    549          
+    550          /**
+    551            * @brief  Enables or disables TIM5 peripheral Preload register on ARR.
+    552            * @param   NewState new state of the TIM5 peripheral Preload register.
+    553            * This parameter can be ENABLE or DISABLE.
+    554            * @retval None
+    555            */
+    556          void TIM5_ARRPreloadConfig(FunctionalState NewState)
+    557          {
+    558            /* Check the parameters */
+    559            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    560            
+    561            /* Set or Reset the ARPE Bit */
+    562            if (NewState != DISABLE)
+    563            {
+    564              TIM5->CR1 |= TIM5_CR1_ARPE ;
+    565            }
+    566            else
+    567            {
+    568              TIM5->CR1 &= (uint8_t)(~TIM5_CR1_ARPE) ;
+    569            }
+    570          }
+    571          
+    572          /**
+    573            * @brief  Enables or disables the TIM5 peripheral Preload Register on CCR1.
+    574            * @param   NewState new state of the Capture Compare Preload register.
+    575            * This parameter can be ENABLE or DISABLE.
+    576            * @retval None
+    577            */
+    578          void TIM5_OC1PreloadConfig(FunctionalState NewState)
+    579          {
+    580            /* Check the parameters */
+    581            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    582            
+    583            /* Set or Reset the OC1PE Bit */
+    584            if (NewState != DISABLE)
+    585            {
+    586              TIM5->CCMR1 |= TIM5_CCMR_OCxPE ;
+    587            }
+    588            else
+    589            {
+    590              TIM5->CCMR1 &= (uint8_t)(~TIM5_CCMR_OCxPE) ;
+    591            }
+    592          }
+    593          
+    594          /**
+    595            * @brief  Enables or disables the TIM5 peripheral Preload Register on CCR2.
+    596            * @param   NewState new state of the Capture Compare Preload register.
+    597            * This parameter can be ENABLE or DISABLE.
+    598            * @retval None
+    599            */
+    600          void TIM5_OC2PreloadConfig(FunctionalState NewState)
+    601          {
+    602            /* Check the parameters */
+    603            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    604            
+    605            /* Set or Reset the OC2PE Bit */
+    606            if (NewState != DISABLE)
+    607            {
+    608              TIM5->CCMR2 |= TIM5_CCMR_OCxPE ;
+    609            }
+    610            else
+    611            {
+    612              TIM5->CCMR2 &= (uint8_t)(~TIM5_CCMR_OCxPE) ;
+    613            }
+    614          }
+    615          
+    616          /**
+    617            * @brief  Enables or disables the TIM5 peripheral Preload Register on CCR3.
+    618            * @param   NewState new state of the Capture Compare Preload register.
+    619            * This parameter can be ENABLE or DISABLE.
+    620            * @retval None
+    621            */
+    622          void TIM5_OC3PreloadConfig(FunctionalState NewState)
+    623          {
+    624            /* Check the parameters */
+    625            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    626            
+    627            /* Set or Reset the OC3PE Bit */
+    628            if (NewState != DISABLE)
+    629            {
+    630              TIM5->CCMR3 |= TIM5_CCMR_OCxPE ;
+    631            }
+    632            else
+    633            {
+    634              TIM5->CCMR3 &= (uint8_t)(~TIM5_CCMR_OCxPE) ;
+    635            }
+    636          }
+    637          
+    638          /**
+    639            * @brief  Configures the TIM5 event to be generated by software.
+    640            * @param   TIM5_EventSource specifies the event source.
+    641            * This parameter can be one of the following values:
+    642            *                       - TIM5_EVENTSOURCE_UPDATE: TIM5 update Event source
+    643            *                       - TIM5_EVENTSOURCE_CC1: TIM5 Capture Compare 1 Event source
+    644            *                       - TIM5_EVENTSOURCE_CC2: TIM5 Capture Compare 2 Event source
+    645            *                       - TIM5_EVENTSOURCE_CC3: TIM5 Capture Compare 3 Event source
+    646            * @retval None
+    647            */
+    648          void TIM5_GenerateEvent(TIM5_EventSource_TypeDef TIM5_EventSource)
+    649          {
+    650            /* Check the parameters */
+    651            assert_param(IS_TIM5_EVENT_SOURCE_OK(TIM5_EventSource));
+    652            
+    653            /* Set the event sources */
+    654            TIM5->EGR = (uint8_t)TIM5_EventSource;
+    655          }
+    656          
+    657          /**
+    658            * @brief  Configures the TIM5 Channel 1 polarity.
+    659            * @param   TIM5_OCPolarity specifies the OC1 Polarity.
+    660            * This parameter can be one of the following values:
+    661            *                       - TIM5_OCPOLARITY_LOW: Output Compare active low
+    662            *                       - TIM5_OCPOLARITY_HIGH: Output Compare active high
+    663            * @retval None
+    664            */
+    665          void TIM5_OC1PolarityConfig(TIM5_OCPolarity_TypeDef TIM5_OCPolarity)
+    666          {
+    667              /* Check the parameters */
+    668              assert_param(IS_TIM5_OC_POLARITY_OK(TIM5_OCPolarity));
+    669          
+    670              /* Set or Reset the CC1P Bit */
+    671              if (TIM5_OCPolarity != TIM5_OCPOLARITY_HIGH)
+    672              {
+    673                  TIM5->CCER1 |= TIM5_CCER1_CC1P ;
+    674              }
+    675              else
+    676              {
+    677                  TIM5->CCER1 &= (uint8_t)(~TIM5_CCER1_CC1P) ;
+    678              }
+    679          }
+    680          
+    681          
+    682          /**
+    683            * @brief  Configures the TIM5 Channel 2 polarity.
+    684            * @param   TIM5_OCPolarity specifies the OC2 Polarity.
+    685            * This parameter can be one of the following values:
+    686            *                       - TIM5_OCPOLARITY_LOW: Output Compare active low
+    687            *                       - TIM5_OCPOLARITY_HIGH: Output Compare active high
+    688            * @retval None
+    689            */
+    690          void TIM5_OC2PolarityConfig(TIM5_OCPolarity_TypeDef TIM5_OCPolarity)
+    691          {
+    692            /* Check the parameters */
+    693            assert_param(IS_TIM5_OC_POLARITY_OK(TIM5_OCPolarity));
+    694            
+    695            /* Set or Reset the CC2P Bit */
+    696            if (TIM5_OCPolarity != TIM5_OCPOLARITY_HIGH)
+    697            {
+    698              TIM5->CCER1 |= TIM5_CCER1_CC2P ;
+    699            }
+    700            else
+    701            {
+    702              TIM5->CCER1 &= (uint8_t)(~TIM5_CCER1_CC2P) ;
+    703            }
+    704          }
+    705          
+    706          /**
+    707            * @brief  Configures the TIM5 Channel 3 polarity.
+    708            * @param   TIM5_OCPolarity specifies the OC3 Polarity.
+    709            * This parameter can be one of the following values:
+    710            *                       - TIM5_OCPOLARITY_LOW: Output Compare active low
+    711            *                       - TIM5_OCPOLARITY_HIGH: Output Compare active high
+    712            * @retval None
+    713            */
+    714          void TIM5_OC3PolarityConfig(TIM5_OCPolarity_TypeDef TIM5_OCPolarity)
+    715          {
+    716            /* Check the parameters */
+    717            assert_param(IS_TIM5_OC_POLARITY_OK(TIM5_OCPolarity));
+    718            
+    719            /* Set or Reset the CC3P Bit */
+    720            if (TIM5_OCPolarity != TIM5_OCPOLARITY_HIGH)
+    721            {
+    722              TIM5->CCER2 |= TIM5_CCER2_CC3P ;
+    723            }
+    724            else
+    725            {
+    726              TIM5->CCER2 &= (uint8_t)(~TIM5_CCER2_CC3P) ;
+    727            }
+    728          }
+    729          
+    730          /**
+    731            * @brief  Enables or disables the TIM5 Capture Compare Channel x.
+    732            * @param   TIM5_Channel specifies the TIM5 Channel.
+    733            * This parameter can be one of the following values:
+    734            *                       - TIM5_Channel1: TIM5 Channel1
+    735            *                       - TIM5_Channel2: TIM5 Channel2
+    736            *                       - TIM5_Channel3: TIM5 Channel3
+    737            * @param   NewState specifies the TIM5 Channel CCxE bit new state.
+    738            * This parameter can be: ENABLE or DISABLE.
+    739            * @retval None
+    740            */
+    741          void TIM5_CCxCmd(TIM5_Channel_TypeDef TIM5_Channel, FunctionalState NewState)
+    742          {
+    743            /* Check the parameters */
+    744            assert_param(IS_TIM5_CHANNEL_OK(TIM5_Channel));
+    745            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+    746            
+    747            if (TIM5_Channel == TIM5_CHANNEL_1)
+    748            {
+    749              /* Set or Reset the CC1E Bit */
+    750              if (NewState != DISABLE)
+    751              {
+    752                TIM5->CCER1 |= TIM5_CCER1_CC1E ;
+    753              }
+    754              else
+    755              {
+    756                TIM5->CCER1 &= (uint8_t)(~TIM5_CCER1_CC1E) ;
+    757              }
+    758              
+    759            }
+    760            else if (TIM5_Channel == TIM5_CHANNEL_2)
+    761            {
+    762              /* Set or Reset the CC2E Bit */
+    763              if (NewState != DISABLE)
+    764              {
+    765                TIM5->CCER1 |= TIM5_CCER1_CC2E;
+    766              }
+    767              else
+    768              {
+    769                TIM5->CCER1 &= (uint8_t)(~TIM5_CCER1_CC2E) ;
+    770              }
+    771            }
+    772            else
+    773            {
+    774              /* Set or Reset the CC3E Bit */
+    775              if (NewState != DISABLE)
+    776              {
+    777                TIM5->CCER2 |= TIM5_CCER2_CC3E;
+    778              }
+    779              else
+    780              {
+    781                TIM5->CCER2 &= (uint8_t)(~TIM5_CCER2_CC3E) ;
+    782              }
+    783            }
+    784          }
+    785          
+    786          /**
+    787            * @brief  Selects the TIM5 Output Compare Mode. This function disables the
+    788            * selected channel before changing the Output Compare Mode. User has to
+    789            * enable this channel using TIM5_CCxCmd and TIM5_CCxNCmd functions.
+    790            * @param   TIM5_Channel specifies the TIM5 Channel.
+    791            * This parameter can be one of the following values:
+    792            *                       - TIM5_Channel1: TIM5 Channel1
+    793            *                       - TIM5_Channel2: TIM5 Channel2
+    794            *                       - TIM5_Channel3: TIM5 Channel3
+    795            * @param   TIM5_OCMode specifies the TIM5 Output Compare Mode.
+    796            * This parameter can be one of the following values:
+    797            *                       - TIM5_OCMODE_TIMING
+    798            *                       - TIM5_OCMODE_ACTIVE
+    799            *                       - TIM5_OCMODE_TOGGLE
+    800            *                       - TIM5_OCMODE_PWM1
+    801            *                       - TIM5_OCMODE_PWM2
+    802            *                       - TIM5_FORCEDACTION_ACTIVE
+    803            *                       - TIM5_FORCEDACTION_INACTIVE
+    804            * @retval None
+    805            */
+    806          void TIM5_SelectOCxM(TIM5_Channel_TypeDef TIM5_Channel, TIM5_OCMode_TypeDef TIM5_OCMode)
+    807          {
+    808            /* Check the parameters */
+    809            assert_param(IS_TIM5_CHANNEL_OK(TIM5_Channel));
+    810            assert_param(IS_TIM5_OCM_OK(TIM5_OCMode));
+    811            
+    812            if (TIM5_Channel == TIM5_CHANNEL_1)
+    813            {
+    814              /* Disable the Channel 1: Reset the CCE Bit */
+    815              TIM5->CCER1 &= (uint8_t)(~TIM5_CCER1_CC1E);
+    816              
+    817              /* Reset the Output Compare Bits  Set the Output Compare Mode */
+    818              TIM5->CCMR1 = (uint8_t)((uint8_t)(TIM5->CCMR1 & (uint8_t)(~TIM5_CCMR_OCM)) 
+    819                                      | (uint8_t)TIM5_OCMode);
+    820            }
+    821            else if (TIM5_Channel == TIM5_CHANNEL_2)
+    822            {
+    823              /* Disable the Channel 2: Reset the CCE Bit */
+    824              TIM5->CCER1 &= (uint8_t)(~TIM5_CCER1_CC2E);
+    825              
+    826              /* Reset the Output Compare Bits ** Set the Output Compare Mode */
+    827              TIM5->CCMR2 = (uint8_t)((uint8_t)(TIM5->CCMR2 & (uint8_t)(~TIM5_CCMR_OCM))
+    828                                      | (uint8_t)TIM5_OCMode);
+    829            }
+    830            else
+    831            {
+    832              /* Disable the Channel 3: Reset the CCE Bit */
+    833              TIM5->CCER2 &= (uint8_t)(~TIM5_CCER2_CC3E);
+    834              
+    835              /* Reset the Output Compare Bits ** Set the Output Compare Mode */
+    836              TIM5->CCMR3 = (uint8_t)((uint8_t)(TIM5->CCMR3 & (uint8_t)(~TIM5_CCMR_OCM))
+    837                                      | (uint8_t)TIM5_OCMode);
+    838            }
+    839          }
+    840          
+    841          /**
+    842            * @brief  Sets the TIM5 Counter Register value.
+    843            * @param   Counter specifies the Counter register new value.
+    844            * This parameter is between 0x0000 and 0xFFFF.
+    845            * @retval None
+    846            */
+    847          void TIM5_SetCounter(uint16_t Counter)
+    848          {
+    849            /* Set the Counter Register value */
+    850            TIM5->CNTRH = (uint8_t)(Counter >> 8);
+    851            TIM5->CNTRL = (uint8_t)(Counter);
+    852          }
+    853          
+    854          /**
+    855            * @brief  Sets the TIM5 Autoreload Register value.
+    856            * @param   Autoreload specifies the Autoreload register new value.
+    857            * This parameter is between 0x0000 and 0xFFFF.
+    858            * @retval None
+    859            */
+    860          void TIM5_SetAutoreload(uint16_t Autoreload)
+    861          {
+    862            /* Set the Autoreload Register value */
+    863            TIM5->ARRH = (uint8_t)(Autoreload >> 8);
+    864            TIM5->ARRL = (uint8_t)(Autoreload);
+    865          }
+    866          
+    867          /**
+    868            * @brief  Sets the TIM5 Capture Compare1 Register value.
+    869            * @param   Compare1 specifies the Capture Compare1 register new value.
+    870            * This parameter is between 0x0000 and 0xFFFF.
+    871            * @retval None
+    872            */
+    873          void TIM5_SetCompare1(uint16_t Compare1)
+    874          {
+    875            /* Set the Capture Compare1 Register value */
+    876            TIM5->CCR1H = (uint8_t)(Compare1 >> 8);
+    877            TIM5->CCR1L = (uint8_t)(Compare1);
+    878          }
+    879          
+    880          /**
+    881            * @brief  Sets the TIM5 Capture Compare2 Register value.
+    882            * @param   Compare2 specifies the Capture Compare2 register new value.
+    883            * This parameter is between 0x0000 and 0xFFFF.
+    884            * @retval None
+    885            */
+    886          void TIM5_SetCompare2(uint16_t Compare2)
+    887          {
+    888            /* Set the Capture Compare2 Register value */
+    889            TIM5->CCR2H = (uint8_t)(Compare2 >> 8);
+    890            TIM5->CCR2L = (uint8_t)(Compare2);
+    891          }
+    892          
+    893          /**
+    894            * @brief  Sets the TIM5 Capture Compare3 Register value.
+    895            * @param   Compare3 specifies the Capture Compare3 register new value.
+    896            * This parameter is between 0x0000 and 0xFFFF.
+    897            * @retval None
+    898            */
+    899          void TIM5_SetCompare3(uint16_t Compare3)
+    900          {
+    901            /* Set the Capture Compare3 Register value */
+    902            TIM5->CCR3H = (uint8_t)(Compare3 >> 8);
+    903            TIM5->CCR3L = (uint8_t)(Compare3);
+    904          }
+    905          
+    906          /**
+    907            * @brief  Sets the TIM5 Input Capture 1 prescaler.
+    908            * @param   TIM5_IC1Prescaler specifies the Input Capture prescaler new value
+    909            * This parameter can be one of the following values:
+    910            *                       - TIM5_ICPSC_DIV1: no prescaler
+    911            *                       - TIM5_ICPSC_DIV2: capture is done once every 2 events
+    912            *                       - TIM5_ICPSC_DIV4: capture is done once every 4 events
+    913            *                       - TIM5_ICPSC_DIV8: capture is done once every 8 events
+    914            * @retval None
+    915            */
+    916          void TIM5_SetIC1Prescaler(TIM5_ICPSC_TypeDef TIM5_IC1Prescaler)
+    917          {
+    918            /* Check the parameters */
+    919            assert_param(IS_TIM5_IC_PRESCALER_OK(TIM5_IC1Prescaler));
+    920            
+    921            /* Reset the IC1PSC Bits */ /* Set the IC1PSC value */
+    922            TIM5->CCMR1 = (uint8_t)((uint8_t)(TIM5->CCMR1 & (uint8_t)(~TIM5_CCMR_ICxPSC))|
+    923                                    (uint8_t)TIM5_IC1Prescaler);
+    924          }
+    925          
+    926          /**
+    927            * @brief  Sets the TIM5 Input Capture 2 prescaler.
+    928            * @param   TIM5_IC2Prescaler specifies the Input Capture prescaler new value
+    929            * This parameter can be one of the following values:
+    930            *                       - TIM5_ICPSC_DIV1: no prescaler
+    931            *                       - TIM5_ICPSC_DIV2: capture is done once every 2 events
+    932            *                       - TIM5_ICPSC_DIV4: capture is done once every 4 events
+    933            *                       - TIM5_ICPSC_DIV8: capture is done once every 8 events
+    934            * @retval None
+    935            */
+    936          void TIM5_SetIC2Prescaler(TIM5_ICPSC_TypeDef TIM5_IC2Prescaler)
+    937          {
+    938            /* Check the parameters */
+    939            assert_param(IS_TIM5_IC_PRESCALER_OK(TIM5_IC2Prescaler));
+    940            
+    941            /* Reset the IC1PSC Bits */ /* Set the IC1PSC value */
+    942            TIM5->CCMR2 = (uint8_t)((uint8_t)(TIM5->CCMR2 & (uint8_t)(~TIM5_CCMR_ICxPSC))
+    943                                    | (uint8_t)TIM5_IC2Prescaler);
+    944          }
+    945          
+    946          /**
+    947            * @brief  Sets the TIM5 Input Capture 3 prescaler.
+    948            * @param   TIM5_IC3Prescaler specifies the Input Capture prescaler new value
+    949            * This parameter can be one of the following values:
+    950            *                       - TIM5_ICPSC_DIV1: no prescaler
+    951            *                       - TIM5_ICPSC_DIV2: capture is done once every 2 events
+    952            *                       - TIM5_ICPSC_DIV4: capture is done once every 4 events
+    953            *                       - TIM5_ICPSC_DIV8: capture is done once every 8 events
+    954            * @retval None
+    955            */
+    956          void TIM5_SetIC3Prescaler(TIM5_ICPSC_TypeDef TIM5_IC3Prescaler)
+    957          {
+    958            /* Check the parameters */
+    959            assert_param(IS_TIM5_IC_PRESCALER_OK(TIM5_IC3Prescaler));
+    960            /* Reset the IC1PSC Bits */ /* Set the IC1PSC value */
+    961            TIM5->CCMR3 = (uint8_t)((uint8_t)(TIM5->CCMR3 & (uint8_t)(~TIM5_CCMR_ICxPSC)) |
+    962                                    (uint8_t)TIM5_IC3Prescaler);
+    963          }
+    964          
+    965          /**
+    966            * @brief  Gets the TIM5 Input Capture 1 value.
+    967            * @param  None
+    968            * @retval Capture Compare 1 Register value.
+    969            */
+    970          uint16_t TIM5_GetCapture1(void)
+    971          {
+    972            uint16_t temp = 0; 
+    973            
+    974            temp = ((uint16_t)TIM5->CCR1H << 8); 
+    975            
+    976            /* Get the Capture 1 Register value */
+    977            return (uint16_t)(temp | (uint16_t)(TIM5->CCR1L));
+    978          }
+    979          
+    980          /**
+    981            * @brief  Gets the TIM5 Input Capture 2 value.
+    982            * @param  None
+    983            * @retval Capture Compare 2 Register value.
+    984            */
+    985          uint16_t TIM5_GetCapture2(void)
+    986          {
+    987            uint16_t temp = 0; 
+    988            
+    989            temp = ((uint16_t)TIM5->CCR2H << 8);  
+    990            
+    991            /* Get the Capture 2 Register value */
+    992            return (uint16_t)(temp | (uint16_t)(TIM5->CCR2L));
+    993          }
+    994          
+    995          /**
+    996            * @brief  Gets the TIM5 Input Capture 3 value.
+    997            * @param  None
+    998            * @retval Capture Compare 3 Register value.
+    999            */
+   1000          uint16_t TIM5_GetCapture3(void)
+   1001          {
+   1002            uint16_t temp = 0; 
+   1003            
+   1004            temp = ((uint16_t)TIM5->CCR3H << 8);
+   1005            /* Get the Capture 1 Register value */
+   1006            return (uint16_t)(temp | (uint16_t)(TIM5->CCR3L));
+   1007          }
+   1008          
+   1009          /**
+   1010            * @brief  Gets the TIM5 Counter value.
+   1011            * @param  None
+   1012            * @retval Counter Register value.
+   1013            */
+   1014          uint16_t TIM5_GetCounter(void)
+   1015          {
+   1016            uint16_t tmpcntr = 0;
+   1017            
+   1018            tmpcntr = ((uint16_t)TIM5->CNTRH << 8); 
+   1019            /* Get the Counter Register value */
+   1020            return (uint16_t)(tmpcntr | (uint16_t)(TIM5->CNTRL));
+   1021          }
+   1022          
+   1023          /**
+   1024            * @brief  Gets the TIM5 Prescaler value.
+   1025            * @param  None
+   1026            * @retval Prescaler Register configuration value  @ref TIM5_Prescaler_TypeDef .
+   1027            */
+   1028          TIM5_Prescaler_TypeDef TIM5_GetPrescaler(void)
+   1029          {
+   1030            /* Get the Prescaler Register value */
+   1031            return (TIM5_Prescaler_TypeDef)(TIM5->PSCR);
+   1032          }
+   1033          
+   1034          /**
+   1035            * @brief  Checks whether the specified TIM5 flag is set or not.
+   1036            * @param   TIM5_FLAG specifies the flag to check.
+   1037            * This parameter can be one of the following values:
+   1038            *                       - TIM5_FLAG_UPDATE: TIM5 update Flag
+   1039            *                       - TIM5_FLAG_CC1: TIM5 Capture Compare 1 Flag
+   1040            *                       - TIM5_FLAG_CC2: TIM5 Capture Compare 2 Flag
+   1041            *                       - TIM5_FLAG_CC3: TIM5 Capture Compare 3 Flag
+   1042            *                       - TIM5_FLAG_CC1OF: TIM5 Capture Compare 1 overcapture Flag
+   1043            *                       - TIM5_FLAG_CC2OF: TIM5 Capture Compare 2 overcapture Flag
+   1044            *                       - TIM5_FLAG_CC3OF: TIM5 Capture Compare 3 overcapture Flag
+   1045            * @retval FlagStatus The new state of TIM5_FLAG (SET or RESET).
+   1046            */
+   1047          FlagStatus TIM5_GetFlagStatus(TIM5_FLAG_TypeDef TIM5_FLAG)
+   1048          {
+   1049            FlagStatus bitstatus = RESET;
+   1050            uint8_t tim5_flag_l, tim5_flag_h;
+   1051            
+   1052            /* Check the parameters */
+   1053            assert_param(IS_TIM5_GET_FLAG_OK(TIM5_FLAG));
+   1054            
+   1055            tim5_flag_l= (uint8_t)(TIM5->SR1 & (uint8_t)TIM5_FLAG);
+   1056            tim5_flag_h= (uint8_t)((uint16_t)TIM5_FLAG >> 8);
+   1057            
+   1058            if (((tim5_flag_l)|(uint8_t)(TIM5->SR2 & tim5_flag_h)) != RESET )
+   1059            {
+   1060              bitstatus = SET;
+   1061            }
+   1062            else
+   1063            {
+   1064              bitstatus = RESET;
+   1065            }
+   1066            return (FlagStatus)bitstatus;
+   1067          }
+   1068          
+   1069          /**
+   1070            * @brief  Clears the TIM5’s pending flags.
+   1071            * @param   TIM5_FLAG specifies the flag to clear.
+   1072            * This parameter can be one of the following values:
+   1073            *                       - TIM5_FLAG_UPDATE: TIM5 update Flag
+   1074            *                       - TIM5_FLAG_CC1: TIM5 Capture Compare 1 Flag
+   1075            *                       - TIM5_FLAG_CC2: TIM5 Capture Compare 2 Flag
+   1076            *                       - TIM5_FLAG_CC3: TIM5 Capture Compare 3 Flag
+   1077            *                       - TIM5_FLAG_CC1OF: TIM5 Capture Compare 1 overcapture Flag
+   1078            *                       - TIM5_FLAG_CC2OF: TIM5 Capture Compare 2 overcapture Flag
+   1079            *                       - TIM5_FLAG_CC3OF: TIM5 Capture Compare 3 overcapture Flag
+   1080            * @retval None.
+   1081            */
+   1082          void TIM5_ClearFlag(TIM5_FLAG_TypeDef TIM5_FLAG)
+   1083          {
+   1084            /* Check the parameters */
+   1085            assert_param(IS_TIM5_CLEAR_FLAG_OK(TIM5_FLAG));
+   1086            
+   1087            /* Clear the flags (rc_w0) clear this bit by writing 0. Writing ‘1’ has no effect*/
+   1088            TIM5->SR1 = (uint8_t)(~((uint8_t)(TIM5_FLAG)));
+   1089            TIM5->SR2 &= (uint8_t)(~((uint8_t)((uint16_t)TIM5_FLAG >> 8)));
+   1090          }
+   1091          
+   1092          /**
+   1093            * @brief  Checks whether the TIM5 interrupt has occurred or not.
+   1094            * @param   TIM5_IT specifies the TIM5 interrupt source to check.
+   1095            * This parameter can be one of the following values:
+   1096            *                       - TIM5_IT_UPDATE: TIM5 update Interrupt source
+   1097            *                       - TIM5_IT_CC1: TIM5 Capture Compare 1 Interrupt source
+   1098            *                       - TIM5_IT_CC2: TIM5 Capture Compare 2 Interrupt source
+   1099            *                       - TIM5_IT_CC3: TIM5 Capture Compare 3 Interrupt source
+   1100            * @retval ITStatus The new state of the TIM5_IT(SET or RESET).
+   1101            */
+   1102          
+   1103          ITStatus TIM5_GetITStatus(TIM5_IT_TypeDef TIM5_IT)
+   1104          {
+   1105            ITStatus bitstatus = RESET;
+   1106            uint8_t TIM5_itStatus = 0, TIM5_itEnable = 0;
+   1107            
+   1108            /* Check the parameters */
+   1109            assert_param(IS_TIM5_GET_IT_OK(TIM5_IT));
+   1110            
+   1111            TIM5_itStatus = (uint8_t)(TIM5->SR1 & TIM5_IT);
+   1112            
+   1113            TIM5_itEnable = (uint8_t)(TIM5->IER & TIM5_IT);
+   1114            
+   1115            if ((TIM5_itStatus != (uint8_t)RESET ) && (TIM5_itEnable != (uint8_t)RESET ))
+   1116            {
+   1117              bitstatus = SET;
+   1118            }
+   1119            else
+   1120            {
+   1121              bitstatus = RESET;
+   1122            }
+   1123            return (ITStatus)(bitstatus);
+   1124          }
+   1125          
+   1126          /**
+   1127            * @brief  Clears the TIM5's interrupt pending bits.
+   1128            * @param   TIM5_IT specifies the pending bit to clear.
+   1129            * This parameter can be one of the following values:
+   1130            *                       - TIM5_IT_UPDATE: TIM5 update Interrupt source
+   1131            *                       - TIM5_IT_CC1: TIM5 Capture Compare 1 Interrupt source
+   1132            *                       - TIM5_IT_CC2: TIM5 Capture Compare 2 Interrupt source
+   1133            *                       - TIM5_IT_CC3: TIM5 Capture Compare 3 Interrupt source
+   1134            * @retval None.
+   1135            */
+   1136          void TIM5_ClearITPendingBit(TIM5_IT_TypeDef TIM5_IT)
+   1137          {
+   1138            /* Check the parameters */
+   1139            assert_param(IS_TIM5_IT_OK(TIM5_IT));
+   1140            
+   1141            /* Clear the IT pending Bit */
+   1142            TIM5->SR1 = (uint8_t)(~TIM5_IT);
+   1143          }
+   1144          
+   1145          /**
+   1146            * @brief  Configure the TI1 as Input.
+   1147            * @param   TIM5_ICPolarity  The Input Polarity.
+   1148            * This parameter can be one of the following values:
+   1149            *                       - TIM5_ICPOLARITY_FALLING
+   1150            *                       - TIM5_ICPOLARITY_RISING
+   1151            * @param   TIM5_ICSelection specifies the input to be used.
+   1152            * This parameter can be one of the following values:
+   1153            *                       - TIM5_ICSELECTION_DIRECTTI: TIM5 Input 1 is selected to
+   1154            *                         be connected to IC1.
+   1155            *                       - TIM5_ICSELECTION_INDIRECTTI: TIM5 Input 1 is selected to
+   1156            *                         be connected to IC2.
+   1157            * @param   TIM5_ICFilter Specifies the Input Capture Filter.
+   1158            * This parameter must be a value between 0x00 and 0x0F.
+   1159            * @retval None
+   1160            */
+   1161          static void TI1_Config(uint8_t TIM5_ICPolarity,
+   1162                                 uint8_t TIM5_ICSelection,
+   1163                                 uint8_t TIM5_ICFilter)
+   1164          {
+   1165            /* Disable the Channel 1: Reset the CCE Bit */
+   1166            TIM5->CCER1 &= (uint8_t)(~TIM5_CCER1_CC1E);
+   1167            
+   1168            /* Select the Input and set the filter */
+   1169            TIM5->CCMR1  = (uint8_t)((uint8_t)(TIM5->CCMR1 & (uint8_t)(~( TIM5_CCMR_CCxS | TIM5_CCMR_ICxF )))
+   1170                                     | (uint8_t)(( (TIM5_ICSelection)) | ((uint8_t)( TIM5_ICFilter << 4))));
+   1171            
+   1172            /* Select the Polarity */
+   1173            if (TIM5_ICPolarity != TIM5_ICPOLARITY_RISING)
+   1174            {
+   1175              TIM5->CCER1 |= TIM5_CCER1_CC1P ;
+   1176            }
+   1177            else
+   1178            {
+   1179              TIM5->CCER1 &= (uint8_t)(~TIM5_CCER1_CC1P) ;
+   1180            }
+   1181            /* Set the CCE Bit */
+   1182            TIM5->CCER1 |=  TIM5_CCER1_CC1E;
+   1183          }
+   1184          
+   1185          /**
+   1186            * @brief  Configure the TI2 as Input.
+   1187            * @param   TIM5_ICPolarity  The Input Polarity.
+   1188            * This parameter can be one of the following values:
+   1189            *                       - TIM5_ICPOLARITY_FALLING
+   1190            *                       - TIM5_ICPOLARITY_RISING
+   1191            * @param   TIM5_ICSelection specifies the input to be used.
+   1192            * This parameter can be one of the following values:
+   1193            *                       - TIM5_ICSELECTION_DIRECTTI: TIM5 Input 2 is selected to
+   1194            *                         be connected to IC2.
+   1195            *                       - TIM5_ICSELECTION_INDIRECTTI: TIM5 Input 2 is selected to
+   1196            *                         be connected to IC1.
+   1197            * @param   TIM5_ICFilter Specifies the Input Capture Filter.
+   1198            * This parameter must be a value between 0x00 and 0x0F.
+   1199            * @retval None
+   1200            */
+   1201          static void TI2_Config(uint8_t TIM5_ICPolarity,
+   1202                                 uint8_t TIM5_ICSelection,
+   1203                                 uint8_t TIM5_ICFilter)
+   1204          {
+   1205            /* Disable the Channel 2: Reset the CCE Bit */
+   1206            TIM5->CCER1 &=  (uint8_t)(~TIM5_CCER1_CC2E);
+   1207            
+   1208            /* Select the Input and set the filter */
+   1209            TIM5->CCMR2  = (uint8_t)((uint8_t)(TIM5->CCMR2 & (uint8_t)(~( TIM5_CCMR_CCxS | TIM5_CCMR_ICxF)))
+   1210                                     | (uint8_t)(( (TIM5_ICSelection)) | ((uint8_t)( TIM5_ICFilter << 4))));
+   1211            
+   1212            
+   1213            /* Select the Polarity */
+   1214            if (TIM5_ICPolarity != TIM5_ICPOLARITY_RISING)
+   1215            {
+   1216              TIM5->CCER1 |= TIM5_CCER1_CC2P ;
+   1217            }
+   1218            else
+   1219            {
+   1220              TIM5->CCER1 &= (uint8_t)(~TIM5_CCER1_CC2P) ;
+   1221            }
+   1222            
+   1223            /* Set the CCE Bit */
+   1224            TIM5->CCER1 |=  TIM5_CCER1_CC2E;
+   1225          }
+   1226          
+   1227          /**
+   1228            * @brief  Configure the TI3 as Input.
+   1229            * @param   TIM5_ICPolarity  The Input Polarity.
+   1230            * This parameter can be one of the following values:
+   1231            *                       - TIM5_ICPOLARITY_FALLING
+   1232            *                       - TIM5_ICPOLARITY_RISING
+   1233            * @param   TIM5_ICSelection specifies the input to be used.
+   1234            * This parameter can be one of the following values:
+   1235            *                       - TIM5_ICSELECTION_DIRECTTI: TIM5 Input 3 is selected to
+   1236            *                         be connected to IC3.
+   1237            * @param   TIM5_ICFilter Specifies the Input Capture Filter.
+   1238            * This parameter must be a value between 0x00 and 0x0F.
+   1239            * @retval None
+   1240            */
+   1241          static void TI3_Config(uint8_t TIM5_ICPolarity, uint8_t TIM5_ICSelection,
+   1242                                 uint8_t TIM5_ICFilter)
+   1243          {
+   1244            /* Disable the Channel 3: Reset the CCE Bit */
+   1245            TIM5->CCER2 &=  (uint8_t)(~TIM5_CCER2_CC3E);
+   1246            
+   1247            /* Select the Input and set the filter */
+   1248            TIM5->CCMR3 = (uint8_t)((uint8_t)(TIM5->CCMR3 & (uint8_t)(~( TIM5_CCMR_CCxS | TIM5_CCMR_ICxF))) 
+   1249                                    | (uint8_t)(( (TIM5_ICSelection)) | ((uint8_t)( TIM5_ICFilter << 4))));
+   1250            
+   1251            
+   1252            /* Select the Polarity */
+   1253            if (TIM5_ICPolarity != TIM5_ICPOLARITY_RISING)
+   1254            {
+   1255              TIM5->CCER2 |= TIM5_CCER2_CC3P ;
+   1256            }
+   1257            else
+   1258            {
+   1259              TIM5->CCER2 &= (uint8_t)(~TIM5_CCER2_CC3P) ;
+   1260            }
+   1261            /* Set the CCE Bit */
+   1262            TIM5->CCER2 |=  TIM5_CCER2_CC3E;
+   1263          }
+   1264          
+   1265          /**
+   1266            * @brief  Enables the TIM5 internal Clock.
+   1267            * @par Parameters:
+   1268          	* None
+   1269            * @retval None
+   1270            */
+   1271          void TIM5_InternalClockConfig(void)
+   1272          {
+   1273            /* Disable slave mode to clock the prescaler directly with the internal clock */
+   1274            TIM5->SMCR &=  (uint8_t)(~TIM5_SMCR_SMS);
+   1275          }
+   1276          
+   1277          /**
+   1278            * @brief  Selects the TIM5 Trigger Output Mode.
+   1279            * @param   TIM5_TRGOSource : Specifies the Trigger Output source.
+   1280            * This parameter can be one of the @ref TIM5_TRGOSource_TypeDef enumeration.
+   1281            * @retval None
+   1282            */
+   1283          void TIM5_SelectOutputTrigger(TIM5_TRGOSource_TypeDef TIM5_TRGOSource)
+   1284          {
+   1285            uint8_t tmpcr2 = 0;
+   1286            
+   1287            /* Check the parameters */
+   1288            assert_param(IS_TIM5_TRGO_SOURCE_OK(TIM5_TRGOSource));
+   1289            
+   1290            tmpcr2 = TIM5->CR2;
+   1291            
+   1292            /* Reset the MMS Bits */
+   1293            tmpcr2 &= (uint8_t)(~TIM5_CR2_MMS);
+   1294            
+   1295            /* Select the TRGO source */
+   1296            tmpcr2 |=  (uint8_t)TIM5_TRGOSource;
+   1297            
+   1298            TIM5->CR2 = tmpcr2;
+   1299          }
+   1300          
+   1301          /**
+   1302            * @brief  Selects the TIM5 Slave Mode.
+   1303            * @param   TIM5_SlaveMode : Specifies the TIM5 Slave Mode.
+   1304            * This parameter can be one of the @ref TIM5_SlaveMode_TypeDef enumeration.
+   1305            * @retval None
+   1306            */
+   1307          void TIM5_SelectSlaveMode(TIM5_SlaveMode_TypeDef TIM5_SlaveMode)
+   1308          {
+   1309            uint8_t tmpsmcr = 0;
+   1310            
+   1311            /* Check the parameters */
+   1312            assert_param(IS_TIM5_SLAVE_MODE_OK(TIM5_SlaveMode));
+   1313            
+   1314            tmpsmcr = TIM5->SMCR;
+   1315            
+   1316            /* Reset the SMS Bits */
+   1317            tmpsmcr &= (uint8_t)(~TIM5_SMCR_SMS);
+   1318            
+   1319            /* Select the Slave Mode */
+   1320            tmpsmcr |= (uint8_t)TIM5_SlaveMode;
+   1321            
+   1322            TIM5->SMCR = tmpsmcr;
+   1323          }
+   1324          
+   1325          /**
+   1326            * @brief  Selects the TIM5 Input Trigger source.
+   1327            * @param   TIM5_InputTriggerSource : Specifies Input Trigger source.
+   1328            * This parameter can be one of the @ref TIM5_TS_TypeDef enumeration.
+   1329            * @retval None
+   1330            */
+   1331          void TIM5_SelectInputTrigger(TIM5_TS_TypeDef TIM5_InputTriggerSource)
+   1332          {
+   1333            uint8_t tmpsmcr = 0;
+   1334            
+   1335            /* Check the parameters */
+   1336            assert_param(IS_TIM5_TRIGGER_SELECTION_OK(TIM5_InputTriggerSource));
+   1337            
+   1338            tmpsmcr = TIM5->SMCR;
+   1339            
+   1340            /* Select the Trigger Source */
+   1341            tmpsmcr &= (uint8_t)(~TIM5_SMCR_TS);
+   1342            tmpsmcr |= (uint8_t)TIM5_InputTriggerSource;
+   1343            
+   1344            TIM5->SMCR = (uint8_t)tmpsmcr;
+   1345          }
+   1346          
+   1347          /**
+   1348            * @brief  Configures the TIM5 Encoder Interface.
+   1349            * @param   TIM5_EncoderMode : Specifies the TIM5 Encoder Mode.
+   1350            * This parameter can be one of the @ref TIM5_EncoderMode_TypeDef enumeration.
+   1351            * @param   TIM5_IC1Polarity : Specifies the IC1 Polarity.
+   1352            * This parameter can be one of the @ref TIM5_ICPolarity_TypeDef enumeration.
+   1353            * @param   TIM5_IC2Polarity : Specifies the IC2 Polarity.
+   1354            * This parameter can be one of the @ref TIM5_ICPolarity_TypeDef enumeration.
+   1355            * @retval None
+   1356            */
+   1357          void TIM5_EncoderInterfaceConfig(TIM5_EncoderMode_TypeDef TIM5_EncoderMode,
+   1358                                           TIM5_ICPolarity_TypeDef TIM5_IC1Polarity,
+   1359                                           TIM5_ICPolarity_TypeDef TIM5_IC2Polarity)
+   1360          {
+   1361            uint8_t tmpsmcr = 0;
+   1362            uint8_t tmpccmr1 = 0;
+   1363            uint8_t tmpccmr2 = 0;
+   1364            
+   1365            /* Check the parameters */
+   1366            assert_param(IS_TIM5_ENCODER_MODE_OK(TIM5_EncoderMode));
+   1367            assert_param(IS_TIM5_IC_POLARITY_OK(TIM5_IC1Polarity));
+   1368            assert_param(IS_TIM5_IC_POLARITY_OK(TIM5_IC2Polarity));
+   1369            
+   1370            tmpsmcr = TIM5->SMCR;
+   1371            tmpccmr1 = TIM5->CCMR1;
+   1372            tmpccmr2 = TIM5->CCMR2;
+   1373            
+   1374            /* Set the encoder Mode */
+   1375            tmpsmcr &= (uint8_t)(TIM5_SMCR_MSM | TIM5_SMCR_TS)  ;
+   1376            tmpsmcr |= (uint8_t)TIM5_EncoderMode;
+   1377            
+   1378            /* Select the Capture Compare 1 and the Capture Compare 2 as input */
+   1379            tmpccmr1 &= (uint8_t)(~TIM5_CCMR_CCxS);
+   1380            tmpccmr2 &= (uint8_t)(~TIM5_CCMR_CCxS);
+   1381            tmpccmr1 |= TIM5_CCMR_TIxDirect_Set;
+   1382            tmpccmr2 |= TIM5_CCMR_TIxDirect_Set;
+   1383            
+   1384            /* Set the TI1 and the TI2 Polarities */
+   1385            if (TIM5_IC1Polarity == TIM5_ICPOLARITY_FALLING)
+   1386            {
+   1387              TIM5->CCER1 |= TIM5_CCER1_CC1P ;
+   1388            }
+   1389            else
+   1390            {
+   1391              TIM5->CCER1 &= (uint8_t)(~TIM5_CCER1_CC1P) ;
+   1392            }
+   1393            
+   1394            if (TIM5_IC2Polarity == TIM5_ICPOLARITY_FALLING)
+   1395            {
+   1396              TIM5->CCER1 |= TIM5_CCER1_CC2P ;
+   1397            }
+   1398            else
+   1399            {
+   1400              TIM5->CCER1 &= (uint8_t)(~TIM5_CCER1_CC2P) ;
+   1401            }
+   1402            
+   1403            TIM5->SMCR = tmpsmcr;
+   1404            TIM5->CCMR1 = tmpccmr1;
+   1405            TIM5->CCMR2 = tmpccmr2;
+   1406          }
+   1407          
+   1408          /**
+   1409            * @}
+   1410            */
+   1411          
+   1412          /**
+   1413            * @}
+   1414            */
+   1415          
+   1416          
+   1417          /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+Errors: 68
+Warnings: none

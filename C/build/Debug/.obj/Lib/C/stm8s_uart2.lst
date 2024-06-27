@@ -1,0 +1,2048 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 19/Jan/2024  20:42:43
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\Lib\C\stm8s_uart2.c
+#    Command line =  
+#        -f "e:\Nas\电路\保温箱\YZW-S805-EE22(Rev1.0) -
+#        KF7620\C\build\Debug\.obj\Lib\C\stm8s_uart2.args.txt" (--silent -lCN
+#        .\build\Debug\.obj\Lib\C\stm8s_uart2.lst -I d:/IAR/STM8/stm8/inc -I
+#        d:/IAR/STM8/stm8/lib -I Lib/H -I Lib/C -I User -D STM8S005
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\.obj\Lib\C\stm8s_uart2.o .\Lib\C\stm8s_uart2.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\.obj\Lib\C\stm8s_uart2.lst
+#    Object file  =  .\build\Debug\.obj\Lib\C\stm8s_uart2.o
+#
+###############################################################################
+
+e:\Nas\电路\保温箱\YZW-S805-EE22(Rev1.0) - KF7620\C\Lib\C\stm8s_uart2.c
+      1          /**
+      2            ********************************************************************************
+      3            * @file    stm8s_uart2.c
+      4            * @author  MCD Application Team
+      5            * @version V2.3.0
+      6            * @date    16-June-2017
+      7            * @brief   This file contains all the functions for the UART2 peripheral.
+      8             ******************************************************************************
+      9            * @attention
+     10            *
+     11            * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
+     12            *
+     13            * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+     14            * You may not use this file except in compliance with the License.
+     15            * You may obtain a copy of the License at:
+     16            *
+     17            *        http://www.st.com/software_license_agreement_liberty_v2
+     18            *
+     19            * Unless required by applicable law or agreed to in writing, software 
+     20            * distributed under the License is distributed on an "AS IS" BASIS, 
+     21            * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     22            * See the License for the specific language governing permissions and
+     23            * limitations under the License.
+     24            *
+     25            ******************************************************************************
+     26            */
+     27          
+     28          /* Includes ------------------------------------------------------------------*/
+     29          #include "stm8s_uart2.h"
+     30          
+     31          /** @addtogroup STM8S_StdPeriph_Driver
+     32            * @{
+     33            */
+     34          /* Private typedef -----------------------------------------------------------*/
+     35          /* Private define ------------------------------------------------------------*/
+     36          /* Private macro -------------------------------------------------------------*/
+     37          /* Private variables ---------------------------------------------------------*/
+     38          /* Private function prototypes -----------------------------------------------*/
+     39          /* Private functions ---------------------------------------------------------*/
+     40          /* Public functions ----------------------------------------------------------*/
+     41          
+     42          /**
+     43            * @addtogroup UART2_Public_Functions
+     44            * @{
+     45            */
+     46          
+     47          /**
+     48            * @brief  Deinitializes the UART peripheral.
+     49            * @param  None
+     50            * @retval None
+     51            */
+     52          
+
+   \                                 In section .far_func.text, align 1
+     53          void UART2_DeInit(void)
+     54          {
+     55            /*  Clear the Idle Line Detected bit in the status register by a read
+     56            to the UART2_SR register followed by a Read to the UART2_DR register */
+     57            (void) UART2->SR;
+   \                     UART2_DeInit:
+   \   000000 55 5240 .... MOV       S:?b0, L:0x5240
+     58            (void)UART2->DR;
+   \   000005 C6 5241      LD        A, L:0x5241
+     59            
+     60            UART2->BRR2 = UART2_BRR2_RESET_VALUE;  /*  Set UART2_BRR2 to reset value 0x00 */
+   \   000008 725F 5243    CLR       L:0x5243
+     61            UART2->BRR1 = UART2_BRR1_RESET_VALUE;  /*  Set UART2_BRR1 to reset value 0x00 */
+   \   00000C 725F 5242    CLR       L:0x5242
+     62            
+     63            UART2->CR1 = UART2_CR1_RESET_VALUE; /*  Set UART2_CR1 to reset value 0x00  */
+   \   000010 725F 5244    CLR       L:0x5244
+     64            UART2->CR2 = UART2_CR2_RESET_VALUE; /*  Set UART2_CR2 to reset value 0x00  */
+   \   000014 725F 5245    CLR       L:0x5245
+     65            UART2->CR3 = UART2_CR3_RESET_VALUE; /*  Set UART2_CR3 to reset value 0x00  */
+   \   000018 725F 5246    CLR       L:0x5246
+     66            UART2->CR4 = UART2_CR4_RESET_VALUE; /*  Set UART2_CR4 to reset value 0x00  */
+   \   00001C 725F 5247    CLR       L:0x5247
+     67            UART2->CR5 = UART2_CR5_RESET_VALUE; /*  Set UART2_CR5 to reset value 0x00  */
+   \   000020 725F 5248    CLR       L:0x5248
+     68            UART2->CR6 = UART2_CR6_RESET_VALUE; /*  Set UART2_CR6 to reset value 0x00  */
+   \   000024 725F 5249    CLR       L:0x5249
+     69          }
+   \   000028 87           RETF
+     70          
+     71          /**
+     72            * @brief  Initializes the UART2 according to the specified parameters.
+     73            * @param  BaudRate: The baudrate.
+     74            * @param  WordLength : This parameter can be any of the 
+     75            *         @ref UART2_WordLength_TypeDef enumeration.
+     76            * @param  StopBits: This parameter can be any of the 
+     77            *         @ref UART2_StopBits_TypeDef enumeration.
+     78            * @param  Parity: This parameter can be any of the 
+     79            *         @ref UART2_Parity_TypeDef enumeration.
+     80            * @param  SyncMode: This parameter can be any of the 
+     81            *         @ref UART2_SyncMode_TypeDef values.
+     82            * @param  Mode: This parameter can be any of the @ref UART2_Mode_TypeDef values
+     83            * @retval None
+     84            */
+
+   \                                 In section .far_func.text, align 1
+     85          void UART2_Init(uint32_t BaudRate, UART2_WordLength_TypeDef WordLength, UART2_StopBits_TypeDef StopBits, UART2_Parity_TypeDef Parity, UART2_SyncMode_TypeDef SyncMode, UART2_Mode_TypeDef Mode)
+     86          {
+   \                     UART2_Init:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 8D ......    CALLF     L:?push_l3
+   \   000008 3B ....      PUSH      S:?b6
+   \   00000B 52 0B        SUB       SP, #0xb
+   \   00000D 8D ......    CALLF     L:?mov_l2_l0
+   \   000011 B7 ..        LD        S:?b15, A
+   \   000013 45 .. ..     MOV       S:?b13, S:?b4
+   \   000016 45 .. ..     MOV       S:?b14, S:?b5
+   \   000019 45 .. ..     MOV       S:?b12, S:?b7
+     87            uint8_t BRR2_1 = 0, BRR2_2 = 0;
+   \   00001C 0F 02        CLR       (0x2,SP)
+   \   00001E 0F 01        CLR       (0x1,SP)
+     88            uint32_t BaudRate_Mantissa = 0, BaudRate_Mantissa100 = 0;
+   \   000020 5F           CLRW      X
+   \   000021 1F 03        LDW       (0x3,SP), X
+   \   000023 5F           CLRW      X
+   \   000024 1F 05        LDW       (0x5,SP), X
+   \   000026 5F           CLRW      X
+   \   000027 1F 08        LDW       (0x8,SP), X
+   \   000029 5F           CLRW      X
+   \   00002A 1F 0A        LDW       (0xa,SP), X
+     89            
+     90            /* Check the parameters */
+     91            assert_param(IS_UART2_BAUDRATE_OK(BaudRate));
+   \   00002C BE ..        LDW       X, S:?w4
+   \   00002E A3 0009      CPW       X, #0x9
+   \   000031 26 05        JRNE      L:??UART2_Init_0
+   \   000033 BE ..        LDW       X, S:?w5
+   \   000035 A3 8969      CPW       X, #0x8969
+   \                     ??UART2_Init_0:
+   \   000038 25 0F        JRC       L:??UART2_Init_1
+   \   00003A AE 005B      LDW       X, #0x5b
+   \   00003D BF ..        LDW       S:?w1, X
+   \   00003F 5F           CLRW      X
+   \   000040 BF ..        LDW       S:?w0, X
+   \   000042 AE ....      LDW       X, #?_0
+   \   000045 8D ......    CALLF     assert_failed
+     92            assert_param(IS_UART2_WORDLENGTH_OK(WordLength));
+   \                     ??UART2_Init_1:
+   \   000049 3D ..        TNZ       S:?b15
+   \   00004B 27 15        JREQ      L:??UART2_Init_2
+   \   00004D B6 ..        LD        A, S:?b15
+   \   00004F A1 10        CP        A, #0x10
+   \   000051 27 0F        JREQ      L:??UART2_Init_2
+   \   000053 AE 005C      LDW       X, #0x5c
+   \   000056 BF ..        LDW       S:?w1, X
+   \   000058 5F           CLRW      X
+   \   000059 BF ..        LDW       S:?w0, X
+   \   00005B AE ....      LDW       X, #?_0
+   \   00005E 8D ......    CALLF     assert_failed
+     93            assert_param(IS_UART2_STOPBITS_OK(StopBits));
+   \                     ??UART2_Init_2:
+   \   000062 3D ..        TNZ       S:?b13
+   \   000064 27 21        JREQ      L:??UART2_Init_3
+   \   000066 B6 ..        LD        A, S:?b13
+   \   000068 A1 10        CP        A, #0x10
+   \   00006A 27 1B        JREQ      L:??UART2_Init_3
+   \   00006C B6 ..        LD        A, S:?b13
+   \   00006E A1 20        CP        A, #0x20
+   \   000070 27 15        JREQ      L:??UART2_Init_3
+   \   000072 B6 ..        LD        A, S:?b13
+   \   000074 A1 30        CP        A, #0x30
+   \   000076 27 0F        JREQ      L:??UART2_Init_3
+   \   000078 AE 005D      LDW       X, #0x5d
+   \   00007B BF ..        LDW       S:?w1, X
+   \   00007D 5F           CLRW      X
+   \   00007E BF ..        LDW       S:?w0, X
+   \   000080 AE ....      LDW       X, #?_0
+   \   000083 8D ......    CALLF     assert_failed
+     94            assert_param(IS_UART2_PARITY_OK(Parity));
+   \                     ??UART2_Init_3:
+   \   000087 3D ..        TNZ       S:?b14
+   \   000089 27 1B        JREQ      L:??UART2_Init_4
+   \   00008B B6 ..        LD        A, S:?b14
+   \   00008D A1 04        CP        A, #0x4
+   \   00008F 27 15        JREQ      L:??UART2_Init_4
+   \   000091 B6 ..        LD        A, S:?b14
+   \   000093 A1 06        CP        A, #0x6
+   \   000095 27 0F        JREQ      L:??UART2_Init_4
+   \   000097 AE 005E      LDW       X, #0x5e
+   \   00009A BF ..        LDW       S:?w1, X
+   \   00009C 5F           CLRW      X
+   \   00009D BF ..        LDW       S:?w0, X
+   \   00009F AE ....      LDW       X, #?_0
+   \   0000A2 8D ......    CALLF     assert_failed
+     95            assert_param(IS_UART2_MODE_OK((uint8_t)Mode));
+   \                     ??UART2_Init_4:
+   \   0000A6 B6 ..        LD        A, S:?b12
+   \   0000A8 A1 08        CP        A, #0x8
+   \   0000AA 27 3F        JREQ      L:??UART2_Init_5
+   \   0000AC B6 ..        LD        A, S:?b12
+   \   0000AE A1 40        CP        A, #0x40
+   \   0000B0 27 39        JREQ      L:??UART2_Init_5
+   \   0000B2 B6 ..        LD        A, S:?b12
+   \   0000B4 A1 04        CP        A, #0x4
+   \   0000B6 27 33        JREQ      L:??UART2_Init_5
+   \   0000B8 B6 ..        LD        A, S:?b12
+   \   0000BA A1 80        CP        A, #0x80
+   \   0000BC 27 2D        JREQ      L:??UART2_Init_5
+   \   0000BE B6 ..        LD        A, S:?b12
+   \   0000C0 A1 0C        CP        A, #0xc
+   \   0000C2 27 27        JREQ      L:??UART2_Init_5
+   \   0000C4 B6 ..        LD        A, S:?b12
+   \   0000C6 A1 0C        CP        A, #0xc
+   \   0000C8 27 21        JREQ      L:??UART2_Init_5
+   \   0000CA B6 ..        LD        A, S:?b12
+   \   0000CC A1 44        CP        A, #0x44
+   \   0000CE 27 1B        JREQ      L:??UART2_Init_5
+   \   0000D0 B6 ..        LD        A, S:?b12
+   \   0000D2 A1 C0        CP        A, #0xc0
+   \   0000D4 27 15        JREQ      L:??UART2_Init_5
+   \   0000D6 B6 ..        LD        A, S:?b12
+   \   0000D8 A1 88        CP        A, #0x88
+   \   0000DA 27 0F        JREQ      L:??UART2_Init_5
+   \   0000DC AE 005F      LDW       X, #0x5f
+   \   0000DF BF ..        LDW       S:?w1, X
+   \   0000E1 5F           CLRW      X
+   \   0000E2 BF ..        LDW       S:?w0, X
+   \   0000E4 AE ....      LDW       X, #?_0
+   \   0000E7 8D ......    CALLF     assert_failed
+     96            assert_param(IS_UART2_SYNCMODE_OK((uint8_t)SyncMode));
+   \                     ??UART2_Init_5:
+   \   0000EB 7B 0C        LD        A, (0xc,SP)
+   \   0000ED A4 88        AND       A, #0x88
+   \   0000EF A1 88        CP        A, #0x88
+   \   0000F1 27 18        JREQ      L:??UART2_Init_6
+   \   0000F3 7B 0C        LD        A, (0xc,SP)
+   \   0000F5 A4 44        AND       A, #0x44
+   \   0000F7 A1 44        CP        A, #0x44
+   \   0000F9 27 10        JREQ      L:??UART2_Init_6
+   \   0000FB 7B 0C        LD        A, (0xc,SP)
+   \   0000FD A4 22        AND       A, #0x22
+   \   0000FF A1 22        CP        A, #0x22
+   \   000101 27 08        JREQ      L:??UART2_Init_6
+   \   000103 7B 0C        LD        A, (0xc,SP)
+   \   000105 A4 11        AND       A, #0x11
+   \   000107 A1 11        CP        A, #0x11
+   \   000109 26 0F        JRNE      L:??UART2_Init_7
+   \                     ??UART2_Init_6:
+   \   00010B AE 0060      LDW       X, #0x60
+   \   00010E BF ..        LDW       S:?w1, X
+   \   000110 5F           CLRW      X
+   \   000111 BF ..        LDW       S:?w0, X
+   \   000113 AE ....      LDW       X, #?_0
+   \   000116 8D ......    CALLF     assert_failed
+     97            
+     98            /* Clear the word length bit */
+     99            UART2->CR1 &= (uint8_t)(~UART2_CR1_M);
+   \                     ??UART2_Init_7:
+   \   00011A 7219 5244    BRES      L:0x5244, #0x4
+    100            /* Set the word length bit according to UART2_WordLength value */
+    101            UART2->CR1 |= (uint8_t)WordLength; 
+   \   00011E C6 5244      LD        A, L:0x5244
+   \   000121 BA ..        OR        A, S:?b15
+   \   000123 C7 5244      LD        L:0x5244, A
+    102            
+    103            /* Clear the STOP bits */
+    104            UART2->CR3 &= (uint8_t)(~UART2_CR3_STOP);
+   \   000126 C6 5246      LD        A, L:0x5246
+   \   000129 A4 CF        AND       A, #0xcf
+   \   00012B C7 5246      LD        L:0x5246, A
+    105            /* Set the STOP bits number according to UART2_StopBits value  */
+    106            UART2->CR3 |= (uint8_t)StopBits; 
+   \   00012E C6 5246      LD        A, L:0x5246
+   \   000131 BA ..        OR        A, S:?b13
+   \   000133 C7 5246      LD        L:0x5246, A
+    107            
+    108            /* Clear the Parity Control bit */
+    109            UART2->CR1 &= (uint8_t)(~(UART2_CR1_PCEN | UART2_CR1_PS  ));
+   \   000136 C6 5244      LD        A, L:0x5244
+   \   000139 A4 F9        AND       A, #0xf9
+   \   00013B C7 5244      LD        L:0x5244, A
+    110            /* Set the Parity Control bit to UART2_Parity value */
+    111            UART2->CR1 |= (uint8_t)Parity;
+   \   00013E C6 5244      LD        A, L:0x5244
+   \   000141 BA ..        OR        A, S:?b14
+   \   000143 C7 5244      LD        L:0x5244, A
+    112            
+    113            /* Clear the LSB mantissa of UART2DIV  */
+    114            UART2->BRR1 &= (uint8_t)(~UART2_BRR1_DIVM);
+   \   000146 C6 5242      LD        A, L:0x5242
+   \   000149 6B 07        LD        (0x7,SP), A
+   \   00014B 725F 5242    CLR       L:0x5242
+    115            /* Clear the MSB mantissa of UART2DIV  */
+    116            UART2->BRR2 &= (uint8_t)(~UART2_BRR2_DIVM);
+   \   00014F C6 5243      LD        A, L:0x5243
+   \   000152 A4 0F        AND       A, #0xf
+   \   000154 C7 5243      LD        L:0x5243, A
+    117            /* Clear the Fraction bits of UART2DIV */
+    118            UART2->BRR2 &= (uint8_t)(~UART2_BRR2_DIVF);
+   \   000157 C6 5243      LD        A, L:0x5243
+   \   00015A A4 F0        AND       A, #0xf0
+   \   00015C C7 5243      LD        L:0x5243, A
+    119            
+    120            /* Set the UART2 BaudRates in BRR1 and BRR2 registers according to UART2_BaudRate value */
+    121            BaudRate_Mantissa    = ((uint32_t)CLK_GetClockFreq() / (BaudRate << 4));
+   \   00015F 8D ......    CALLF     L:?mov_l0_l2
+   \   000163 A6 04        LD        A, #0x4
+   \   000165 8D ......    CALLF     L:?sll32_l0_l0_a
+   \   000169 8D ......    CALLF     L:?push_l0
+   \   00016D 8D ......    CALLF     CLK_GetClockFreq
+   \   000171 8D ......    CALLF     L:?pop_l1
+   \   000175 8D ......    CALLF     L:?udiv32_l0_l0_l1
+   \   000179 AE 0003      LDW       X, #0x3
+   \   00017C 8D ......    CALLF     L:?load32_xsp_l0
+    122            BaudRate_Mantissa100 = (((uint32_t)CLK_GetClockFreq() * 100) / (BaudRate << 4));
+   \   000180 8D ......    CALLF     L:?mov_l0_l2
+   \   000184 A6 04        LD        A, #0x4
+   \   000186 8D ......    CALLF     L:?sll32_l0_l0_a
+   \   00018A 8D ......    CALLF     L:?push_l0
+   \   00018E 8D ......    CALLF     CLK_GetClockFreq
+   \   000192 AE 0064      LDW       X, #0x64
+   \   000195 BF ..        LDW       S:?w3, X
+   \   000197 5F           CLRW      X
+   \   000198 BF ..        LDW       S:?w2, X
+   \   00019A 8D ......    CALLF     L:?mul32_l0_l0_l1
+   \   00019E 8D ......    CALLF     L:?pop_l1
+   \   0001A2 8D ......    CALLF     L:?udiv32_l0_l0_l1
+   \   0001A6 AE 0008      LDW       X, #0x8
+   \   0001A9 8D ......    CALLF     L:?load32_xsp_l0
+    123            
+    124            /* The fraction and MSB mantissa should be loaded in one step in the BRR2 register*/
+    125            /* Set the fraction of UARTDIV  */
+    126            BRR2_1 = (uint8_t)((uint8_t)(((BaudRate_Mantissa100 - (BaudRate_Mantissa * 100))
+    127                                          << 4) / 100) & (uint8_t)0x0F); 
+   \   0001AD AE 0064      LDW       X, #0x64
+   \   0001B0 BF ..        LDW       S:?w3, X
+   \   0001B2 5F           CLRW      X
+   \   0001B3 BF ..        LDW       S:?w2, X
+   \   0001B5 8D ......    CALLF     L:?load32_l0_dbsp
+   \   0001B9 03           DC8       0x3
+   \   0001BA 8D ......    CALLF     L:?mul32_l0_l0_l1
+   \   0001BE 8D ......    CALLF     L:?mov_l1_l0
+   \   0001C2 8D ......    CALLF     L:?load32_l0_dbsp
+   \   0001C6 08           DC8       0x8
+   \   0001C7 8D ......    CALLF     L:?sub32_l0_l0_l1
+   \   0001CB A6 04        LD        A, #0x4
+   \   0001CD 8D ......    CALLF     L:?sll32_l0_l0_a
+   \   0001D1 8D ......    CALLF     L:?udiv32_l0_l0_dl
+   \   0001D5 00000064     DC32      0x64
+   \   0001D9 B6 ..        LD        A, S:?b3
+   \   0001DB A4 0F        AND       A, #0xf
+   \   0001DD 6B 02        LD        (0x2,SP), A
+    128            BRR2_2 = (uint8_t)((BaudRate_Mantissa >> 4) & (uint8_t)0xF0);
+   \   0001DF 1E 05        LDW       X, (0x5,SP)
+   \   0001E1 54           SRLW      X
+   \   0001E2 54           SRLW      X
+   \   0001E3 54           SRLW      X
+   \   0001E4 54           SRLW      X
+   \   0001E5 9F           LD        A, XL
+   \   0001E6 A4 F0        AND       A, #0xf0
+   \   0001E8 6B 01        LD        (0x1,SP), A
+    129            
+    130            UART2->BRR2 = (uint8_t)(BRR2_1 | BRR2_2);
+   \   0001EA 7B 01        LD        A, (0x1,SP)
+   \   0001EC 1A 02        OR        A, (0x2,SP)
+   \   0001EE C7 5243      LD        L:0x5243, A
+    131            /* Set the LSB mantissa of UARTDIV  */
+    132            UART2->BRR1 = (uint8_t)BaudRate_Mantissa;           
+   \   0001F1 1E 05        LDW       X, (0x5,SP)
+   \   0001F3 9F           LD        A, XL
+   \   0001F4 C7 5242      LD        L:0x5242, A
+    133            
+    134            /* Disable the Transmitter and Receiver before setting the LBCL, CPOL and CPHA bits */
+    135            UART2->CR2 &= (uint8_t)~(UART2_CR2_TEN | UART2_CR2_REN);
+   \   0001F7 C6 5245      LD        A, L:0x5245
+   \   0001FA A4 F3        AND       A, #0xf3
+   \   0001FC C7 5245      LD        L:0x5245, A
+    136            /* Clear the Clock Polarity, lock Phase, Last Bit Clock pulse */
+    137            UART2->CR3 &= (uint8_t)~(UART2_CR3_CPOL | UART2_CR3_CPHA | UART2_CR3_LBCL);
+   \   0001FF C6 5246      LD        A, L:0x5246
+   \   000202 A4 F8        AND       A, #0xf8
+   \   000204 C7 5246      LD        L:0x5246, A
+    138            /* Set the Clock Polarity, lock Phase, Last Bit Clock pulse */
+    139            UART2->CR3 |= (uint8_t)((uint8_t)SyncMode & (uint8_t)(UART2_CR3_CPOL | \
+    140              UART2_CR3_CPHA | UART2_CR3_LBCL));
+   \   000207 7B 0C        LD        A, (0xc,SP)
+   \   000209 A4 07        AND       A, #0x7
+   \   00020B CA 5246      OR        A, L:0x5246
+   \   00020E C7 5246      LD        L:0x5246, A
+    141            
+    142            if ((uint8_t)(Mode & UART2_MODE_TX_ENABLE))
+   \   000211 B6 ..        LD        A, S:?b12
+   \   000213 A4 04        AND       A, #0x4
+   \   000215 A1 00        CP        A, #0x0
+   \   000217 27 06        JREQ      L:??UART2_Init_8
+    143            {
+    144              /* Set the Transmitter Enable bit */
+    145              UART2->CR2 |= (uint8_t)UART2_CR2_TEN;
+   \   000219 7216 5245    BSET      L:0x5245, #0x3
+   \   00021D 20 04        JRA       L:??UART2_Init_9
+    146            }
+    147            else
+    148            {
+    149              /* Clear the Transmitter Disable bit */
+    150              UART2->CR2 &= (uint8_t)(~UART2_CR2_TEN);
+   \                     ??UART2_Init_8:
+   \   00021F 7217 5245    BRES      L:0x5245, #0x3
+    151            }
+    152            if ((uint8_t)(Mode & UART2_MODE_RX_ENABLE))
+   \                     ??UART2_Init_9:
+   \   000223 B6 ..        LD        A, S:?b12
+   \   000225 A4 08        AND       A, #0x8
+   \   000227 A1 00        CP        A, #0x0
+   \   000229 27 06        JREQ      L:??UART2_Init_10
+    153            {
+    154              /* Set the Receiver Enable bit */
+    155              UART2->CR2 |= (uint8_t)UART2_CR2_REN;
+   \   00022B 7214 5245    BSET      L:0x5245, #0x2
+   \   00022F 20 04        JRA       L:??UART2_Init_11
+    156            }
+    157            else
+    158            {
+    159              /* Clear the Receiver Disable bit */
+    160              UART2->CR2 &= (uint8_t)(~UART2_CR2_REN);
+   \                     ??UART2_Init_10:
+   \   000231 7215 5245    BRES      L:0x5245, #0x2
+    161            }
+    162            /* Set the Clock Enable bit, lock Polarity, lock Phase and Last Bit Clock 
+    163            pulse bits according to UART2_Mode value */
+    164            if ((uint8_t)(SyncMode & UART2_SYNCMODE_CLOCK_DISABLE))
+   \                     ??UART2_Init_11:
+   \   000235 7B 0C        LD        A, (0xc,SP)
+   \   000237 A4 80        AND       A, #0x80
+   \   000239 A1 00        CP        A, #0x0
+   \   00023B 27 06        JREQ      L:??UART2_Init_12
+    165            {
+    166              /* Clear the Clock Enable bit */
+    167              UART2->CR3 &= (uint8_t)(~UART2_CR3_CKEN); 
+   \   00023D 7217 5246    BRES      L:0x5246, #0x3
+   \   000241 20 0A        JRA       L:??UART2_Init_13
+    168            }
+    169            else
+    170            {
+    171              UART2->CR3 |= (uint8_t)((uint8_t)SyncMode & UART2_CR3_CKEN);
+   \                     ??UART2_Init_12:
+   \   000243 7B 0C        LD        A, (0xc,SP)
+   \   000245 A4 08        AND       A, #0x8
+   \   000247 CA 5246      OR        A, L:0x5246
+   \   00024A C7 5246      LD        L:0x5246, A
+    172            }
+    173          }
+   \                     ??UART2_Init_13:
+   \   00024D 5B 0C        ADD       SP, #0xc
+   \   00024F AC ......    JPF       L:?epilogue_l2_l3
+    174          
+    175          /**
+    176            * @brief  Enable the UART2 peripheral.
+    177            * @param  NewState : The new state of the UART Communication.
+    178            *         This parameter can be any of the @ref FunctionalState enumeration.
+    179            * @retval None
+    180            */
+
+   \                                 In section .far_func.text, align 1
+    181          void UART2_Cmd(FunctionalState NewState)
+    182          {
+    183            if (NewState != DISABLE)
+   \                     UART2_Cmd:
+   \   000000 4D           TNZ       A
+   \   000001 27 06        JREQ      L:??UART2_Cmd_0
+    184            {
+    185              /* UART2 Enable */
+    186              UART2->CR1 &= (uint8_t)(~UART2_CR1_UARTD);
+   \   000003 721B 5244    BRES      L:0x5244, #0x5
+   \   000007 20 04        JRA       L:??UART2_Cmd_1
+    187            }
+    188            else
+    189            {
+    190              /* UART2 Disable */
+    191              UART2->CR1 |= UART2_CR1_UARTD; 
+   \                     ??UART2_Cmd_0:
+   \   000009 721A 5244    BSET      L:0x5244, #0x5
+    192            }
+    193          }
+   \                     ??UART2_Cmd_1:
+   \   00000D 87           RETF
+    194          
+    195          /**
+    196            * @brief  Enables or disables the specified UART2 interrupts.
+    197            * @param  UART2_IT specifies the UART2 interrupt sources to be enabled or disabled.
+    198            *         This parameter can be one of the following values:
+    199            *         - UART2_IT_LBDF:  LIN Break detection interrupt
+    200            *         - UART2_IT_LHDF:  LIN Break detection interrupt
+    201            *         - UART2_IT_TXE:  Transmit Data Register empty interrupt
+    202            *         - UART2_IT_TC:   Transmission complete interrupt
+    203            *         - UART2_IT_RXNE_OR: Receive Data register not empty/Over run error interrupt
+    204            *         - UART2_IT_IDLE: Idle line detection interrupt
+    205            *         - UART2_IT_PE:   Parity Error interrupt
+    206            * @param  NewState new state of the specified UART2 interrupts.
+    207            *         This parameter can be: ENABLE or DISABLE.
+    208            * @retval None
+    209            */
+
+   \                                 In section .far_func.text, align 1
+    210          void UART2_ITConfig(UART2_IT_TypeDef UART2_IT, FunctionalState NewState)
+    211          {
+   \                     UART2_ITConfig:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 3B ....      PUSH      S:?b12
+   \   000007 BF ..        LDW       S:?w4, X
+   \   000009 B7 ..        LD        S:?b10, A
+    212            uint8_t uartreg = 0, itpos = 0x00;
+   \   00000B 3F ..        CLR       S:?b11
+   \   00000D 3F ..        CLR       S:?b12
+    213            
+    214            /* Check the parameters */
+    215            assert_param(IS_UART2_CONFIG_IT_OK(UART2_IT));
+   \   00000F BE ..        LDW       X, S:?w4
+   \   000011 A3 0100      CPW       X, #0x100
+   \   000014 27 39        JREQ      L:??UART2_ITConfig_0
+   \   000016 BE ..        LDW       X, S:?w4
+   \   000018 A3 0277      CPW       X, #0x277
+   \   00001B 27 32        JREQ      L:??UART2_ITConfig_0
+   \   00001D BE ..        LDW       X, S:?w4
+   \   00001F A3 0266      CPW       X, #0x266
+   \   000022 27 2B        JREQ      L:??UART2_ITConfig_0
+   \   000024 BE ..        LDW       X, S:?w4
+   \   000026 A3 0205      CPW       X, #0x205
+   \   000029 27 24        JREQ      L:??UART2_ITConfig_0
+   \   00002B BE ..        LDW       X, S:?w4
+   \   00002D A3 0244      CPW       X, #0x244
+   \   000030 27 1D        JREQ      L:??UART2_ITConfig_0
+   \   000032 BE ..        LDW       X, S:?w4
+   \   000034 A3 0412      CPW       X, #0x412
+   \   000037 27 16        JREQ      L:??UART2_ITConfig_0
+   \   000039 BE ..        LDW       X, S:?w4
+   \   00003B A3 0346      CPW       X, #0x346
+   \   00003E 27 0F        JREQ      L:??UART2_ITConfig_0
+   \   000040 AE 00D7      LDW       X, #0xd7
+   \   000043 BF ..        LDW       S:?w1, X
+   \   000045 5F           CLRW      X
+   \   000046 BF ..        LDW       S:?w0, X
+   \   000048 AE ....      LDW       X, #?_0
+   \   00004B 8D ......    CALLF     assert_failed
+    216            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \                     ??UART2_ITConfig_0:
+   \   00004F 3D ..        TNZ       S:?b10
+   \   000051 27 15        JREQ      L:??UART2_ITConfig_1
+   \   000053 B6 ..        LD        A, S:?b10
+   \   000055 A1 01        CP        A, #0x1
+   \   000057 27 0F        JREQ      L:??UART2_ITConfig_1
+   \   000059 AE 00D8      LDW       X, #0xd8
+   \   00005C BF ..        LDW       S:?w1, X
+   \   00005E 5F           CLRW      X
+   \   00005F BF ..        LDW       S:?w0, X
+   \   000061 AE ....      LDW       X, #?_0
+   \   000064 8D ......    CALLF     assert_failed
+    217            
+    218            /* Get the UART2 register index */
+    219            uartreg = (uint8_t)((uint16_t)UART2_IT >> 0x08);
+   \                     ??UART2_ITConfig_1:
+   \   000068 45 .. ..     MOV       S:?b11, S:?b8
+    220            
+    221            /* Get the UART2 IT index */
+    222            itpos = (uint8_t)((uint8_t)1 << (uint8_t)((uint8_t)UART2_IT & (uint8_t)0x0F));
+   \   00006B B6 ..        LD        A, S:?b9
+   \   00006D A4 0F        AND       A, #0xf
+   \   00006F 5F           CLRW      X
+   \   000070 5C           INCW      X
+   \   000071 8D ......    CALLF     L:?sll16_x_x_a
+   \   000075 9F           LD        A, XL
+   \   000076 B7 ..        LD        S:?b12, A
+    223            
+    224            if (NewState != DISABLE)
+   \   000078 3D ..        TNZ       S:?b10
+   \   00007A 27 3A        JREQ      L:??UART2_ITConfig_2
+    225            {
+    226              /* Enable the Interrupt bits according to UART2_IT mask */
+    227              if (uartreg == 0x01)
+   \   00007C B6 ..        LD        A, S:?b11
+   \   00007E A1 01        CP        A, #0x1
+   \   000080 26 0A        JRNE      L:??UART2_ITConfig_3
+    228              {
+    229                UART2->CR1 |= itpos;
+   \   000082 C6 5244      LD        A, L:0x5244
+   \   000085 BA ..        OR        A, S:?b12
+   \   000087 C7 5244      LD        L:0x5244, A
+   \   00008A 20 66        JRA       L:??UART2_ITConfig_4
+    230              }
+    231              else if (uartreg == 0x02)
+   \                     ??UART2_ITConfig_3:
+   \   00008C B6 ..        LD        A, S:?b11
+   \   00008E A1 02        CP        A, #0x2
+   \   000090 26 0A        JRNE      L:??UART2_ITConfig_5
+    232              {
+    233                UART2->CR2 |= itpos;
+   \   000092 C6 5245      LD        A, L:0x5245
+   \   000095 BA ..        OR        A, S:?b12
+   \   000097 C7 5245      LD        L:0x5245, A
+   \   00009A 20 56        JRA       L:??UART2_ITConfig_4
+    234              }
+    235              else if (uartreg == 0x03)
+   \                     ??UART2_ITConfig_5:
+   \   00009C B6 ..        LD        A, S:?b11
+   \   00009E A1 03        CP        A, #0x3
+   \   0000A0 26 0A        JRNE      L:??UART2_ITConfig_6
+    236              {
+    237                UART2->CR4 |= itpos;
+   \   0000A2 C6 5247      LD        A, L:0x5247
+   \   0000A5 BA ..        OR        A, S:?b12
+   \   0000A7 C7 5247      LD        L:0x5247, A
+   \   0000AA 20 46        JRA       L:??UART2_ITConfig_4
+    238              }
+    239              else
+    240              {
+    241                UART2->CR6 |= itpos;
+   \                     ??UART2_ITConfig_6:
+   \   0000AC C6 5249      LD        A, L:0x5249
+   \   0000AF BA ..        OR        A, S:?b12
+   \   0000B1 C7 5249      LD        L:0x5249, A
+   \   0000B4 20 3C        JRA       L:??UART2_ITConfig_4
+    242              }
+    243            }
+    244            else
+    245            {
+    246              /* Disable the interrupt bits according to UART2_IT mask */
+    247              if (uartreg == 0x01)
+   \                     ??UART2_ITConfig_2:
+   \   0000B6 B6 ..        LD        A, S:?b11
+   \   0000B8 A1 01        CP        A, #0x1
+   \   0000BA 26 0B        JRNE      L:??UART2_ITConfig_7
+    248              {
+    249                UART2->CR1 &= (uint8_t)(~itpos);
+   \   0000BC B6 ..        LD        A, S:?b12
+   \   0000BE 43           CPL       A
+   \   0000BF C4 5244      AND       A, L:0x5244
+   \   0000C2 C7 5244      LD        L:0x5244, A
+   \   0000C5 20 2B        JRA       L:??UART2_ITConfig_4
+    250              }
+    251              else if (uartreg == 0x02)
+   \                     ??UART2_ITConfig_7:
+   \   0000C7 B6 ..        LD        A, S:?b11
+   \   0000C9 A1 02        CP        A, #0x2
+   \   0000CB 26 0B        JRNE      L:??UART2_ITConfig_8
+    252              {
+    253                UART2->CR2 &= (uint8_t)(~itpos);
+   \   0000CD B6 ..        LD        A, S:?b12
+   \   0000CF 43           CPL       A
+   \   0000D0 C4 5245      AND       A, L:0x5245
+   \   0000D3 C7 5245      LD        L:0x5245, A
+   \   0000D6 20 1A        JRA       L:??UART2_ITConfig_4
+    254              }
+    255              else if (uartreg == 0x03)
+   \                     ??UART2_ITConfig_8:
+   \   0000D8 B6 ..        LD        A, S:?b11
+   \   0000DA A1 03        CP        A, #0x3
+   \   0000DC 26 0B        JRNE      L:??UART2_ITConfig_9
+    256              {
+    257                UART2->CR4 &= (uint8_t)(~itpos);
+   \   0000DE B6 ..        LD        A, S:?b12
+   \   0000E0 43           CPL       A
+   \   0000E1 C4 5247      AND       A, L:0x5247
+   \   0000E4 C7 5247      LD        L:0x5247, A
+   \   0000E7 20 09        JRA       L:??UART2_ITConfig_4
+    258              }
+    259              else
+    260              {
+    261                UART2->CR6 &= (uint8_t)(~itpos);
+   \                     ??UART2_ITConfig_9:
+   \   0000E9 B6 ..        LD        A, S:?b12
+   \   0000EB 43           CPL       A
+   \   0000EC C4 5249      AND       A, L:0x5249
+   \   0000EF C7 5249      LD        L:0x5249, A
+    262              }
+    263            }
+    264          }
+   \                     ??UART2_ITConfig_4:
+   \   0000F2 32 ....      POP       S:?b12
+   \   0000F5 AC ......    JPF       L:?epilogue_l2
+    265          
+    266          /**
+    267            * @brief  Configures the UART2抯 IrDA interface.
+    268            * @param  UART2_IrDAMode specifies the IrDA mode.
+    269            *         This parameter can be any of the @ref UART2_IrDAMode_TypeDef values.
+    270            * @retval None
+    271            */
+
+   \                                 In section .far_func.text, align 1
+    272          void UART2_IrDAConfig(UART2_IrDAMode_TypeDef UART2_IrDAMode)
+    273          {
+   \                     UART2_IrDAConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    274            assert_param(IS_UART2_IRDAMODE_OK(UART2_IrDAMode));
+   \   000005 B6 ..        LD        A, S:?b8
+   \   000007 A1 01        CP        A, #0x1
+   \   000009 27 13        JREQ      L:??UART2_IrDAConfig_0
+   \   00000B 3D ..        TNZ       S:?b8
+   \   00000D 27 0F        JREQ      L:??UART2_IrDAConfig_0
+   \   00000F AE 0112      LDW       X, #0x112
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    275            
+    276            if (UART2_IrDAMode != UART2_IRDAMODE_NORMAL)
+   \                     ??UART2_IrDAConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??UART2_IrDAConfig_1
+    277            {
+    278              UART2->CR5 |= UART2_CR5_IRLP;
+   \   000022 7214 5248    BSET      L:0x5248, #0x2
+   \   000026 20 04        JRA       L:??UART2_IrDAConfig_2
+    279            }
+    280            else
+    281            {
+    282              UART2->CR5 &= ((uint8_t)~UART2_CR5_IRLP);
+   \                     ??UART2_IrDAConfig_1:
+   \   000028 7215 5248    BRES      L:0x5248, #0x2
+    283            }
+    284          }
+   \                     ??UART2_IrDAConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    285          
+    286          /**
+    287            * @brief  Enables or disables the UART2抯 IrDA interface.
+    288            * @param  NewState new state of the IrDA mode.
+    289            *         This parameter can be: ENABLE or DISABLE.
+    290            * @retval None
+    291            */
+
+   \                                 In section .far_func.text, align 1
+    292          void UART2_IrDACmd(FunctionalState NewState)
+    293          {
+   \                     UART2_IrDACmd:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    294            /* Check parameters */
+    295            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??UART2_IrDACmd_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??UART2_IrDACmd_0
+   \   00000F AE 0127      LDW       X, #0x127
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    296            
+    297            if (NewState != DISABLE)
+   \                     ??UART2_IrDACmd_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??UART2_IrDACmd_1
+    298            {
+    299              /* Enable the IrDA mode by setting the IREN bit in the CR3 register */
+    300              UART2->CR5 |= UART2_CR5_IREN;
+   \   000022 7212 5248    BSET      L:0x5248, #0x1
+   \   000026 20 04        JRA       L:??UART2_IrDACmd_2
+    301            }
+    302            else
+    303            {
+    304              /* Disable the IrDA mode by clearing the IREN bit in the CR3 register */
+    305              UART2->CR5 &= ((uint8_t)~UART2_CR5_IREN);
+   \                     ??UART2_IrDACmd_1:
+   \   000028 7213 5248    BRES      L:0x5248, #0x1
+    306            }
+    307          }
+   \                     ??UART2_IrDACmd_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    308          
+    309          /**
+    310            * @brief  Sets the UART2 LIN Break detection length.
+    311            * @param  UART2_LINBreakDetectionLength specifies the LIN break detection length.
+    312            *         This parameter can be any of the 
+    313            *         @ref UART2_LINBreakDetectionLength_TypeDef values.
+    314            * @retval None
+    315            */
+
+   \                                 In section .far_func.text, align 1
+    316          void UART2_LINBreakDetectionConfig(UART2_LINBreakDetectionLength_TypeDef UART2_LINBreakDetectionLength)
+    317          {
+   \                     UART2_LINBreakDetectionConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    318            /* Check parameters */    
+    319            assert_param(IS_UART2_LINBREAKDETECTIONLENGTH_OK(UART2_LINBreakDetectionLength));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??UART2_LINBreakDetectionConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??UART2_LINBreakDetectionConfig_0
+   \   00000F AE 013F      LDW       X, #0x13f
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    320            
+    321            if (UART2_LINBreakDetectionLength != UART2_LINBREAKDETECTIONLENGTH_10BITS)
+   \                     ??UART2_LINBreakDetectionConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??UART2_LINBreakDetectionConfig_1
+    322            {
+    323              UART2->CR4 |= UART2_CR4_LBDL;
+   \   000022 721A 5247    BSET      L:0x5247, #0x5
+   \   000026 20 04        JRA       L:??UART2_LINBreakDetectionConfig_2
+    324            }
+    325            else
+    326            {
+    327              UART2->CR4 &= ((uint8_t)~UART2_CR4_LBDL);
+   \                     ??UART2_LINBreakDetectionConfig_1:
+   \   000028 721B 5247    BRES      L:0x5247, #0x5
+    328            }
+    329          }
+   \                     ??UART2_LINBreakDetectionConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    330          
+    331          /**
+    332            * @brief  Configure the UART2 peripheral.
+    333            * @param  UART2_Mode specifies the LIN mode.
+    334            *         This parameter can be any of the @ref UART2_LinMode_TypeDef values.
+    335            * @param  UART2_Autosync specifies the LIN automatic resynchronization mode.
+    336            *         This parameter can be any of the @ref UART2_LinAutosync_TypeDef values.
+    337            * @param  UART2_DivUp specifies the LIN divider update method.
+    338            *         This parameter can be any of the @ref UART2_LinDivUp_TypeDef values.
+    339            * @retval None
+    340            */
+
+   \                                 In section .far_func.text, align 1
+    341          void UART2_LINConfig(UART2_LinMode_TypeDef UART2_Mode, 
+    342                               UART2_LinAutosync_TypeDef UART2_Autosync, 
+    343                               UART2_LinDivUp_TypeDef UART2_DivUp)
+    344          {
+   \                     UART2_LINConfig:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 3B ....      PUSH      S:?b10
+   \   000007 B7 ..        LD        S:?b10, A
+   \   000009 45 .. ..     MOV       S:?b9, S:?b0
+   \   00000C 45 .. ..     MOV       S:?b8, S:?b1
+    345            /* Check parameters */
+    346            assert_param(IS_UART2_SLAVE_OK(UART2_Mode));
+   \   00000F 3D ..        TNZ       S:?b10
+   \   000011 27 15        JREQ      L:??UART2_LINConfig_0
+   \   000013 B6 ..        LD        A, S:?b10
+   \   000015 A1 01        CP        A, #0x1
+   \   000017 27 0F        JREQ      L:??UART2_LINConfig_0
+   \   000019 AE 015A      LDW       X, #0x15a
+   \   00001C BF ..        LDW       S:?w1, X
+   \   00001E 5F           CLRW      X
+   \   00001F BF ..        LDW       S:?w0, X
+   \   000021 AE ....      LDW       X, #?_0
+   \   000024 8D ......    CALLF     assert_failed
+    347            assert_param(IS_UART2_AUTOSYNC_OK(UART2_Autosync));
+   \                     ??UART2_LINConfig_0:
+   \   000028 B6 ..        LD        A, S:?b9
+   \   00002A A1 01        CP        A, #0x1
+   \   00002C 27 13        JREQ      L:??UART2_LINConfig_1
+   \   00002E 3D ..        TNZ       S:?b9
+   \   000030 27 0F        JREQ      L:??UART2_LINConfig_1
+   \   000032 AE 015B      LDW       X, #0x15b
+   \   000035 BF ..        LDW       S:?w1, X
+   \   000037 5F           CLRW      X
+   \   000038 BF ..        LDW       S:?w0, X
+   \   00003A AE ....      LDW       X, #?_0
+   \   00003D 8D ......    CALLF     assert_failed
+    348            assert_param(IS_UART2_DIVUP_OK(UART2_DivUp));
+   \                     ??UART2_LINConfig_1:
+   \   000041 3D ..        TNZ       S:?b8
+   \   000043 27 15        JREQ      L:??UART2_LINConfig_2
+   \   000045 B6 ..        LD        A, S:?b8
+   \   000047 A1 01        CP        A, #0x1
+   \   000049 27 0F        JREQ      L:??UART2_LINConfig_2
+   \   00004B AE 015C      LDW       X, #0x15c
+   \   00004E BF ..        LDW       S:?w1, X
+   \   000050 5F           CLRW      X
+   \   000051 BF ..        LDW       S:?w0, X
+   \   000053 AE ....      LDW       X, #?_0
+   \   000056 8D ......    CALLF     assert_failed
+    349            
+    350            if (UART2_Mode != UART2_LIN_MODE_MASTER)
+   \                     ??UART2_LINConfig_2:
+   \   00005A 3D ..        TNZ       S:?b10
+   \   00005C 27 06        JREQ      L:??UART2_LINConfig_3
+    351            {
+    352              UART2->CR6 |=  UART2_CR6_LSLV;
+   \   00005E 721A 5249    BSET      L:0x5249, #0x5
+   \   000062 20 04        JRA       L:??UART2_LINConfig_4
+    353            }
+    354            else
+    355            {
+    356              UART2->CR6 &= ((uint8_t)~UART2_CR6_LSLV);
+   \                     ??UART2_LINConfig_3:
+   \   000064 721B 5249    BRES      L:0x5249, #0x5
+    357            }
+    358            
+    359            if (UART2_Autosync != UART2_LIN_AUTOSYNC_DISABLE)
+   \                     ??UART2_LINConfig_4:
+   \   000068 3D ..        TNZ       S:?b9
+   \   00006A 27 06        JREQ      L:??UART2_LINConfig_5
+    360            {
+    361              UART2->CR6 |=  UART2_CR6_LASE ;
+   \   00006C 7218 5249    BSET      L:0x5249, #0x4
+   \   000070 20 04        JRA       L:??UART2_LINConfig_6
+    362            }
+    363            else
+    364            {
+    365              UART2->CR6 &= ((uint8_t)~ UART2_CR6_LASE );
+   \                     ??UART2_LINConfig_5:
+   \   000072 7219 5249    BRES      L:0x5249, #0x4
+    366            }
+    367            
+    368            if (UART2_DivUp != UART2_LIN_DIVUP_LBRR1)
+   \                     ??UART2_LINConfig_6:
+   \   000076 3D ..        TNZ       S:?b8
+   \   000078 27 06        JREQ      L:??UART2_LINConfig_7
+    369            {
+    370              UART2->CR6 |=  UART2_CR6_LDUM;
+   \   00007A 721E 5249    BSET      L:0x5249, #0x7
+   \   00007E 20 04        JRA       L:??UART2_LINConfig_8
+    371            }
+    372            else
+    373            {
+    374              UART2->CR6 &= ((uint8_t)~ UART2_CR6_LDUM);
+   \                     ??UART2_LINConfig_7:
+   \   000080 721F 5249    BRES      L:0x5249, #0x7
+    375            }
+    376          }
+   \                     ??UART2_LINConfig_8:
+   \   000084 32 ....      POP       S:?b10
+   \   000087 AC ......    JPF       L:?epilogue_w4
+    377          
+    378          /**
+    379            * @brief  Enables or disables the UART2 LIN mode.
+    380            * @param  NewState is new state of the UART2 LIN mode.
+    381            *         This parameter can be ENABLE or DISABLE
+    382            * @retval None
+    383            */
+
+   \                                 In section .far_func.text, align 1
+    384          void UART2_LINCmd(FunctionalState NewState)
+    385          {
+   \                     UART2_LINCmd:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    386            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??UART2_LINCmd_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??UART2_LINCmd_0
+   \   00000F AE 0182      LDW       X, #0x182
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    387            
+    388            if (NewState != DISABLE)
+   \                     ??UART2_LINCmd_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??UART2_LINCmd_1
+    389            {
+    390              /* Enable the LIN mode by setting the LINE bit in the CR2 register */
+    391              UART2->CR3 |= UART2_CR3_LINEN;
+   \   000022 721C 5246    BSET      L:0x5246, #0x6
+   \   000026 20 04        JRA       L:??UART2_LINCmd_2
+    392            }
+    393            else
+    394            {
+    395              /* Disable the LIN mode by clearing the LINE bit in the CR2 register */
+    396              UART2->CR3 &= ((uint8_t)~UART2_CR3_LINEN);
+   \                     ??UART2_LINCmd_1:
+   \   000028 721D 5246    BRES      L:0x5246, #0x6
+    397            }
+    398          }
+   \                     ??UART2_LINCmd_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    399          
+    400          /**
+    401            * @brief  Enables or disables the UART2 Smart Card mode.
+    402            * @param  NewState: new state of the Smart Card mode.
+    403            *         This parameter can be: ENABLE or DISABLE.
+    404            * @retval None
+    405            */
+
+   \                                 In section .far_func.text, align 1
+    406          void UART2_SmartCardCmd(FunctionalState NewState)
+    407          {
+   \                     UART2_SmartCardCmd:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    408            /* Check parameters */
+    409            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??UART2_SmartCardCmd_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??UART2_SmartCardCmd_0
+   \   00000F AE 0199      LDW       X, #0x199
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    410            
+    411            if (NewState != DISABLE)
+   \                     ??UART2_SmartCardCmd_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??UART2_SmartCardCmd_1
+    412            {
+    413              /* Enable the SC mode by setting the SCEN bit in the CR5 register */
+    414              UART2->CR5 |= UART2_CR5_SCEN;
+   \   000022 721A 5248    BSET      L:0x5248, #0x5
+   \   000026 20 04        JRA       L:??UART2_SmartCardCmd_2
+    415            }
+    416            else
+    417            {
+    418              /* Disable the SC mode by clearing the SCEN bit in the CR5 register */
+    419              UART2->CR5 &= ((uint8_t)(~UART2_CR5_SCEN));
+   \                     ??UART2_SmartCardCmd_1:
+   \   000028 721B 5248    BRES      L:0x5248, #0x5
+    420            }
+    421          }
+   \                     ??UART2_SmartCardCmd_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    422          
+    423          /**
+    424            * @brief  Enables or disables NACK transmission.
+    425            * @param  NewState: new state of the Smart Card mode.
+    426            *         This parameter can be: ENABLE or DISABLE.
+    427            * @retval None
+    428            */
+
+   \                                 In section .far_func.text, align 1
+    429          void UART2_SmartCardNACKCmd(FunctionalState NewState)
+    430          {
+   \                     UART2_SmartCardNACKCmd:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    431            /* Check parameters */
+    432            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??UART2_SmartCardNACKCmd_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??UART2_SmartCardNACKCmd_0
+   \   00000F AE 01B0      LDW       X, #0x1b0
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    433            
+    434            if (NewState != DISABLE)
+   \                     ??UART2_SmartCardNACKCmd_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??UART2_SmartCardNACKCmd_1
+    435            {
+    436              /* Enable the NACK transmission by setting the NACK bit in the CR5 register */
+    437              UART2->CR5 |= UART2_CR5_NACK;
+   \   000022 7218 5248    BSET      L:0x5248, #0x4
+   \   000026 20 04        JRA       L:??UART2_SmartCardNACKCmd_2
+    438            }
+    439            else
+    440            {
+    441              /* Disable the NACK transmission by clearing the NACK bit in the CR5 register */
+    442              UART2->CR5 &= ((uint8_t)~(UART2_CR5_NACK));
+   \                     ??UART2_SmartCardNACKCmd_1:
+   \   000028 7219 5248    BRES      L:0x5248, #0x4
+    443            }
+    444          }
+   \                     ??UART2_SmartCardNACKCmd_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    445          
+    446          /**
+    447            * @brief  Selects the UART2 WakeUp method.
+    448            * @param  UART2_WakeUp: specifies the UART2 wakeup method.
+    449            *         This parameter can be any of the @ref UART2_WakeUp_TypeDef values.
+    450            * @retval None
+    451            */
+
+   \                                 In section .far_func.text, align 1
+    452          void UART2_WakeUpConfig(UART2_WakeUp_TypeDef UART2_WakeUp)
+    453          {
+   \                     UART2_WakeUpConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    454            assert_param(IS_UART2_WAKEUP_OK(UART2_WakeUp));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??UART2_WakeUpConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 08        CP        A, #0x8
+   \   00000D 27 0F        JREQ      L:??UART2_WakeUpConfig_0
+   \   00000F AE 01C6      LDW       X, #0x1c6
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    455            
+    456            UART2->CR1 &= ((uint8_t)~UART2_CR1_WAKE);
+   \                     ??UART2_WakeUpConfig_0:
+   \   00001E 7217 5244    BRES      L:0x5244, #0x3
+    457            UART2->CR1 |= (uint8_t)UART2_WakeUp;
+   \   000022 C6 5244      LD        A, L:0x5244
+   \   000025 BA ..        OR        A, S:?b8
+   \   000027 C7 5244      LD        L:0x5244, A
+    458          }
+   \   00002A 32 ....      POP       S:?b8
+   \   00002D 87           RETF
+    459          
+    460          /**
+    461            * @brief  Determines if the UART2 is in mute mode or not.
+    462            * @param  NewState: new state of the UART2 mode.
+    463            *         This parameter can be ENABLE or DISABLE
+    464            * @retval None
+    465            */
+
+   \                                 In section .far_func.text, align 1
+    466          void UART2_ReceiverWakeUpCmd(FunctionalState NewState)
+    467          {
+   \                     UART2_ReceiverWakeUpCmd:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    468            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??UART2_ReceiverWakeUpCmd_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??UART2_ReceiverWakeUpCmd_0
+   \   00000F AE 01D4      LDW       X, #0x1d4
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    469            
+    470            if (NewState != DISABLE)
+   \                     ??UART2_ReceiverWakeUpCmd_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??UART2_ReceiverWakeUpCmd_1
+    471            {
+    472              /* Enable the mute mode UART2 by setting the RWU bit in the CR2 register */
+    473              UART2->CR2 |= UART2_CR2_RWU;
+   \   000022 7212 5245    BSET      L:0x5245, #0x1
+   \   000026 20 04        JRA       L:??UART2_ReceiverWakeUpCmd_2
+    474            }
+    475            else
+    476            {
+    477              /* Disable the mute mode UART2 by clearing the RWU bit in the CR1 register */
+    478              UART2->CR2 &= ((uint8_t)~UART2_CR2_RWU);
+   \                     ??UART2_ReceiverWakeUpCmd_1:
+   \   000028 7213 5245    BRES      L:0x5245, #0x1
+    479            }
+    480          }
+   \                     ??UART2_ReceiverWakeUpCmd_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    481          
+    482          /**
+    483            * @brief  Returns the most recent received data by the UART2 peripheral.
+    484            * @param  None
+    485            * @retval Received Data
+    486            */
+
+   \                                 In section .far_func.text, align 1
+    487          uint8_t UART2_ReceiveData8(void)
+    488          {
+    489            return ((uint8_t)UART2->DR);
+   \                     UART2_ReceiveData8:
+   \   000000 C6 5241      LD        A, L:0x5241
+   \   000003 87           RETF
+    490          }
+    491          
+    492          /**
+    493            * @brief  Returns the most recent received data by the UART2 peripheral.
+    494            * @param  None  
+    495            * @retval Received Data
+    496            */
+
+   \                                 In section .far_func.text, align 1
+    497          uint16_t UART2_ReceiveData9(void)
+    498          {
+    499            uint16_t temp = 0;
+   \                     UART2_ReceiveData9:
+   \   000000 3F ..        CLR       S:?b1
+   \   000002 3F ..        CLR       S:?b0
+    500            
+    501            temp = ((uint16_t)(((uint16_t)((uint16_t)UART2->CR1 & (uint16_t)UART2_CR1_R8)) << 1));
+   \   000004 C6 5244      LD        A, L:0x5244
+   \   000007 5F           CLRW      X
+   \   000008 97           LD        XL, A
+   \   000009 58           SLLW      X
+   \   00000A 02           RLWA      X, A
+   \   00000B A4 01        AND       A, #0x1
+   \   00000D 02           RLWA      X, A
+   \   00000E A4 00        AND       A, #0x0
+   \   000010 02           RLWA      X, A
+   \   000011 BF ..        LDW       S:?w0, X
+    502            
+    503            return (uint16_t)((((uint16_t)UART2->DR) | temp) & ((uint16_t)0x01FF));
+   \   000013 C6 5241      LD        A, L:0x5241
+   \   000016 5F           CLRW      X
+   \   000017 97           LD        XL, A
+   \   000018 01           RRWA      X, A
+   \   000019 BA ..        OR        A, S:?b1
+   \   00001B 01           RRWA      X, A
+   \   00001C BA ..        OR        A, S:?b0
+   \   00001E 01           RRWA      X, A
+   \   00001F 02           RLWA      X, A
+   \   000020 A4 01        AND       A, #0x1
+   \   000022 02           RLWA      X, A
+   \   000023 A4 FF        AND       A, #0xff
+   \   000025 02           RLWA      X, A
+   \   000026 87           RETF
+    504          }
+    505          
+    506          /**
+    507            * @brief  Transmits 8 bit data through the UART2 peripheral.
+    508            * @param  Data: the data to transmit.
+    509            * @retval None
+    510            */
+
+   \                                 In section .far_func.text, align 1
+    511          void UART2_SendData8(uint8_t Data)
+    512          {
+    513            /* Transmit Data */
+    514            UART2->DR = Data;
+   \                     UART2_SendData8:
+   \   000000 C7 5241      LD        L:0x5241, A
+    515          }
+   \   000003 87           RETF
+    516          
+    517          /**
+    518            * @brief  Transmits 9 bit data through the UART2 peripheral.
+    519            * @param  Data: the data to transmit.
+    520            * @retval None
+    521            */
+
+   \                                 In section .far_func.text, align 1
+    522          void UART2_SendData9(uint16_t Data)
+    523          {
+   \                     UART2_SendData9:
+   \   000000 9093         LDW       Y, X
+    524            /* Clear the transmit data bit 8 */
+    525            UART2->CR1 &= ((uint8_t)~UART2_CR1_T8);                  
+   \   000002 721D 5244    BRES      L:0x5244, #0x6
+    526            
+    527            /* Write the transmit data bit [8] */
+    528            UART2->CR1 |= (uint8_t)(((uint8_t)(Data >> 2)) & UART2_CR1_T8); 
+   \   000006 93           LDW       X, Y
+   \   000007 54           SRLW      X
+   \   000008 54           SRLW      X
+   \   000009 9F           LD        A, XL
+   \   00000A A4 40        AND       A, #0x40
+   \   00000C CA 5244      OR        A, L:0x5244
+   \   00000F C7 5244      LD        L:0x5244, A
+    529            
+    530            /* Write the transmit data bit [0:7] */
+    531            UART2->DR   = (uint8_t)(Data);                    
+   \   000012 909F         LD        A, YL
+   \   000014 C7 5241      LD        L:0x5241, A
+    532          }
+   \   000017 87           RETF
+    533          
+    534          /**
+    535            * @brief  Transmits break characters.
+    536            * @param  None
+    537            * @retval None
+    538            */
+
+   \                                 In section .far_func.text, align 1
+    539          void UART2_SendBreak(void)
+    540          {
+    541            UART2->CR2 |= UART2_CR2_SBK;
+   \                     UART2_SendBreak:
+   \   000000 7210 5245    BSET      L:0x5245, #0x0
+    542          }
+   \   000004 87           RETF
+    543          
+    544          /**
+    545            * @brief  Sets the address of the UART2 node.
+    546            * @param  UART2_Address: Indicates the address of the UART2 node.
+    547            * @retval None
+    548            */
+
+   \                                 In section .far_func.text, align 1
+    549          void UART2_SetAddress(uint8_t UART2_Address)
+    550          {
+   \                     UART2_SetAddress:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    551            /*assert_param for x UART2_Address*/
+    552            assert_param(IS_UART2_ADDRESS_OK(UART2_Address));
+   \   000005 B6 ..        LD        A, S:?b8
+   \   000007 A1 10        CP        A, #0x10
+   \   000009 25 0F        JRC       L:??UART2_SetAddress_0
+   \   00000B AE 0228      LDW       X, #0x228
+   \   00000E BF ..        LDW       S:?w1, X
+   \   000010 5F           CLRW      X
+   \   000011 BF ..        LDW       S:?w0, X
+   \   000013 AE ....      LDW       X, #?_0
+   \   000016 8D ......    CALLF     assert_failed
+    553            
+    554            /* Clear the UART2 address */
+    555            UART2->CR4 &= ((uint8_t)~UART2_CR4_ADD);
+   \                     ??UART2_SetAddress_0:
+   \   00001A C6 5247      LD        A, L:0x5247
+   \   00001D A4 F0        AND       A, #0xf0
+   \   00001F C7 5247      LD        L:0x5247, A
+    556            /* Set the UART2 address node */
+    557            UART2->CR4 |= UART2_Address;
+   \   000022 C6 5247      LD        A, L:0x5247
+   \   000025 BA ..        OR        A, S:?b8
+   \   000027 C7 5247      LD        L:0x5247, A
+    558          }
+   \   00002A 32 ....      POP       S:?b8
+   \   00002D 87           RETF
+    559          
+    560          /**
+    561            * @brief  Sets the specified UART2 guard time.
+    562            * @note   SmartCard Mode should be Enabled  
+    563            * @param  UART2_GuardTime: specifies the guard time.
+    564            * @retval None
+    565            */
+
+   \                                 In section .far_func.text, align 1
+    566          void UART2_SetGuardTime(uint8_t UART2_GuardTime)
+    567          {
+    568            /* Set the UART2 guard time */
+    569            UART2->GTR = UART2_GuardTime;
+   \                     UART2_SetGuardTime:
+   \   000000 C7 524A      LD        L:0x524a, A
+    570          }
+   \   000003 87           RETF
+    571          
+    572          /**
+    573            * @brief  Sets the system clock prescaler.
+    574            * @note   IrDA Low Power mode or smartcard mode should be enabled
+    575            * @note   This function is related to SmartCard and IrDa mode.
+    576            * @param  UART2_Prescaler: specifies the prescaler clock.
+    577            *         This parameter can be one of the following values:
+    578            *         @par IrDA Low Power Mode
+    579            *         The clock source is divided by the value given in the register (8 bits)
+    580            *         - 0000 0000 Reserved
+    581            *         - 0000 0001 divides the clock source by 1
+    582            *         - 0000 0010 divides the clock source by 2
+    583            *         - ...
+    584            *        @par Smart Card Mode
+    585            *        The clock source is divided by the value given in the register
+    586            *        (5 significant bits) multiped by 2
+    587            *         - 0 0000 Reserved
+    588            *         - 0 0001 divides the clock source by 2
+    589            *         - 0 0010 divides the clock source by 4
+    590            *         - 0 0011 divides the clock source by 6
+    591            *         - ...
+    592            * @retval None
+    593            */
+
+   \                                 In section .far_func.text, align 1
+    594          void UART2_SetPrescaler(uint8_t UART2_Prescaler)
+    595          {
+    596            /* Load the UART2 prescaler value*/
+    597            UART2->PSCR = UART2_Prescaler;
+   \                     UART2_SetPrescaler:
+   \   000000 C7 524B      LD        L:0x524b, A
+    598          }
+   \   000003 87           RETF
+    599          
+    600          /**
+    601            * @brief  Checks whether the specified UART2 flag is set or not.
+    602            * @param  UART2_FLAG specifies the flag to check.
+    603            *         This parameter can be any of the @ref UART2_Flag_TypeDef enumeration.
+    604            * @retval FlagStatus (SET or RESET)
+    605            */
+
+   \                                 In section .far_func.text, align 1
+    606          FlagStatus UART2_GetFlagStatus(UART2_Flag_TypeDef UART2_FLAG)
+    607          {
+   \                     UART2_GetFlagStatus:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 3B ....      PUSH      S:?b10
+   \   000007 BF ..        LDW       S:?w4, X
+    608            FlagStatus status = RESET;
+   \   000009 3F ..        CLR       S:?b10
+    609            
+    610            /* Check parameters */
+    611            assert_param(IS_UART2_FLAG_OK(UART2_FLAG));
+   \   00000B BE ..        LDW       X, S:?w4
+   \   00000D A3 0080      CPW       X, #0x80
+   \   000010 27 5C        JREQ      L:??UART2_GetFlagStatus_0
+   \   000012 BE ..        LDW       X, S:?w4
+   \   000014 A3 0040      CPW       X, #0x40
+   \   000017 27 55        JREQ      L:??UART2_GetFlagStatus_0
+   \   000019 BE ..        LDW       X, S:?w4
+   \   00001B A3 0020      CPW       X, #0x20
+   \   00001E 27 4E        JREQ      L:??UART2_GetFlagStatus_0
+   \   000020 BE ..        LDW       X, S:?w4
+   \   000022 A3 0010      CPW       X, #0x10
+   \   000025 27 47        JREQ      L:??UART2_GetFlagStatus_0
+   \   000027 BE ..        LDW       X, S:?w4
+   \   000029 A3 0008      CPW       X, #0x8
+   \   00002C 27 40        JREQ      L:??UART2_GetFlagStatus_0
+   \   00002E BE ..        LDW       X, S:?w4
+   \   000030 A3 0004      CPW       X, #0x4
+   \   000033 27 39        JREQ      L:??UART2_GetFlagStatus_0
+   \   000035 BE ..        LDW       X, S:?w4
+   \   000037 A3 0002      CPW       X, #0x2
+   \   00003A 27 32        JREQ      L:??UART2_GetFlagStatus_0
+   \   00003C BE ..        LDW       X, S:?w4
+   \   00003E A3 0001      CPW       X, #0x1
+   \   000041 27 2B        JREQ      L:??UART2_GetFlagStatus_0
+   \   000043 BE ..        LDW       X, S:?w4
+   \   000045 A3 0101      CPW       X, #0x101
+   \   000048 27 24        JREQ      L:??UART2_GetFlagStatus_0
+   \   00004A BE ..        LDW       X, S:?w4
+   \   00004C A3 0301      CPW       X, #0x301
+   \   00004F 27 1D        JREQ      L:??UART2_GetFlagStatus_0
+   \   000051 BE ..        LDW       X, S:?w4
+   \   000053 A3 0302      CPW       X, #0x302
+   \   000056 27 16        JREQ      L:??UART2_GetFlagStatus_0
+   \   000058 BE ..        LDW       X, S:?w4
+   \   00005A A3 0210      CPW       X, #0x210
+   \   00005D 27 0F        JREQ      L:??UART2_GetFlagStatus_0
+   \   00005F AE 0263      LDW       X, #0x263
+   \   000062 BF ..        LDW       S:?w1, X
+   \   000064 5F           CLRW      X
+   \   000065 BF ..        LDW       S:?w0, X
+   \   000067 AE ....      LDW       X, #?_0
+   \   00006A 8D ......    CALLF     assert_failed
+    612            
+    613            /* Check the status of the specified UART2 flag*/
+    614            if (UART2_FLAG == UART2_FLAG_LBDF)
+   \                     ??UART2_GetFlagStatus_0:
+   \   00006E BE ..        LDW       X, S:?w4
+   \   000070 A3 0210      CPW       X, #0x210
+   \   000073 26 13        JRNE      L:??UART2_GetFlagStatus_1
+    615            {
+    616              if ((UART2->CR4 & (uint8_t)UART2_FLAG) != (uint8_t)0x00)
+   \   000075 B6 ..        LD        A, S:?b9
+   \   000077 C4 5247      AND       A, L:0x5247
+   \   00007A A1 00        CP        A, #0x0
+   \   00007C 27 06        JREQ      L:??UART2_GetFlagStatus_2
+    617              {
+    618                /* UART2_FLAG is set*/
+    619                status = SET;
+   \   00007E A6 01        LD        A, #0x1
+   \   000080 B7 ..        LD        S:?b10, A
+   \   000082 20 50        JRA       L:??UART2_GetFlagStatus_3
+    620              }
+    621              else
+    622              {
+    623                /* UART2_FLAG is reset*/
+    624                status = RESET;
+   \                     ??UART2_GetFlagStatus_2:
+   \   000084 3F ..        CLR       S:?b10
+   \   000086 20 4C        JRA       L:??UART2_GetFlagStatus_3
+    625              }
+    626            }
+    627            else if (UART2_FLAG == UART2_FLAG_SBK)
+   \                     ??UART2_GetFlagStatus_1:
+   \   000088 BE ..        LDW       X, S:?w4
+   \   00008A A3 0101      CPW       X, #0x101
+   \   00008D 26 13        JRNE      L:??UART2_GetFlagStatus_4
+    628            {
+    629              if ((UART2->CR2 & (uint8_t)UART2_FLAG) != (uint8_t)0x00)
+   \   00008F B6 ..        LD        A, S:?b9
+   \   000091 C4 5245      AND       A, L:0x5245
+   \   000094 A1 00        CP        A, #0x0
+   \   000096 27 06        JREQ      L:??UART2_GetFlagStatus_5
+    630              {
+    631                /* UART2_FLAG is set*/
+    632                status = SET;
+   \   000098 A6 01        LD        A, #0x1
+   \   00009A B7 ..        LD        S:?b10, A
+   \   00009C 20 36        JRA       L:??UART2_GetFlagStatus_3
+    633              }
+    634              else
+    635              {
+    636                /* UART2_FLAG is reset*/
+    637                status = RESET;
+   \                     ??UART2_GetFlagStatus_5:
+   \   00009E 3F ..        CLR       S:?b10
+   \   0000A0 20 32        JRA       L:??UART2_GetFlagStatus_3
+    638              }
+    639            }
+    640            else if ((UART2_FLAG == UART2_FLAG_LHDF) || (UART2_FLAG == UART2_FLAG_LSF))
+   \                     ??UART2_GetFlagStatus_4:
+   \   0000A2 BE ..        LDW       X, S:?w4
+   \   0000A4 A3 0302      CPW       X, #0x302
+   \   0000A7 27 07        JREQ      L:??UART2_GetFlagStatus_6
+   \   0000A9 BE ..        LDW       X, S:?w4
+   \   0000AB A3 0301      CPW       X, #0x301
+   \   0000AE 26 13        JRNE      L:??UART2_GetFlagStatus_7
+    641            {
+    642              if ((UART2->CR6 & (uint8_t)UART2_FLAG) != (uint8_t)0x00)
+   \                     ??UART2_GetFlagStatus_6:
+   \   0000B0 B6 ..        LD        A, S:?b9
+   \   0000B2 C4 5249      AND       A, L:0x5249
+   \   0000B5 A1 00        CP        A, #0x0
+   \   0000B7 27 06        JREQ      L:??UART2_GetFlagStatus_8
+    643              {
+    644                /* UART2_FLAG is set*/
+    645                status = SET;
+   \   0000B9 A6 01        LD        A, #0x1
+   \   0000BB B7 ..        LD        S:?b10, A
+   \   0000BD 20 15        JRA       L:??UART2_GetFlagStatus_3
+    646              }
+    647              else
+    648              {
+    649                /* UART2_FLAG is reset*/
+    650                status = RESET;
+   \                     ??UART2_GetFlagStatus_8:
+   \   0000BF 3F ..        CLR       S:?b10
+   \   0000C1 20 11        JRA       L:??UART2_GetFlagStatus_3
+    651              }
+    652            }
+    653            else
+    654            {
+    655              if ((UART2->SR & (uint8_t)UART2_FLAG) != (uint8_t)0x00)
+   \                     ??UART2_GetFlagStatus_7:
+   \   0000C3 B6 ..        LD        A, S:?b9
+   \   0000C5 C4 5240      AND       A, L:0x5240
+   \   0000C8 A1 00        CP        A, #0x0
+   \   0000CA 27 06        JREQ      L:??UART2_GetFlagStatus_9
+    656              {
+    657                /* UART2_FLAG is set*/
+    658                status = SET;
+   \   0000CC A6 01        LD        A, #0x1
+   \   0000CE B7 ..        LD        S:?b10, A
+   \   0000D0 20 02        JRA       L:??UART2_GetFlagStatus_3
+    659              }
+    660              else
+    661              {
+    662                /* UART2_FLAG is reset*/
+    663                status = RESET;
+   \                     ??UART2_GetFlagStatus_9:
+   \   0000D2 3F ..        CLR       S:?b10
+    664              }
+    665            }
+    666            
+    667            /* Return the UART2_FLAG status*/
+    668            return  status;
+   \                     ??UART2_GetFlagStatus_3:
+   \   0000D4 B6 ..        LD        A, S:?b10
+   \   0000D6 32 ....      POP       S:?b10
+   \   0000D9 AC ......    JPF       L:?epilogue_w4
+    669          }
+    670          
+    671          /**
+    672            * @brief  Clears the UART2 flags.
+    673            * @param  UART2_FLAG specifies the flag to clear
+    674            *         This parameter can be any combination of the following values:
+    675            *         - UART2_FLAG_LBDF: LIN Break detection flag.
+    676            *         - UART2_FLAG_LHDF: LIN Header detection flag.
+    677            *         - UART2_FLAG_LSF: LIN synchrone field flag.
+    678            *         - UART2_FLAG_RXNE: Receive data register not empty flag.
+    679            * @note:
+    680            *         - PE (Parity error), FE (Framing error), NE (Noise error), 
+    681            *           OR (OverRun error) and IDLE (Idle line detected) flags are cleared
+    682            *           by software sequence: a read operation to UART2_SR register 
+    683            *           (UART2_GetFlagStatus())followed by a read operation to UART2_DR 
+    684            *           register(UART2_ReceiveData8() or UART2_ReceiveData9()).
+    685            *        
+    686            *         - RXNE flag can be also cleared by a read to the UART2_DR register
+    687            *           (UART2_ReceiveData8()or UART2_ReceiveData9()).
+    688            *
+    689            *         - TC flag can be also cleared by software sequence: a read operation
+    690            *           to UART2_SR register (UART2_GetFlagStatus()) followed by a write 
+    691            *           operation to UART2_DR register (UART2_SendData8() or UART2_SendData9()).
+    692            *             
+    693            *         - TXE flag is cleared only by a write to the UART2_DR register 
+    694            *           (UART2_SendData8() or UART2_SendData9()).
+    695            *             
+    696            *         - SBK flag is cleared during the stop bit of break.
+    697            * @retval None
+    698            */
+
+   \                                 In section .far_func.text, align 1
+    699          void UART2_ClearFlag(UART2_Flag_TypeDef UART2_FLAG)
+    700          {
+   \                     UART2_ClearFlag:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 BF ..        LDW       S:?w4, X
+    701            assert_param(IS_UART2_CLEAR_FLAG_OK(UART2_FLAG));
+   \   000006 BE ..        LDW       X, S:?w4
+   \   000008 A3 0020      CPW       X, #0x20
+   \   00000B 27 24        JREQ      L:??UART2_ClearFlag_0
+   \   00000D BE ..        LDW       X, S:?w4
+   \   00000F A3 0302      CPW       X, #0x302
+   \   000012 27 1D        JREQ      L:??UART2_ClearFlag_0
+   \   000014 BE ..        LDW       X, S:?w4
+   \   000016 A3 0301      CPW       X, #0x301
+   \   000019 27 16        JREQ      L:??UART2_ClearFlag_0
+   \   00001B BE ..        LDW       X, S:?w4
+   \   00001D A3 0210      CPW       X, #0x210
+   \   000020 27 0F        JREQ      L:??UART2_ClearFlag_0
+   \   000022 AE 02BD      LDW       X, #0x2bd
+   \   000025 BF ..        LDW       S:?w1, X
+   \   000027 5F           CLRW      X
+   \   000028 BF ..        LDW       S:?w0, X
+   \   00002A AE ....      LDW       X, #?_0
+   \   00002D 8D ......    CALLF     assert_failed
+    702            
+    703            /*  Clear the Receive Register Not Empty flag */
+    704            if (UART2_FLAG == UART2_FLAG_RXNE)
+   \                     ??UART2_ClearFlag_0:
+   \   000031 BE ..        LDW       X, S:?w4
+   \   000033 A3 0020      CPW       X, #0x20
+   \   000036 26 06        JRNE      L:??UART2_ClearFlag_1
+    705            {
+    706              UART2->SR = (uint8_t)~(UART2_SR_RXNE);
+   \   000038 35 DF 5240   MOV       L:0x5240, #0xdf
+   \   00003C 20 1E        JRA       L:??UART2_ClearFlag_2
+    707            }
+    708            /*  Clear the LIN Break Detection flag */
+    709            else if (UART2_FLAG == UART2_FLAG_LBDF)
+   \                     ??UART2_ClearFlag_1:
+   \   00003E BE ..        LDW       X, S:?w4
+   \   000040 A3 0210      CPW       X, #0x210
+   \   000043 26 06        JRNE      L:??UART2_ClearFlag_3
+    710            {
+    711              UART2->CR4 &= (uint8_t)(~UART2_CR4_LBDF);
+   \   000045 7219 5247    BRES      L:0x5247, #0x4
+   \   000049 20 11        JRA       L:??UART2_ClearFlag_2
+    712            }
+    713            /*  Clear the LIN Header Detection Flag */
+    714            else if (UART2_FLAG == UART2_FLAG_LHDF)
+   \                     ??UART2_ClearFlag_3:
+   \   00004B BE ..        LDW       X, S:?w4
+   \   00004D A3 0302      CPW       X, #0x302
+   \   000050 26 06        JRNE      L:??UART2_ClearFlag_4
+    715            {
+    716              UART2->CR6 &= (uint8_t)(~UART2_CR6_LHDF);
+   \   000052 7213 5249    BRES      L:0x5249, #0x1
+   \   000056 20 04        JRA       L:??UART2_ClearFlag_2
+    717            }
+    718            /*  Clear the LIN Synch Field flag */
+    719            else
+    720            {
+    721              UART2->CR6 &= (uint8_t)(~UART2_CR6_LSF);
+   \                     ??UART2_ClearFlag_4:
+   \   000058 7211 5249    BRES      L:0x5249, #0x0
+    722            }
+    723          }
+   \                     ??UART2_ClearFlag_2:
+   \   00005C AC ......    JPF       L:?epilogue_w4
+    724          
+    725          /**
+    726            * @brief  Checks whether the specified UART2 interrupt has occurred or not.
+    727            * @param  UART2_IT: Specifies the UART2 interrupt pending bit to check.
+    728            *         This parameter can be one of the following values:
+    729            *         - UART2_IT_LBDF:  LIN Break detection interrupt
+    730            *         - UART2_IT_TXE:  Transmit Data Register empty interrupt
+    731            *         - UART2_IT_TC:   Transmission complete interrupt
+    732            *         - UART2_IT_RXNE: Receive Data register not empty interrupt
+    733            *         - UART2_IT_IDLE: Idle line detection interrupt
+    734            *         - UART2_IT_OR:  OverRun Error interrupt
+    735            *         - UART2_IT_PE:   Parity Error interrupt
+    736            * @retval The state of UART2_IT (SET or RESET).
+    737            */
+
+   \                                 In section .far_func.text, align 1
+    738          ITStatus UART2_GetITStatus(UART2_IT_TypeDef UART2_IT)
+    739          {
+   \                     UART2_GetITStatus:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 8D ......    CALLF     L:?push_w6
+   \   000008 3B ....      PUSH      S:?b14
+   \   00000B BF ..        LDW       S:?w4, X
+    740            ITStatus pendingbitstatus = RESET;
+   \   00000D 3F ..        CLR       S:?b10
+    741            uint8_t itpos = 0;
+   \   00000F 3F ..        CLR       S:?b14
+    742            uint8_t itmask1 = 0;
+   \   000011 3F ..        CLR       S:?b12
+    743            uint8_t itmask2 = 0;
+   \   000013 3F ..        CLR       S:?b13
+    744            uint8_t enablestatus = 0;
+   \   000015 3F ..        CLR       S:?b11
+    745            
+    746            /* Check parameters */
+    747            assert_param(IS_UART2_GET_IT_OK(UART2_IT));
+   \   000017 BE ..        LDW       X, S:?w4
+   \   000019 A3 0277      CPW       X, #0x277
+   \   00001C 27 40        JREQ      L:??UART2_GetITStatus_0
+   \   00001E BE ..        LDW       X, S:?w4
+   \   000020 A3 0266      CPW       X, #0x266
+   \   000023 27 39        JREQ      L:??UART2_GetITStatus_0
+   \   000025 BE ..        LDW       X, S:?w4
+   \   000027 A3 0255      CPW       X, #0x255
+   \   00002A 27 32        JREQ      L:??UART2_GetITStatus_0
+   \   00002C BE ..        LDW       X, S:?w4
+   \   00002E A3 0244      CPW       X, #0x244
+   \   000031 27 2B        JREQ      L:??UART2_GetITStatus_0
+   \   000033 BE ..        LDW       X, S:?w4
+   \   000035 A3 0235      CPW       X, #0x235
+   \   000038 27 24        JREQ      L:??UART2_GetITStatus_0
+   \   00003A BE ..        LDW       X, S:?w4
+   \   00003C A3 0346      CPW       X, #0x346
+   \   00003F 27 1D        JREQ      L:??UART2_GetITStatus_0
+   \   000041 BE ..        LDW       X, S:?w4
+   \   000043 A3 0412      CPW       X, #0x412
+   \   000046 27 16        JREQ      L:??UART2_GetITStatus_0
+   \   000048 BE ..        LDW       X, S:?w4
+   \   00004A A3 0100      CPW       X, #0x100
+   \   00004D 27 0F        JREQ      L:??UART2_GetITStatus_0
+   \   00004F AE 02EB      LDW       X, #0x2eb
+   \   000052 BF ..        LDW       S:?w1, X
+   \   000054 5F           CLRW      X
+   \   000055 BF ..        LDW       S:?w0, X
+   \   000057 AE ....      LDW       X, #?_0
+   \   00005A 8D ......    CALLF     assert_failed
+    748            
+    749            /* Get the UART2 IT index*/
+    750            itpos = (uint8_t)((uint8_t)1 << (uint8_t)((uint8_t)UART2_IT & (uint8_t)0x0F));
+   \                     ??UART2_GetITStatus_0:
+   \   00005E B6 ..        LD        A, S:?b9
+   \   000060 A4 0F        AND       A, #0xf
+   \   000062 5F           CLRW      X
+   \   000063 5C           INCW      X
+   \   000064 8D ......    CALLF     L:?sll16_x_x_a
+   \   000068 9F           LD        A, XL
+   \   000069 B7 ..        LD        S:?b14, A
+    751            /* Get the UART2 IT index*/
+    752            itmask1 = (uint8_t)((uint8_t)UART2_IT >> (uint8_t)4);
+   \   00006B B6 ..        LD        A, S:?b9
+   \   00006D 4E           SWAP      A
+   \   00006E A4 0F        AND       A, #0xf
+   \   000070 B7 ..        LD        S:?b12, A
+    753            /* Set the IT mask*/
+    754            itmask2 = (uint8_t)((uint8_t)1 << itmask1);
+   \   000072 5F           CLRW      X
+   \   000073 5C           INCW      X
+   \   000074 B6 ..        LD        A, S:?b12
+   \   000076 8D ......    CALLF     L:?sll16_x_x_a
+   \   00007A 9F           LD        A, XL
+   \   00007B B7 ..        LD        S:?b13, A
+    755            
+    756            /* Check the status of the specified UART2 pending bit*/
+    757            if (UART2_IT == UART2_IT_PE)
+   \   00007D BE ..        LDW       X, S:?w4
+   \   00007F A3 0100      CPW       X, #0x100
+   \   000082 26 1E        JRNE      L:??UART2_GetITStatus_1
+    758            {
+    759              /* Get the UART2_ITPENDINGBIT enable bit status*/
+    760              enablestatus = (uint8_t)((uint8_t)UART2->CR1 & itmask2);
+   \   000084 C6 5244      LD        A, L:0x5244
+   \   000087 B4 ..        AND       A, S:?b13
+   \   000089 B7 ..        LD        S:?b11, A
+    761              /* Check the status of the specified UART2 interrupt*/
+    762              
+    763              if (((UART2->SR & itpos) != (uint8_t)0x00) && enablestatus)
+   \   00008B C6 5240      LD        A, L:0x5240
+   \   00008E B4 ..        AND       A, S:?b14
+   \   000090 A1 00        CP        A, #0x0
+   \   000092 27 0A        JREQ      L:??UART2_GetITStatus_2
+   \   000094 3D ..        TNZ       S:?b11
+   \   000096 27 06        JREQ      L:??UART2_GetITStatus_2
+    764              {
+    765                /* Interrupt occurred*/
+    766                pendingbitstatus = SET;
+   \   000098 A6 01        LD        A, #0x1
+   \   00009A B7 ..        LD        S:?b10, A
+   \   00009C 20 6A        JRA       L:??UART2_GetITStatus_3
+    767              }
+    768              else
+    769              {
+    770                /* Interrupt not occurred*/
+    771                pendingbitstatus = RESET;
+   \                     ??UART2_GetITStatus_2:
+   \   00009E 3F ..        CLR       S:?b10
+   \   0000A0 20 66        JRA       L:??UART2_GetITStatus_3
+    772              }
+    773            }
+    774            else if (UART2_IT == UART2_IT_LBDF)
+   \                     ??UART2_GetITStatus_1:
+   \   0000A2 BE ..        LDW       X, S:?w4
+   \   0000A4 A3 0346      CPW       X, #0x346
+   \   0000A7 26 1E        JRNE      L:??UART2_GetITStatus_4
+    775            {
+    776              /* Get the UART2_IT enable bit status*/
+    777              enablestatus = (uint8_t)((uint8_t)UART2->CR4 & itmask2);
+   \   0000A9 C6 5247      LD        A, L:0x5247
+   \   0000AC B4 ..        AND       A, S:?b13
+   \   0000AE B7 ..        LD        S:?b11, A
+    778              /* Check the status of the specified UART2 interrupt*/
+    779              if (((UART2->CR4 & itpos) != (uint8_t)0x00) && enablestatus)
+   \   0000B0 C6 5247      LD        A, L:0x5247
+   \   0000B3 B4 ..        AND       A, S:?b14
+   \   0000B5 A1 00        CP        A, #0x0
+   \   0000B7 27 0A        JREQ      L:??UART2_GetITStatus_5
+   \   0000B9 3D ..        TNZ       S:?b11
+   \   0000BB 27 06        JREQ      L:??UART2_GetITStatus_5
+    780              {
+    781                /* Interrupt occurred*/
+    782                pendingbitstatus = SET;
+   \   0000BD A6 01        LD        A, #0x1
+   \   0000BF B7 ..        LD        S:?b10, A
+   \   0000C1 20 45        JRA       L:??UART2_GetITStatus_3
+    783              }
+    784              else
+    785              {
+    786                /* Interrupt not occurred*/
+    787                pendingbitstatus = RESET;
+   \                     ??UART2_GetITStatus_5:
+   \   0000C3 3F ..        CLR       S:?b10
+   \   0000C5 20 41        JRA       L:??UART2_GetITStatus_3
+    788              }
+    789            }
+    790            else if (UART2_IT == UART2_IT_LHDF)
+   \                     ??UART2_GetITStatus_4:
+   \   0000C7 BE ..        LDW       X, S:?w4
+   \   0000C9 A3 0412      CPW       X, #0x412
+   \   0000CC 26 1E        JRNE      L:??UART2_GetITStatus_6
+    791            {
+    792              /* Get the UART2_IT enable bit status*/
+    793              enablestatus = (uint8_t)((uint8_t)UART2->CR6 & itmask2);
+   \   0000CE C6 5249      LD        A, L:0x5249
+   \   0000D1 B4 ..        AND       A, S:?b13
+   \   0000D3 B7 ..        LD        S:?b11, A
+    794              /* Check the status of the specified UART2 interrupt*/
+    795              if (((UART2->CR6 & itpos) != (uint8_t)0x00) && enablestatus)
+   \   0000D5 C6 5249      LD        A, L:0x5249
+   \   0000D8 B4 ..        AND       A, S:?b14
+   \   0000DA A1 00        CP        A, #0x0
+   \   0000DC 27 0A        JREQ      L:??UART2_GetITStatus_7
+   \   0000DE 3D ..        TNZ       S:?b11
+   \   0000E0 27 06        JREQ      L:??UART2_GetITStatus_7
+    796              {
+    797                /* Interrupt occurred*/
+    798                pendingbitstatus = SET;
+   \   0000E2 A6 01        LD        A, #0x1
+   \   0000E4 B7 ..        LD        S:?b10, A
+   \   0000E6 20 20        JRA       L:??UART2_GetITStatus_3
+    799              }
+    800              else
+    801              {
+    802                /* Interrupt not occurred*/
+    803                pendingbitstatus = RESET;
+   \                     ??UART2_GetITStatus_7:
+   \   0000E8 3F ..        CLR       S:?b10
+   \   0000EA 20 1C        JRA       L:??UART2_GetITStatus_3
+    804              }
+    805            }
+    806            else
+    807            {
+    808              /* Get the UART2_IT enable bit status*/
+    809              enablestatus = (uint8_t)((uint8_t)UART2->CR2 & itmask2);
+   \                     ??UART2_GetITStatus_6:
+   \   0000EC C6 5245      LD        A, L:0x5245
+   \   0000EF B4 ..        AND       A, S:?b13
+   \   0000F1 B7 ..        LD        S:?b11, A
+    810              /* Check the status of the specified UART2 interrupt*/
+    811              if (((UART2->SR & itpos) != (uint8_t)0x00) && enablestatus)
+   \   0000F3 C6 5240      LD        A, L:0x5240
+   \   0000F6 B4 ..        AND       A, S:?b14
+   \   0000F8 A1 00        CP        A, #0x0
+   \   0000FA 27 0A        JREQ      L:??UART2_GetITStatus_8
+   \   0000FC 3D ..        TNZ       S:?b11
+   \   0000FE 27 06        JREQ      L:??UART2_GetITStatus_8
+    812              {
+    813                /* Interrupt occurred*/
+    814                pendingbitstatus = SET;
+   \   000100 A6 01        LD        A, #0x1
+   \   000102 B7 ..        LD        S:?b10, A
+   \   000104 20 02        JRA       L:??UART2_GetITStatus_3
+    815              }
+    816              else
+    817              {
+    818                /* Interrupt not occurred*/
+    819                pendingbitstatus = RESET;
+   \                     ??UART2_GetITStatus_8:
+   \   000106 3F ..        CLR       S:?b10
+    820              }
+    821            }
+    822            /* Return the UART2_IT status*/
+    823            return  pendingbitstatus;
+   \                     ??UART2_GetITStatus_3:
+   \   000108 B6 ..        LD        A, S:?b10
+   \   00010A 32 ....      POP       S:?b14
+   \   00010D AC ......    JPF       L:?epilogue_l2_w6
+    824          }
+    825          
+    826          /**
+    827            * @brief  Clears the UART2 pending flags.
+    828            * @param  UART2_IT specifies the pending bit to clear
+    829            *         This parameter can be one of the following values:
+    830            *         - UART2_IT_LBDF:  LIN Break detection interrupt
+    831            *         - UART2_IT_LHDF:  LIN Header detection interrupt
+    832            *         - UART2_IT_RXNE: Receive Data register not empty interrupt.
+    833            * @note
+    834            *         - PE (Parity error), FE (Framing error), NE (Noise error), 
+    835            *           OR (OverRun error) and IDLE (Idle line detected) pending bits are 
+    836            *           cleared by software sequence: a read operation to UART2_SR register
+    837            *           (UART2_GetITStatus()) followed by a read operation to UART2_DR register
+    838            *           (UART2_ReceiveData8() or UART2_ReceiveData9()).
+    839            *             
+    840            *         - RXNE pending bit can be also cleared by a read to the UART2_DR 
+    841            *           register (UART2_ReceiveData8() or UART2_ReceiveData9()).
+    842            *              
+    843            *         - TC (Transmit complete) pending bit can be cleared by software 
+    844            *           sequence: a read operation to UART2_SR register 
+    845            *           (UART2_GetITStatus()) followed by a write operation to UART2_DR 
+    846            *           register (UART2_SendData8()or UART2_SendData9()).
+    847            *               
+    848            *         - TXE pending bit is cleared only by a write to the UART2_DR register
+    849            *           (UART2_SendData8() or UART2_SendData9()).
+    850            * @retval None
+    851            */
+
+   \                                 In section .far_func.text, align 1
+    852          void UART2_ClearITPendingBit(UART2_IT_TypeDef UART2_IT)
+    853          {
+   \                     UART2_ClearITPendingBit:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 BF ..        LDW       S:?w4, X
+    854            assert_param(IS_UART2_CLEAR_IT_OK(UART2_IT));
+   \   000006 BE ..        LDW       X, S:?w4
+   \   000008 A3 0255      CPW       X, #0x255
+   \   00000B 27 1D        JREQ      L:??UART2_ClearITPendingBit_0
+   \   00000D BE ..        LDW       X, S:?w4
+   \   00000F A3 0412      CPW       X, #0x412
+   \   000012 27 16        JREQ      L:??UART2_ClearITPendingBit_0
+   \   000014 BE ..        LDW       X, S:?w4
+   \   000016 A3 0346      CPW       X, #0x346
+   \   000019 27 0F        JREQ      L:??UART2_ClearITPendingBit_0
+   \   00001B AE 0356      LDW       X, #0x356
+   \   00001E BF ..        LDW       S:?w1, X
+   \   000020 5F           CLRW      X
+   \   000021 BF ..        LDW       S:?w0, X
+   \   000023 AE ....      LDW       X, #?_0
+   \   000026 8D ......    CALLF     assert_failed
+    855            
+    856            /*  Clear the Receive Register Not Empty pending bit */
+    857            if (UART2_IT == UART2_IT_RXNE)
+   \                     ??UART2_ClearITPendingBit_0:
+   \   00002A BE ..        LDW       X, S:?w4
+   \   00002C A3 0255      CPW       X, #0x255
+   \   00002F 26 06        JRNE      L:??UART2_ClearITPendingBit_1
+    858            {
+    859              UART2->SR = (uint8_t)~(UART2_SR_RXNE);
+   \   000031 35 DF 5240   MOV       L:0x5240, #0xdf
+   \   000035 20 11        JRA       L:??UART2_ClearITPendingBit_2
+    860            }
+    861            /*  Clear the LIN Break Detection pending bit */
+    862            else if (UART2_IT == UART2_IT_LBDF)
+   \                     ??UART2_ClearITPendingBit_1:
+   \   000037 BE ..        LDW       X, S:?w4
+   \   000039 A3 0346      CPW       X, #0x346
+   \   00003C 26 06        JRNE      L:??UART2_ClearITPendingBit_3
+    863            {
+    864              UART2->CR4 &= (uint8_t)~(UART2_CR4_LBDF);
+   \   00003E 7219 5247    BRES      L:0x5247, #0x4
+   \   000042 20 04        JRA       L:??UART2_ClearITPendingBit_2
+    865            }
+    866            /*  Clear the LIN Header Detection pending bit */
+    867            else
+    868            {
+    869              UART2->CR6 &= (uint8_t)(~UART2_CR6_LHDF);
+   \                     ??UART2_ClearITPendingBit_3:
+   \   000044 7213 5249    BRES      L:0x5249, #0x1
+    870            }
+    871          }
+   \                     ??UART2_ClearITPendingBit_2:
+   \   000048 AC ......    JPF       L:?epilogue_w4
+
+   \                                 In section .near.rodata, align 1
+   \                     ?_0:
+   \   000000 2E 5C 4C 69  DC8 ".\\Lib\\C\\stm8s_uart2.c"
+   \          62 5C 43 5C 
+    872          
+    873          /**
+    874            * @}
+    875            */
+    876          
+    877          /**
+    878            * @}
+    879            */
+    880          
+    881          
+    882          /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      22  ?_0
+      96  UART2_ClearFlag
+      76  UART2_ClearITPendingBit
+      14  UART2_Cmd
+      41  UART2_DeInit
+     221  UART2_GetFlagStatus
+     273  UART2_GetITStatus
+     249  UART2_ITConfig
+     595  UART2_Init
+      48  UART2_IrDACmd
+      48  UART2_IrDAConfig
+      48  UART2_LINBreakDetectionConfig
+      48  UART2_LINCmd
+     139  UART2_LINConfig
+       4  UART2_ReceiveData8
+      39  UART2_ReceiveData9
+      48  UART2_ReceiverWakeUpCmd
+       5  UART2_SendBreak
+       4  UART2_SendData8
+      24  UART2_SendData9
+      46  UART2_SetAddress
+       4  UART2_SetGuardTime
+       4  UART2_SetPrescaler
+      48  UART2_SmartCardCmd
+      48  UART2_SmartCardNACKCmd
+      46  UART2_WakeUpConfig
+
+ 
+ 2 216 bytes in section .far_func.text
+    22 bytes in section .near.rodata
+ 
+ 2 216 bytes of CODE  memory
+    22 bytes of CONST memory
+
+Errors: none
+Warnings: none
