@@ -4,7 +4,7 @@
     "afterBuildTasks": [],
     "global": {
         "data-mode": "medium",
-        "code-mode": "small",
+        "code-mode": "medium",
         "printf-formatter": "tiny",
         "scanf-formatter": "small",
         "math-functions": "default",
@@ -13,14 +13,18 @@
     "c/cpp-compiler": {
         "optimization": "no",
         "runtime-lib": "normal",
-        "destroy-cpp-static-object": true
+        "destroy-cpp-static-object": true,
+        "language-c": "c99",
+        "language-cpp": "Extended-EC++",
+        "language-conformance": "IAR-extensions",
+        "virtual-bytes": "16"
     },
     "asm-compiler": {
         "case-sensitive-user-symbols": true
     },
     "linker": {
         "output-format": "elf",
-        "linker-config": "lnkstm8s103f3.icf",
+        "linker-config": "lnkstm8s003f3.icf",
         "auto-search-runtime-lib": true,
         "use-C_SPY-debug-lib": true,
         "config-defines": [

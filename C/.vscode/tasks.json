@@ -6,7 +6,7 @@
             "type": "shell",
             "command": "${command:eide.project.build}",
             "group": "build",
-            "problemMatcher": []
+            "problemMatcher": "$gcc"
         },
         {
             "label": "flash",
@@ -19,15 +19,14 @@
             "label": "build and flash",
             "type": "shell",
             "command": "${command:eide.project.buildAndFlash}",
-            "group": "build",
-            "problemMatcher": []
+            "group": "build"
         },
         {
             "label": "rebuild",
             "type": "shell",
             "command": "${command:eide.project.rebuild}",
             "group": "build",
-            "problemMatcher": []
+            "problemMatcher": "$gcc"
         },
         {
             "label": "clean",

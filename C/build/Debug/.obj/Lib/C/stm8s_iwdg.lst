@@ -1,0 +1,229 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 24/Jan/2024  16:39:11
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\Lib\C\stm8s_iwdg.c
+#    Command line =  
+#        -f "e:\Nas\电路\保温箱\YZW-S803-EE22-
+#        KF7620-分体\C\build\Debug\.obj\Lib\C\stm8s_iwdg.args.txt" (--silent
+#        -lCN .\build\Debug\.obj\Lib\C\stm8s_iwdg.lst -I "d:/Program Files
+#        (x86)/IAR Systems/STM8/stm8/lib" -I Lib/H -I Lib/C -I User -D STM8S003
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\.obj\Lib\C\stm8s_iwdg.o .\Lib\C\stm8s_iwdg.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\.obj\Lib\C\stm8s_iwdg.lst
+#    Object file  =  .\build\Debug\.obj\Lib\C\stm8s_iwdg.o
+#
+###############################################################################
+
+e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_iwdg.c
+      1          /**
+      2            ********************************************************************************
+      3            * @file    stm8s_iwdg.c
+      4            * @author  MCD Application Team
+      5            * @version V2.3.0
+      6            * @date    16-June-2017
+      7            * @brief   This file contains all the functions for the IWDG peripheral.
+      8             ******************************************************************************
+      9            * @attention
+     10            *
+     11            * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
+     12            *
+     13            * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+     14            * You may not use this file except in compliance with the License.
+     15            * You may obtain a copy of the License at:
+     16            *
+     17            *        http://www.st.com/software_license_agreement_liberty_v2
+     18            *
+     19            * Unless required by applicable law or agreed to in writing, software 
+     20            * distributed under the License is distributed on an "AS IS" BASIS, 
+     21            * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     22            * See the License for the specific language governing permissions and
+     23            * limitations under the License.
+     24            *
+     25            ******************************************************************************
+     26            */
+     27          
+     28          /* Includes ------------------------------------------------------------------*/
+     29          #include "stm8s_iwdg.h"
+     30          
+     31          /* Private define ------------------------------------------------------------*/
+     32          /* Private macro -------------------------------------------------------------*/
+     33          /* Private variables ---------------------------------------------------------*/
+     34          /* Private function prototypes -----------------------------------------------*/
+     35          /* Private functions ---------------------------------------------------------*/
+     36          /* Public functions ----------------------------------------------------------*/
+     37          
+     38          /** @addtogroup IWDG_Public_Functions
+     39            * @{
+     40            */
+     41          
+     42          /**
+     43            * @brief  Enables or disables write access to Prescaler and Reload registers.
+     44            * @param  IWDG_WriteAccess : New state of write access to Prescaler and Reload
+     45            *         registers.  This parameter can be a value of @ref IWDG_WriteAccess_TypeDef.
+     46            * @retval None
+     47            */
+
+   \                                 In section .far_func.text, align 1
+     48          void IWDG_WriteAccessCmd(IWDG_WriteAccess_TypeDef IWDG_WriteAccess)
+     49          {
+   \                     IWDG_WriteAccessCmd:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+     50            /* Check the parameters */
+     51            assert_param(IS_IWDG_WRITEACCESS_MODE_OK(IWDG_WriteAccess));
+   \   000005 B6 ..        LD        A, S:?b8
+   \   000007 A1 55        CP        A, #0x55
+   \   000009 27 13        JREQ      L:??IWDG_WriteAccessCmd_0
+   \   00000B 3D ..        TNZ       S:?b8
+   \   00000D 27 0F        JREQ      L:??IWDG_WriteAccessCmd_0
+   \   00000F AE 0033      LDW       X, #0x33
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+     52            
+     53            IWDG->KR = (uint8_t)IWDG_WriteAccess; /* Write Access */
+   \                     ??IWDG_WriteAccessCmd_0:
+   \   00001E B6 ..        LD        A, S:?b8
+   \   000020 C7 50E0      LD        L:0x50e0, A
+     54          }
+   \   000023 32 ....      POP       S:?b8
+   \   000026 87           RETF
+     55          
+     56          /**
+     57            * @brief  Sets IWDG Prescaler value.
+     58            * @note   Write access should be enabled
+     59            * @param  IWDG_Prescaler : Specifies the IWDG Prescaler value.
+     60            *         This parameter can be a value of @ref IWDG_Prescaler_TypeDef.
+     61            * @retval None
+     62            */
+
+   \                                 In section .far_func.text, align 1
+     63          void IWDG_SetPrescaler(IWDG_Prescaler_TypeDef IWDG_Prescaler)
+     64          {
+   \                     IWDG_SetPrescaler:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+     65            /* Check the parameters */
+     66            assert_param(IS_IWDG_PRESCALER_OK(IWDG_Prescaler));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 33        JREQ      L:??IWDG_SetPrescaler_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 2D        JREQ      L:??IWDG_SetPrescaler_0
+   \   00000F B6 ..        LD        A, S:?b8
+   \   000011 A1 02        CP        A, #0x2
+   \   000013 27 27        JREQ      L:??IWDG_SetPrescaler_0
+   \   000015 B6 ..        LD        A, S:?b8
+   \   000017 A1 03        CP        A, #0x3
+   \   000019 27 21        JREQ      L:??IWDG_SetPrescaler_0
+   \   00001B B6 ..        LD        A, S:?b8
+   \   00001D A1 04        CP        A, #0x4
+   \   00001F 27 1B        JREQ      L:??IWDG_SetPrescaler_0
+   \   000021 B6 ..        LD        A, S:?b8
+   \   000023 A1 05        CP        A, #0x5
+   \   000025 27 15        JREQ      L:??IWDG_SetPrescaler_0
+   \   000027 B6 ..        LD        A, S:?b8
+   \   000029 A1 06        CP        A, #0x6
+   \   00002B 27 0F        JREQ      L:??IWDG_SetPrescaler_0
+   \   00002D AE 0042      LDW       X, #0x42
+   \   000030 BF ..        LDW       S:?w1, X
+   \   000032 5F           CLRW      X
+   \   000033 BF ..        LDW       S:?w0, X
+   \   000035 AE ....      LDW       X, #?_0
+   \   000038 8D ......    CALLF     assert_failed
+     67            
+     68            IWDG->PR = (uint8_t)IWDG_Prescaler;
+   \                     ??IWDG_SetPrescaler_0:
+   \   00003C B6 ..        LD        A, S:?b8
+   \   00003E C7 50E1      LD        L:0x50e1, A
+     69          }
+   \   000041 32 ....      POP       S:?b8
+   \   000044 87           RETF
+     70          
+     71          /**
+     72            * @brief  Sets IWDG Reload value.
+     73            * @note   Write access should be enabled
+     74            * @param  IWDG_Reload : Reload register value.
+     75            *         This parameter must be a number between 0 and 0xFF.
+     76            * @retval None
+     77            */
+
+   \                                 In section .far_func.text, align 1
+     78          void IWDG_SetReload(uint8_t IWDG_Reload)
+     79          {
+     80            IWDG->RLR = IWDG_Reload;
+   \                     IWDG_SetReload:
+   \   000000 C7 50E2      LD        L:0x50e2, A
+     81          }
+   \   000003 87           RETF
+     82          
+     83          /**
+     84            * @brief  Reloads IWDG counter
+     85            * @note   Write access should be enabled
+     86            * @param  None
+     87            * @retval None
+     88            */
+
+   \                                 In section .far_func.text, align 1
+     89          void IWDG_ReloadCounter(void)
+     90          {
+     91            IWDG->KR = IWDG_KEY_REFRESH;
+   \                     IWDG_ReloadCounter:
+   \   000000 35 AA 50E0   MOV       L:0x50e0, #0xaa
+     92          }
+   \   000004 87           RETF
+     93          
+     94          /**
+     95            * @brief  Enables IWDG.
+     96            * @param  None
+     97            * @retval None
+     98            */
+
+   \                                 In section .far_func.text, align 1
+     99          void IWDG_Enable(void)
+    100          {
+    101            IWDG->KR = IWDG_KEY_ENABLE;
+   \                     IWDG_Enable:
+   \   000000 35 CC 50E0   MOV       L:0x50e0, #0xcc
+    102          }
+   \   000004 87           RETF
+
+   \                                 In section .near.rodata, align 1
+   \                     ?_0:
+   \   000000 2E 5C 4C 69  DC8 ".\\Lib\\C\\stm8s_iwdg.c"
+   \          62 5C 43 5C 
+    103          
+    104          /**
+    105            * @}
+    106            */
+    107          
+    108          /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      21  ?_0
+       5  IWDG_Enable
+       5  IWDG_ReloadCounter
+      69  IWDG_SetPrescaler
+       4  IWDG_SetReload
+      39  IWDG_WriteAccessCmd
+
+ 
+ 122 bytes in section .far_func.text
+  21 bytes in section .near.rodata
+ 
+ 122 bytes of CODE  memory
+  21 bytes of CONST memory
+
+Errors: none
+Warnings: none

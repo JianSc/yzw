@@ -1,0 +1,185 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 24/Jan/2024  16:39:12
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\User\init.c
+#    Command line =  
+#        -f "e:\Nas\µÁ¬∑\±£Œ¬œ‰\YZW-S803-EE22-
+#        KF7620-∑÷ÃÂ\C\build\Debug\.obj\User\init.args.txt" (--silent -lCN
+#        .\build\Debug\.obj\User\init.lst -I "d:/Program Files (x86)/IAR
+#        Systems/STM8/stm8/lib" -I Lib/H -I Lib/C -I User -D STM8S003
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\.obj\User\init.o .\User\init.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\.obj\User\init.lst
+#    Object file  =  .\build\Debug\.obj\User\init.o
+#
+###############################################################################
+
+e:\Nas\µÁ¬∑\±£Œ¬œ‰\YZW-S803-EE22- KF7620-∑÷ÃÂ\C\User\init.c
+      1          #include "init.h"
+      2          
+
+   \                                 In section .far_func.text, align 1
+      3          void init()
+      4          {
+      5            // Êó∂ÈíèÂàùÂßãÂåñ
+      6            CLK_DeInit();
+   \                     init:
+   \   000000 8D ......    CALLF     CLK_DeInit
+      7            CLK_HSECmd(DISABLE);
+   \   000004 4F           CLR       A
+   \   000005 8D ......    CALLF     CLK_HSECmd
+      8            CLK_HSICmd(ENABLE);
+   \   000009 A6 01        LD        A, #0x1
+   \   00000B 8D ......    CALLF     CLK_HSICmd
+      9            CLK_LSICmd(ENABLE);
+   \   00000F A6 01        LD        A, #0x1
+   \   000011 8D ......    CALLF     CLK_LSICmd
+     10            CLK_CCOCmd(DISABLE);
+   \   000015 4F           CLR       A
+   \   000016 8D ......    CALLF     CLK_CCOCmd
+     11            CLK_HSIPrescalerConfig(CLK_PRESCALER_HSIDIV1);
+   \   00001A 4F           CLR       A
+   \   00001B 8D ......    CALLF     CLK_HSIPrescalerConfig
+     12          
+     13            // GPIOÂàùÂßãÂåñ
+     14            GPIO_DeInit(GPIOA);
+   \   00001F AE 5000      LDW       X, #0x5000
+   \   000022 8D ......    CALLF     GPIO_DeInit
+     15            GPIO_DeInit(GPIOB);
+   \   000026 AE 5005      LDW       X, #0x5005
+   \   000029 8D ......    CALLF     GPIO_DeInit
+     16            GPIO_DeInit(GPIOC);
+   \   00002D AE 500A      LDW       X, #0x500a
+   \   000030 8D ......    CALLF     GPIO_DeInit
+     17            GPIO_DeInit(GPIOD);
+   \   000034 AE 500F      LDW       X, #0x500f
+   \   000037 8D ......    CALLF     GPIO_DeInit
+     18          
+     19            GPIO_Init(LED_LED_PORT, LED_LED_PIN, GPIO_MODE_OUT_OD_HIZ_SLOW);             // LED_D
+   \   00003B 35 90 ....   MOV       S:?b0, #0x90
+   \   00003F A6 02        LD        A, #0x2
+   \   000041 AE 5000      LDW       X, #0x5000
+   \   000044 8D ......    CALLF     GPIO_Init
+     20            GPIO_Init(TM1650_SCL_PORT, TM1650_SCL_PIN, GPIO_MODE_OUT_OD_HIZ_FAST);       // TM1650_SCL
+   \   000048 35 B0 ....   MOV       S:?b0, #0xb0
+   \   00004C A6 10        LD        A, #0x10
+   \   00004E AE 5005      LDW       X, #0x5005
+   \   000051 8D ......    CALLF     GPIO_Init
+     21            GPIO_Init(TM1650_SDA_PORT, TM1650_SDA_PIN, GPIO_MODE_OUT_OD_HIZ_FAST);       // TM1650_SDA
+   \   000055 35 B0 ....   MOV       S:?b0, #0xb0
+   \   000059 A6 20        LD        A, #0x20
+   \   00005B AE 5005      LDW       X, #0x5005
+   \   00005E 8D ......    CALLF     GPIO_Init
+     22            GPIO_Init(SW_PORT, SW_PIN, GPIO_MODE_OUT_OD_LOW_SLOW);                       // SW
+   \   000062 35 80 ....   MOV       S:?b0, #0x80
+   \   000066 A6 08        LD        A, #0x8
+   \   000068 AE 500A      LDW       X, #0x500a
+   \   00006B 8D ......    CALLF     GPIO_Init
+     23            GPIO_Init(FAN_PORT, FAN_PIN, GPIO_MODE_OUT_OD_LOW_SLOW);                     // FAN
+   \   00006F 35 80 ....   MOV       S:?b0, #0x80
+   \   000073 A6 10        LD        A, #0x10
+   \   000075 AE 500A      LDW       X, #0x500a
+   \   000078 8D ......    CALLF     GPIO_Init
+     24            GPIO_Init(TEMP_PLAY_LED_PORT, TEMP_PLAY_LED_PIN, GPIO_MODE_OUT_OD_HIZ_SLOW); // TEMP_PLAY_D
+   \   00007C 35 90 ....   MOV       S:?b0, #0x90
+   \   000080 A6 20        LD        A, #0x20
+   \   000082 AE 500A      LDW       X, #0x500a
+   \   000085 8D ......    CALLF     GPIO_Init
+     25            GPIO_Init(TEMP_STOP_LED_PORT, TEMP_STOP_LED_PIN, GPIO_MODE_OUT_OD_HIZ_SLOW); // TEMP_STOP_D
+   \   000089 35 90 ....   MOV       S:?b0, #0x90
+   \   00008D A6 40        LD        A, #0x40
+   \   00008F AE 500A      LDW       X, #0x500a
+   \   000092 8D ......    CALLF     GPIO_Init
+     26            // GPIO_Init(DS18B20_SDA_PORT, DS18B20_SDA_PIN, GPIO_MODE_OUT_OD_HIZ_FAST);     // DS18B20_DATA
+     27            // GPIO_Init(LED_PORT, LED_PIN, GPIO_MODE_OUT_OD_LOW_FAST);                     // LED
+     28            GPIO_Init(FAN_LED_PORT, FAN_LED_PIN, GPIO_MODE_OUT_OD_HIZ_SLOW); // FAN_D
+   \   000096 35 90 ....   MOV       S:?b0, #0x90
+   \   00009A A6 40        LD        A, #0x40
+   \   00009C AE 500F      LDW       X, #0x500f
+   \   00009F 8D ......    CALLF     GPIO_Init
+     29            GPIO_Init(HF_PORT,HF_PIN,GPIO_MODE_OUT_OD_LOW_SLOW);             //HF_FAN
+   \   0000A3 35 80 ....   MOV       S:?b0, #0x80
+   \   0000A7 A6 04        LD        A, #0x4
+   \   0000A9 AE 5000      LDW       X, #0x5000
+   \   0000AC 8D ......    CALLF     GPIO_Init
+     30            GPIO_Init(MSD_PORT,MSD_PIN,GPIO_MODE_OUT_OD_HIZ_SLOW);          //MSD
+   \   0000B0 35 90 ....   MOV       S:?b0, #0x90
+   \   0000B4 A6 10        LD        A, #0x10
+   \   0000B6 AE 500A      LDW       X, #0x500a
+   \   0000B9 8D ......    CALLF     GPIO_Init
+     31          
+     32          
+     33            // TIM2 ÂàùÂßãÂåñ
+     34            TIM2_DeInit();
+   \   0000BD 8D ......    CALLF     TIM2_DeInit
+     35            TIM2_TimeBaseInit(TIM2_PRESCALER_128, 99);
+   \   0000C1 AE 0063      LDW       X, #0x63
+   \   0000C4 A6 07        LD        A, #0x7
+   \   0000C6 8D ......    CALLF     TIM2_TimeBaseInit
+     36            // PWM, ÁôæÂàÜÊØî‰∏éÂêéÈù¢Ë£ÖËΩΩÁöÑÂÄºÊúâÂÖ≥Ôºå ‰æãÔºö 1000Ôºå 50%ÁöÑPWM Â∞±ÊòØ TIM2_SetCompare3(500)
+     37            TIM2_OC1Init(TIM2_OCMODE_PWM2,
+     38                         TIM1_OUTPUTSTATE_ENABLE,
+     39                         0,
+     40                         TIM2_OCPOLARITY_LOW);
+   \   0000CA 35 22 ....   MOV       S:?b1, #0x22
+   \   0000CE 5F           CLRW      X
+   \   0000CF 35 11 ....   MOV       S:?b0, #0x11
+   \   0000D3 A6 70        LD        A, #0x70
+   \   0000D5 8D ......    CALLF     TIM2_OC1Init
+     41            TIM2_OC3Init(TIM2_OCMODE_PWM2,
+     42                         TIM2_OUTPUTSTATE_ENABLE,
+     43                         0,
+     44                         TIM2_OCPOLARITY_LOW);
+   \   0000D9 35 22 ....   MOV       S:?b1, #0x22
+   \   0000DD 5F           CLRW      X
+   \   0000DE 35 11 ....   MOV       S:?b0, #0x11
+   \   0000E2 A6 70        LD        A, #0x70
+   \   0000E4 8D ......    CALLF     TIM2_OC3Init
+     45            TIM2_Cmd(DISABLE);
+   \   0000E8 4F           CLR       A
+   \   0000E9 8D ......    CALLF     TIM2_Cmd
+     46          
+     47            // TIM1 ÂàùÂßãÂåñ
+     48            TIM1_DeInit();
+   \   0000ED 8D ......    CALLF     TIM1_DeInit
+     49            TIM1_TimeBaseInit(16, TIM1_COUNTERMODE_UP, 999, 0);
+   \   0000F1 3F ..        CLR       S:?b0
+   \   0000F3 90AE 03E7    LDW       Y, #0x3e7
+   \   0000F7 4F           CLR       A
+   \   0000F8 AE 0010      LDW       X, #0x10
+   \   0000FB 8D ......    CALLF     TIM1_TimeBaseInit
+     50            TIM1_ARRPreloadConfig(ENABLE);
+   \   0000FF A6 01        LD        A, #0x1
+   \   000101 8D ......    CALLF     TIM1_ARRPreloadConfig
+     51            TIM1_ITConfig(TIM1_IT_UPDATE, ENABLE);
+   \   000105 35 01 ....   MOV       S:?b0, #0x1
+   \   000109 A6 01        LD        A, #0x1
+   \   00010B 8D ......    CALLF     TIM1_ITConfig
+     52            TIM1_Cmd(DISABLE);
+   \   00010F 4F           CLR       A
+   \   000110 8D ......    CALLF     TIM1_Cmd
+     53          
+     54            FLASH_DeInit();
+   \   000114 8D ......    CALLF     FLASH_DeInit
+     55          }
+   \   000118 87           RETF
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+     281  init
+
+ 
+ 281 bytes in section .far_func.text
+ 
+ 281 bytes of CODE memory
+
+Errors: none
+Warnings: 259

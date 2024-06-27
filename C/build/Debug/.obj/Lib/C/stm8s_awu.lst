@@ -1,0 +1,450 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 24/Jan/2024  16:39:10
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\Lib\C\stm8s_awu.c
+#    Command line =  
+#        -f "e:\Nas\电路\保温箱\YZW-S803-EE22-
+#        KF7620-分体\C\build\Debug\.obj\Lib\C\stm8s_awu.args.txt" (--silent
+#        -lCN .\build\Debug\.obj\Lib\C\stm8s_awu.lst -I "d:/Program Files
+#        (x86)/IAR Systems/STM8/stm8/lib" -I Lib/H -I Lib/C -I User -D STM8S003
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\.obj\Lib\C\stm8s_awu.o .\Lib\C\stm8s_awu.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\.obj\Lib\C\stm8s_awu.lst
+#    Object file  =  .\build\Debug\.obj\Lib\C\stm8s_awu.o
+#
+###############################################################################
+
+e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\Lib\C\stm8s_awu.c
+      1          /**
+      2            ******************************************************************************
+      3            * @file    stm8s_awu.c
+      4            * @author  MCD Application Team
+      5            * @version V2.3.0
+      6            * @date    16-June-2017
+      7            * @brief   This file contains all the functions for the AWU peripheral.  
+      8             ******************************************************************************
+      9            * @attention
+     10            *
+     11            * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
+     12            *
+     13            * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+     14            * You may not use this file except in compliance with the License.
+     15            * You may obtain a copy of the License at:
+     16            *
+     17            *        http://www.st.com/software_license_agreement_liberty_v2
+     18            *
+     19            * Unless required by applicable law or agreed to in writing, software 
+     20            * distributed under the License is distributed on an "AS IS" BASIS, 
+     21            * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     22            * See the License for the specific language governing permissions and
+     23            * limitations under the License.
+     24            *
+     25            ******************************************************************************
+     26            */
+     27          
+     28          /* Includes ------------------------------------------------------------------*/
+     29          #include "stm8s_awu.h"
+     30          
+     31          /** @addtogroup STM8S_StdPeriph_Driver
+     32            * @{
+     33            */
+     34          /* Private typedef -----------------------------------------------------------*/
+     35          /* Private define ------------------------------------------------------------*/
+     36          /* Private macro -------------------------------------------------------------*/
+     37          /* Private variables ---------------------------------------------------------*/
+     38          /* Private function prototypes -----------------------------------------------*/
+     39          /* Private functions ---------------------------------------------------------*/
+     40          
+     41          /* See also AWU_Timebase_TypeDef structure in stm8s_awu.h file :
+     42                                    N   2   5   1   2   4   8   1   3   6   1   2   5   1   2   1   3
+     43                                    O   5   0   m   m   m   m   6   2   4   2   5   1   s   s   2   0
+     44                                    I   0   0   s   s   s   s   m   m   m   8   6   2           s   s
+     45                                    T   u   u                   s   s   s   m   m   m
+     46                                        s   s                               s   s   s
+     47          */
+     48          /** Contains the different values to write in the APR register (used by AWU_Init function) */
+
+   \                                 In section .near.rodata, align 1
+     49          CONST uint8_t APR_Array[17] =
+   \                     APR_Array:
+   \   000000 00 1E 1E 1E  DC8 0, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 61, 23, 23, 62
+   \          1E 1E 1E 1E 
+     50              {
+     51                  0, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 61, 23, 23, 62
+     52              };
+     53          
+     54          /** Contains the different values to write in the TBR register (used by AWU_Init function) */
+
+   \                                 In section .near.rodata, align 1
+     55          CONST uint8_t TBR_Array[17] =
+   \                     TBR_Array:
+   \   000000 00 01 02 03  DC8 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12, 14, 15, 15
+   \          04 05 06 07 
+     56              {
+     57                  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 12, 14, 15, 15
+     58              };
+     59          
+     60          /* Public functions ----------------------------------------------------------*/
+     61          
+     62          /**
+     63            * @addtogroup AWU_Public_Functions
+     64            * @{
+     65            */
+     66          
+     67          /**
+     68            * @brief  Deinitializes the AWU peripheral registers to their default reset
+     69            * values.
+     70            * @param  None
+     71            * @retval None
+     72            */
+
+   \                                 In section .far_func.text, align 1
+     73          void AWU_DeInit(void)
+     74          {
+     75            AWU->CSR = AWU_CSR_RESET_VALUE;
+   \                     AWU_DeInit:
+   \   000000 725F 50F0    CLR       L:0x50f0
+     76            AWU->APR = AWU_APR_RESET_VALUE;
+   \   000004 35 3F 50F1   MOV       L:0x50f1, #0x3f
+     77            AWU->TBR = AWU_TBR_RESET_VALUE;
+   \   000008 725F 50F2    CLR       L:0x50f2
+     78          }
+   \   00000C 87           RETF
+     79          
+     80          /**
+     81            * @brief  Initializes the AWU peripheral according to the specified parameters.
+     82            * @param   AWU_TimeBase : Time base selection (interval between AWU interrupts).
+     83            * can be one of the values of @ref AWU_Timebase_TypeDef.
+     84            * @retval None
+     85            * @par Required preconditions:
+     86            * The LS RC calibration must be performed before calling this function.
+     87            */
+
+   \                                 In section .far_func.text, align 1
+     88          void AWU_Init(AWU_Timebase_TypeDef AWU_TimeBase)
+     89          {
+   \                     AWU_Init:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+     90            /* Check parameter */
+     91            assert_param(IS_AWU_TIMEBASE_OK(AWU_TimeBase));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 6F        JREQ      L:??AWU_Init_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 69        JREQ      L:??AWU_Init_0
+   \   00000F B6 ..        LD        A, S:?b8
+   \   000011 A1 02        CP        A, #0x2
+   \   000013 27 63        JREQ      L:??AWU_Init_0
+   \   000015 B6 ..        LD        A, S:?b8
+   \   000017 A1 03        CP        A, #0x3
+   \   000019 27 5D        JREQ      L:??AWU_Init_0
+   \   00001B B6 ..        LD        A, S:?b8
+   \   00001D A1 04        CP        A, #0x4
+   \   00001F 27 57        JREQ      L:??AWU_Init_0
+   \   000021 B6 ..        LD        A, S:?b8
+   \   000023 A1 05        CP        A, #0x5
+   \   000025 27 51        JREQ      L:??AWU_Init_0
+   \   000027 B6 ..        LD        A, S:?b8
+   \   000029 A1 06        CP        A, #0x6
+   \   00002B 27 4B        JREQ      L:??AWU_Init_0
+   \   00002D B6 ..        LD        A, S:?b8
+   \   00002F A1 07        CP        A, #0x7
+   \   000031 27 45        JREQ      L:??AWU_Init_0
+   \   000033 B6 ..        LD        A, S:?b8
+   \   000035 A1 08        CP        A, #0x8
+   \   000037 27 3F        JREQ      L:??AWU_Init_0
+   \   000039 B6 ..        LD        A, S:?b8
+   \   00003B A1 09        CP        A, #0x9
+   \   00003D 27 39        JREQ      L:??AWU_Init_0
+   \   00003F B6 ..        LD        A, S:?b8
+   \   000041 A1 0A        CP        A, #0xa
+   \   000043 27 33        JREQ      L:??AWU_Init_0
+   \   000045 B6 ..        LD        A, S:?b8
+   \   000047 A1 0B        CP        A, #0xb
+   \   000049 27 2D        JREQ      L:??AWU_Init_0
+   \   00004B B6 ..        LD        A, S:?b8
+   \   00004D A1 0C        CP        A, #0xc
+   \   00004F 27 27        JREQ      L:??AWU_Init_0
+   \   000051 B6 ..        LD        A, S:?b8
+   \   000053 A1 0D        CP        A, #0xd
+   \   000055 27 21        JREQ      L:??AWU_Init_0
+   \   000057 B6 ..        LD        A, S:?b8
+   \   000059 A1 0E        CP        A, #0xe
+   \   00005B 27 1B        JREQ      L:??AWU_Init_0
+   \   00005D B6 ..        LD        A, S:?b8
+   \   00005F A1 0F        CP        A, #0xf
+   \   000061 27 15        JREQ      L:??AWU_Init_0
+   \   000063 B6 ..        LD        A, S:?b8
+   \   000065 A1 10        CP        A, #0x10
+   \   000067 27 0F        JREQ      L:??AWU_Init_0
+   \   000069 AE 005B      LDW       X, #0x5b
+   \   00006C BF ..        LDW       S:?w1, X
+   \   00006E 5F           CLRW      X
+   \   00006F BF ..        LDW       S:?w0, X
+   \   000071 AE ....      LDW       X, #?_0
+   \   000074 8D ......    CALLF     assert_failed
+     92            
+     93            /* Enable the AWU peripheral */
+     94            AWU->CSR |= AWU_CSR_AWUEN;
+   \                     ??AWU_Init_0:
+   \   000078 7218 50F0    BSET      L:0x50f0, #0x4
+     95            
+     96            /* Set the TimeBase */
+     97            AWU->TBR &= (uint8_t)(~AWU_TBR_AWUTB);
+   \   00007C C6 50F2      LD        A, L:0x50f2
+   \   00007F A4 F0        AND       A, #0xf0
+   \   000081 C7 50F2      LD        L:0x50f2, A
+     98            AWU->TBR |= TBR_Array[(uint8_t)AWU_TimeBase];
+   \   000084 5F           CLRW      X
+   \   000085 B6 ..        LD        A, S:?b8
+   \   000087 97           LD        XL, A
+   \   000088 D6 ....      LD        A, (L:TBR_Array,X)
+   \   00008B CA 50F2      OR        A, L:0x50f2
+   \   00008E C7 50F2      LD        L:0x50f2, A
+     99            
+    100            /* Set the APR divider */
+    101            AWU->APR &= (uint8_t)(~AWU_APR_APR);
+   \   000091 C6 50F1      LD        A, L:0x50f1
+   \   000094 A4 C0        AND       A, #0xc0
+   \   000096 C7 50F1      LD        L:0x50f1, A
+    102            AWU->APR |= APR_Array[(uint8_t)AWU_TimeBase];
+   \   000099 5F           CLRW      X
+   \   00009A B6 ..        LD        A, S:?b8
+   \   00009C 97           LD        XL, A
+   \   00009D D6 ....      LD        A, (L:APR_Array,X)
+   \   0000A0 CA 50F1      OR        A, L:0x50f1
+   \   0000A3 C7 50F1      LD        L:0x50f1, A
+    103          }
+   \   0000A6 32 ....      POP       S:?b8
+   \   0000A9 87           RETF
+    104          
+    105          /**
+    106            * @brief  Enable or disable the AWU peripheral.
+    107            * @param   NewState Indicates the new state of the AWU peripheral.
+    108            * @retval None
+    109            * @par Required preconditions:
+    110            * Initialisation of AWU and LS RC calibration must be done before.
+    111            */
+
+   \                                 In section .far_func.text, align 1
+    112          void AWU_Cmd(FunctionalState NewState)
+    113          {
+    114            if (NewState != DISABLE)
+   \                     AWU_Cmd:
+   \   000000 4D           TNZ       A
+   \   000001 27 06        JREQ      L:??AWU_Cmd_0
+    115            {
+    116              /* Enable the AWU peripheral */
+    117              AWU->CSR |= AWU_CSR_AWUEN;
+   \   000003 7218 50F0    BSET      L:0x50f0, #0x4
+   \   000007 20 04        JRA       L:??AWU_Cmd_1
+    118            }
+    119            else
+    120            {
+    121              /* Disable the AWU peripheral */
+    122              AWU->CSR &= (uint8_t)(~AWU_CSR_AWUEN);
+   \                     ??AWU_Cmd_0:
+   \   000009 7219 50F0    BRES      L:0x50f0, #0x4
+    123            }
+    124          }
+   \                     ??AWU_Cmd_1:
+   \   00000D 87           RETF
+    125          
+    126          /**
+    127            * @brief  Update APR register with the measured LSI frequency.
+    128            * @par Note on the APR calculation:
+    129            * A is the integer part of lsifreqkhz/4 and x the decimal part.
+    130            * x <= A/(1+2A) is equivalent to A >= x(1+2A) and also to 4A >= 4x(1+2A) [F1]
+    131            * but we know that A + x = lsifreqkhz/4 ==> 4x = lsifreqkhz-4A
+    132            * so [F1] can be written :
+    133            * 4A >= (lsifreqkhz-4A)(1+2A)
+    134            * @param   LSIFreqHz Low Speed RC frequency measured by timer (in Hz).
+    135            * @retval None
+    136            * @par Required preconditions:
+    137            * - AWU must be disabled to avoid unwanted interrupts.
+    138            */
+
+   \                                 In section .far_func.text, align 1
+    139          void AWU_LSICalibrationConfig(uint32_t LSIFreqHz)
+    140          {
+   \                     AWU_LSICalibrationConfig:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 8D ......    CALLF     L:?push_l3
+   \   000008 8D ......    CALLF     L:?mov_l2_l0
+    141            uint16_t lsifreqkhz = 0x0;
+   \   00000C 3F ..        CLR       S:?b15
+   \   00000E 3F ..        CLR       S:?b14
+    142            uint16_t A = 0x0;
+   \   000010 3F ..        CLR       S:?b13
+   \   000012 3F ..        CLR       S:?b12
+    143            
+    144            /* Check parameter */
+    145            assert_param(IS_LSI_FREQUENCY_OK(LSIFreqHz));
+   \   000014 BE ..        LDW       X, S:?w4
+   \   000016 A3 0001      CPW       X, #0x1
+   \   000019 26 05        JRNE      L:??AWU_LSICalibrationConfig_0
+   \   00001B BE ..        LDW       X, S:?w5
+   \   00001D A3 ADB0      CPW       X, #0xadb0
+   \                     ??AWU_LSICalibrationConfig_0:
+   \   000020 25 0E        JRC       L:??AWU_LSICalibrationConfig_1
+   \   000022 BE ..        LDW       X, S:?w4
+   \   000024 A3 0002      CPW       X, #0x2
+   \   000027 26 05        JRNE      L:??AWU_LSICalibrationConfig_2
+   \   000029 BE ..        LDW       X, S:?w5
+   \   00002B A3 49F1      CPW       X, #0x49f1
+   \                     ??AWU_LSICalibrationConfig_2:
+   \   00002E 25 0F        JRC       L:??AWU_LSICalibrationConfig_3
+   \                     ??AWU_LSICalibrationConfig_1:
+   \   000030 AE 0091      LDW       X, #0x91
+   \   000033 BF ..        LDW       S:?w1, X
+   \   000035 5F           CLRW      X
+   \   000036 BF ..        LDW       S:?w0, X
+   \   000038 AE ....      LDW       X, #?_0
+   \   00003B 8D ......    CALLF     assert_failed
+    146            
+    147            lsifreqkhz = (uint16_t)(LSIFreqHz / 1000); /* Converts value in kHz */
+   \                     ??AWU_LSICalibrationConfig_3:
+   \   00003F 8D ......    CALLF     L:?mov_l0_l2
+   \   000043 8D ......    CALLF     L:?udiv32_l0_l0_dl
+   \   000047 000003E8     DC32      0x3e8
+   \   00004B 8D ......    CALLF     L:?mov_w7_w1
+    148            
+    149            /* Calculation of AWU calibration value */
+    150            
+    151            A = (uint16_t)(lsifreqkhz >> 2U); /* Division by 4, keep integer part only */
+   \   00004F BE ..        LDW       X, S:?w7
+   \   000051 54           SRLW      X
+   \   000052 54           SRLW      X
+   \   000053 BF ..        LDW       S:?w6, X
+    152            
+    153            if ((4U * A) >= ((lsifreqkhz - (4U * A)) * (1U + (2U * A))))
+   \   000055 AE 0004      LDW       X, #0x4
+   \   000058 BF ..        LDW       S:?w0, X
+   \   00005A BE ..        LDW       X, S:?w6
+   \   00005C 8D ......    CALLF     L:?mul16_x_x_w0
+   \   000060 BF ..        LDW       S:?w1, X
+   \   000062 BE ..        LDW       X, S:?w7
+   \   000064 72B0 ....    SUBW      X, S:?w1
+   \   000068 9093         LDW       Y, X
+   \   00006A BE ..        LDW       X, S:?w6
+   \   00006C 58           SLLW      X
+   \   00006D BF ..        LDW       S:?w0, X
+   \   00006F BE ..        LDW       X, S:?w0
+   \   000071 5C           INCW      X
+   \   000072 BF ..        LDW       S:?w0, X
+   \   000074 93           LDW       X, Y
+   \   000075 8D ......    CALLF     L:?mul16_x_x_w0
+   \   000079 BF ..        LDW       S:?w1, X
+   \   00007B AE 0004      LDW       X, #0x4
+   \   00007E BF ..        LDW       S:?w0, X
+   \   000080 BE ..        LDW       X, S:?w6
+   \   000082 8D ......    CALLF     L:?mul16_x_x_w0
+   \   000086 B3 ..        CPW       X, S:?w1
+   \   000088 25 09        JRC       L:??AWU_LSICalibrationConfig_4
+    154            {
+    155              AWU->APR = (uint8_t)(A - 2U);
+   \   00008A B6 ..        LD        A, S:?b13
+   \   00008C 4A           DEC       A
+   \   00008D 4A           DEC       A
+   \   00008E C7 50F1      LD        L:0x50f1, A
+   \   000091 20 06        JRA       L:??AWU_LSICalibrationConfig_5
+    156            }
+    157            else
+    158            {
+    159              AWU->APR = (uint8_t)(A - 1U);
+   \                     ??AWU_LSICalibrationConfig_4:
+   \   000093 B6 ..        LD        A, S:?b13
+   \   000095 4A           DEC       A
+   \   000096 C7 50F1      LD        L:0x50f1, A
+    160            }
+    161          }
+   \                     ??AWU_LSICalibrationConfig_5:
+   \   000099 AC ......    JPF       L:?epilogue_l2_l3
+    162          
+    163          /**
+    164            * @brief  Configures AWU in Idle mode to reduce power consumption.
+    165            * @param  None
+    166            * @retval None
+    167            */
+
+   \                                 In section .far_func.text, align 1
+    168          void AWU_IdleModeEnable(void)
+    169          {
+    170            /* Disable AWU peripheral */
+    171            AWU->CSR &= (uint8_t)(~AWU_CSR_AWUEN);
+   \                     AWU_IdleModeEnable:
+   \   000000 7219 50F0    BRES      L:0x50f0, #0x4
+    172            
+    173            /* No AWU timebase */
+    174            AWU->TBR = (uint8_t)(~AWU_TBR_AWUTB);
+   \   000004 35 F0 50F2   MOV       L:0x50f2, #0xf0
+    175          }
+   \   000008 87           RETF
+    176          
+    177          /**
+    178            * @brief  Returns status of the AWU peripheral flag.
+    179            * @param  None
+    180            * @retval FlagStatus : Status of the AWU flag.
+    181            * This parameter can be any of the @ref FlagStatus enumeration.
+    182            */
+
+   \                                 In section .far_func.text, align 1
+    183          FlagStatus AWU_GetFlagStatus(void)
+    184          {
+    185            return((FlagStatus)(((uint8_t)(AWU->CSR & AWU_CSR_AWUF) == (uint8_t)0x00) ? RESET : SET));
+   \                     AWU_GetFlagStatus:
+   \   000000 C6 50F0      LD        A, L:0x50f0
+   \   000003 4E           SWAP      A
+   \   000004 A4 0F        AND       A, #0xf
+   \   000006 44           SRL       A
+   \   000007 A4 01        AND       A, #0x1
+   \   000009 87           RETF
+    186          }
+
+   \                                 In section .near.rodata, align 1
+   \                     ?_0:
+   \   000000 2E 5C 4C 69  DC8 ".\\Lib\\C\\stm8s_awu.c"
+   \          62 5C 43 5C 
+    187          
+    188          
+    189          /**
+    190            * @}
+    191            */
+    192            
+    193          /**
+    194            * @}
+    195            */
+    196            
+    197          
+    198          /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      20  ?_0
+      17  APR_Array
+      14  AWU_Cmd
+      13  AWU_DeInit
+      10  AWU_GetFlagStatus
+       9  AWU_IdleModeEnable
+     170  AWU_Init
+     157  AWU_LSICalibrationConfig
+      17  TBR_Array
+
+ 
+ 373 bytes in section .far_func.text
+  54 bytes in section .near.rodata
+ 
+ 373 bytes of CODE  memory
+  54 bytes of CONST memory
+
+Errors: none
+Warnings: none

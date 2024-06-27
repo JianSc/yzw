@@ -1,4 +1,4 @@
-DRC Rules Export File for PCB: E:\Nas\电路\保温箱\YZW-S803-EE22(Rev1.0) - KF7620\PCB1.PcbDoc
+DRC Rules Export File for PCB: E:\Nas\电路\保温箱\YZW-S8-EE22(Rev1.0) - KF7620-2\PCB1.PcbDoc
 RuleKind=ShortCircuit|RuleName=ShortCircuit|Scope=Board|Allowed=0
 RuleKind=Clearance|RuleName=Clearance|Scope=Board|Minimum=10.00
 RuleKind=Width|RuleName=Width|Scope=Board|Minimum=6.00

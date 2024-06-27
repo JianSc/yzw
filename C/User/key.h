@@ -3,6 +3,6 @@
 
 #include "init.h"
 
-void KEY_HANDLE(u8 key);
+void btn_down(u8 key);
 
 #endif

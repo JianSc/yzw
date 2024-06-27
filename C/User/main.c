@@ -1,229 +1,215 @@
+/**
+ ******************************************************************************
+ * @file    Project/main.c
+ * @author  MCD Application Team
+ * @version V2.3.0
+ * @date    16-June-2017
+ * @brief   Main program body
+ ******************************************************************************
+ * @attention
+ *
+ * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
+ *
+ * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ *        http://www.st.com/software_license_agreement_liberty_v2
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ ******************************************************************************
+ */
+
+/* Includes ------------------------------------------------------------------*/
 #include "init.h"
 
-#define READ_ADC_LEN 10
+/* Private defines -----------------------------------------------------------*/
 
-// A(10)     B(11)     C(12)     D(13)     E(14)     F(15)	  P(16)     -(17)      n(18)        (19为空)
-// (P1)温度设置 (P2)LED最小亮度设置 (P3)风扇转速 (P4)换气开关
+// TODO:TM1650-LED码	   0	 1		2     3     4     5    6     7     8     9     A     B     C     D     E     F	  P 	-
+// LED7codeH 共阳 , LED7codeL 共阴
+uint8_t LED7CodeH[] = {~0x3f, ~0x06, ~0x5b, ~0x4f, ~0x66, ~0x6d, ~0x7d, ~0x07, ~0x7f, ~0x6f, ~0x77, ~0x7c, ~0x39, ~0x5e, ~0x79, ~0x71, ~0x73, ~0x40};
+uint8_t LED7CodeL[] = {0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f, 0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71, 0x73, 0x40};
 
-bool TEM_GET_STATUS, WARUP_STATUS, LED_STATUS, HF_STATUS_CFG, HF_STATUS;
-bool LCD_STATUS;
-u16 TEM_CFG;
-u8 LED_PWM_MIN_CFG, FAN_PWM_CFG;
-bool KEY_DOWN;
+/* Private function prototypes -----------------------------------------------*/
+int TEM_SUM;
+u8 FAN_PWM_NUM;
+bool LED_STATUS, TEM_STATUS, CONFIG_STATUS;
+bool SYSTEM_RUN, DS18B20_CONVERT_STATUS, HF_STATUS, MSD_STATUS, MSD_TIME_STATUS;
+bool IT_HF_STATUS;
+// btn[0] 为启动/停止按钮, btn[1] 设置按钮, btn[2] +按钮， btn[3] -按钮, btn[4] 确定/灯光按钮.
+u8 btn[] = {0x44, 0x4c, 0x54, 0x5c, 0x64};
 
-void main()
+void main(void)
 {
-    float tems[10];
-    s16 tem, ntctem;
+  /* Infinite loop */
+  init();
+  TIM2_Cmd(ENABLE);
+  TIM1_Cmd(ENABLE);
+  tm1650_displayInit();
+  delay_ms(100);
+  MSD_STATUS = FALSE;
+  MSD_TIME_STATUS = FALSE;
 
-    init();
-    tm1650_init();
-    delay_ms(500);
+  // 读取数据
+  TEM_SUM = FLASH_DATA_TEM_SUM_READ();
+  FAN_PWM_NUM = FLASH_DATA_FAN_PWM_READ();
+  TEM_STATUS = FLASH_DATA_TEM_STATUS_READ();
+  LED_STATUS = FLASH_DATA_LED_STATUS_READ();
+  HF_STATUS = FLASH_DATA_HF_STATUS_READ();
 
-    WARUP_STATUS    = FALSE;
-    LED_STATUS      = FALSE;
-    TEM_CFG         = eeprom_read16(TEM_ADDRESS, 310);
-    LED_PWM_MIN_CFG = eeprom_read(LED_PWM_MIN_ADDRESS, 0);
-    FAN_PWM_CFG     = eeprom_read(FAN_PWM_ADDRESS, 95);
-    WARUP_STATUS    = (eeprom_read(WARUP_STATUS_ADDRESS, 0) == 0xa1) ? TRUE : FALSE;
-    LED_STATUS      = (eeprom_read(LED_STATUS_ADDRESS, 0) == 0xa1) ? TRUE : FALSE;
-    HF_STATUS_CFG   = (eeprom_read(HF_STATUS_ADDRESS, 0) == 0xa1) ? TRUE : FALSE;
+  SYSTEM_RUN = TRUE;
+  DS18B20_CONVERT_STATUS = FALSE;
 
-    WARMUP_LED_OFF;
+  TEM_LED_CL;
 
-    while (1) {
-        u8 i;
-        // 检测温度
-        if (!TEM_GET_STATUS) {
-            disableInterrupts();
-            // DS18B20
-            while (!ds18b20_init()) {}
-            ds18b20_convert();
-            while (!ds18b20_init()) {}
-            tem = ds18b20_convert_get_tem(ds18b20_read());
+  while (1)
+  {
+    // 过温检测，如果温度高于设定的5度，并且持续30秒，就关闭加温继电器
+    // if(MSD_TIME_STATUS)
+    // {
+    //   MSD_CL;
+    //   SW_CL;
+    //   LED_STATUS = TRUE;
+    //   FAN_CL;
+    //   TEM_LED_CL;
 
-            // NTC
-            for (i = 0; i < READ_ADC_LEN; i++) {
-                tems[i] = ntcReadInputRes();
-            }
-            ntcDataFilter(tems, READ_ADC_LEN);
-            ntctem = (s16)(ntcReadNtcTemp(ntcReadNtcTemp_ave(tems)) * 10);
+    //   while(1);
+    // }
+    // 启动 DS18B20 进行温度转换
+    int SUM;
+    if (!DS18B20_CONVERT_STATUS)
+    {
+      disableInterrupts();
 
-            // 显示温度
-            s16 xtem = tem;
-            xtem     = (xtem < -99) ? -99 : xtem;
-            xtem     = (xtem > 999) ? 999 : xtem;
-            if (xtem < 0) {
-                tm1650_write(0, 17, FALSE);
-                xtem = ~xtem + 1;
-                tm1650_write(1, xtem / 10 % 10, TRUE);
-                tm1650_write(2, xtem % 10, FALSE);
-            } else {
-                if (xtem < 100) {
-                    tm1650_write(0, 19, FALSE);
-                } else {
-                    tm1650_write(0, xtem / 100 % 100, FALSE);
-                }
-                tm1650_write(1, xtem / 10 % 10, TRUE);
-                tm1650_write(2, xtem % 10, FALSE);
-            }
+      // 转换温度
+      while (!DS18B20_Init())
+      {
+        delay_ms(10);
+      }
+      ds18b20_Conver();
+      DS18B20_CONVERT_STATUS = TRUE;
 
-            TEM_GET_STATUS = TRUE;
-            enableInterrupts();
+      // 读取温度
+      while (!DS18B20_Init())
+      {
+        delay_ms(10);
+      };
+      SUM = DS18B20_Convert_Get_Tem(DS18B20_Read());
+      delay_ms(5);
+
+      enableInterrupts();
+
+      u8 x;
+      if (!SYSTEM_RUN && x > 2)
+      {
+        // 显示温度
+        SUM = (SUM < -99) ? -99 : SUM;
+        if (SUM < 0)
+        {
+          tm1650_displayW(0, 0x40);
+          SUM = ~SUM + 1;
+          tm1650_displayW(1, (LED7CodeL[SUM / 10 % 10]) | 0x80);
+          tm1650_displayW(2, LED7CodeL[SUM % 10]);
         }
-
-        // 匹配按键
-        if (!KEY_DOWN) {
-            u8 key = tm1650_readkey();
-            KEY_HANDLE(key);
+        else
+        {
+          SUM = (SUM > 999) ? 999 : SUM;
+          if ((SUM / 100 % 100) == 0)
+          {
+            tm1650_displayW(0, 0x00);
+          }
+          else
+          {
+            tm1650_displayW(0, LED7CodeL[SUM / 100 % 100]);
+          }
+          tm1650_displayW(1, (LED7CodeL[SUM / 10 % 10]) | 0x80);
+          tm1650_displayW(2, LED7CodeL[SUM % 10]);
         }
-
-        if (HF_STATUS_CFG) {
-            // 过温
-            if (tem > TEM_CFG + 5) {
-                SW_OFF;
-                WARMUP_LED_OFF;
-                FAN_OFF;
-                HF_ON;
-                continue;
-            } else {
-                if (!HF_STATUS) {
-                    HF_OFF;
-                }
-            }
-
-            // 换气
-            if (HF_STATUS) {
-                if (LCD_STATUS) {
-                    tm1650_on();
-                } else {
-                    tm1650_off();
-                }
-                SW_OFF;
-                WARMUP_LED_OFF;
-                FAN_OFF;
-                HF_ON;
-                continue;
-            } else {
-                HF_OFF;
-                tm1650_on();
-                LCD_STATUS = FALSE;
-            }
-        } else {
-            HF_OFF;
-        }
-        // 加温
-        if (WARUP_STATUS) {
-
-            TIM2_CCR3H = 0;
-            TIM2_CCR3L = FAN_PWM_CFG;
-            FAN_D_ON;
-
-            u16 warup_tem = 1000;
-            for (u8 x = 20; x > 0; x--) {
-                warup_tem = ((TEM_CFG - x) < tem) ? (TEM_CFG + (u16)((float)((float)x / 20) * 600)) : warup_tem;
-            }
-            warup_tem = (TEM_CFG <= tem) ? TEM_CFG + 5 : warup_tem;
-
-            if (ntctem < warup_tem) {
-                WARMUP_LED_ON;
-                SW_ON;
-            } else {
-                WARMUP_LED_OFF;
-                SW_OFF;
-            }
-        } else {
-            WARMUP_LED_OFF;
-            SW_OFF;
-            FAN_D_OFF;
-            TIM2_CCR3H = 0;
-            TIM2_CCR3L = 0;
-        }
+      }
+      x++;
+      x = (x > 10) ? 0 : x;
     }
+
+    // LED 开启状态
+    if (LED_STATUS)
+    {
+      LED_LED_EN;
+    }
+    else
+    {
+      LED_LED_CL;
+    }
+
+    // 开启加温
+    if (TEM_STATUS)
+    {
+      if (SYSTEM_RUN)
+      {
+        delay_ms(500);
+      }
+      else
+      {
+        if (SUM < TEM_SUM)
+        {
+          SW_EN;
+          TEM_LED_EN;
+        }
+        else
+        {
+          SW_CL;
+          TEM_LED_CL;
+        }
+      }
+      FAN_LED_EN;
+      TIM2_SetCompare3(FAN_PWM_NUM);
+    }
+    else
+    {
+      SW_CL;
+      TEM_LED_CL;
+      FAN_LED_CL;
+      TIM2_SetCompare3(0);
+    }
+
+    SYSTEM_RUN = FALSE;
+
+    // 换风
+    if (HF_STATUS)
+    {
+      if ((SUM - TEM_SUM) > 10 && !IT_HF_STATUS)
+      {
+        IT_HF_STATUS = TRUE;
+      }
+      if (IT_HF_STATUS)
+      {
+        HF_EN;
+      }
+      else
+      {
+        HF_CL;
+      }
+    }
+
+    // 匹配按键
+    u8 KEY = tm1650_displaykeyR();
+    btn_down(KEY);
+  }
 }
 
-#pragma vector = TIM2_OVR_UIF_vector
-__interrupt void TIM2_UPD_OVF_BRK_IRQHandler(void)
+void assert_failed(u8 *file, u32 line)
 {
-    static u16 TEM_STATUS_REF_TIME, HF_TIME_S;
-    static u8 HF_TIME_M, HF_TIME_H, LED_PWM_TIME, LED_PWM;
-    static u16 KEY_DOWN_TIME, LCD_STATUS_TIME;
-    // 温度采集缓冲时间
-    if (TEM_GET_STATUS) {
-        if (TEM_STATUS_REF_TIME < 100) {
-            TEM_STATUS_REF_TIME++;
-        } else {
-            TEM_STATUS_REF_TIME = 0;
-            TEM_GET_STATUS      = FALSE;
-        }
-    }
-    // 按鈕按下復位
-    if (KEY_DOWN) {
-        if (KEY_DOWN_TIME < 400) {
-            KEY_DOWN_TIME++;
-        } else {
-            KEY_DOWN_TIME = 0;
-            KEY_DOWN      = FALSE;
-        }
-    }
-    // LED
-    if (LED_STATUS) {
-        if (LED_PWM_TIME < 30) {
-            LED_PWM_TIME++;
-        } else {
-            LED_PWM_TIME = 0;
-            LED_PWM++;
-            LED_PWM    = (LED_PWM > 100) ? 100 : LED_PWM;
-            TIM2_CCR1H = 0;
-            TIM2_CCR1L = LED_PWM;
-        }
-    } else {
-        if (LED_PWM_TIME < 30) {
-            LED_PWM_TIME++;
-        } else {
-            LED_PWM_TIME = 0;
-            if (LED_PWM > LED_PWM_MIN_CFG) {
-                LED_PWM--;
-            }
-            if (LED_PWM < LED_PWM_MIN_CFG) {
-                LED_PWM++;
-            }
-            TIM2_CCR1H = 0;
-            TIM2_CCR1L = LED_PWM;
-        }
-    }
-    // 换气时间
-    if (HF_STATUS_CFG) {
-        if (HF_STATUS) {
-            if (LCD_STATUS_TIME > 1000) {
-                LCD_STATUS_TIME = 0;
-                LCD_STATUS      = !LCD_STATUS;
-            } else {
-                LCD_STATUS_TIME++;
-            }
-            if (HF_TIME_S < 30000) {
-                HF_TIME_S++;
-            } else {
-                HF_TIME_S = 0;
-                HF_STATUS = FALSE;
-            }
-        } else {
-            if (HF_TIME_S < 60000) {
-                HF_TIME_S++;
-            } else {
-                HF_TIME_S = 0;
-                HF_TIME_M++;
-            }
-            if (HF_TIME_M > 59) {
-                HF_TIME_M = 0;
-                HF_TIME_H++;
-            }
-            if (HF_TIME_H > 2) {
-                HF_TIME_H = 0;
-                HF_STATUS = TRUE;
-            }
-        }
-    }
+  /* User can add his own implementation to report the file name and line number,
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 
-    TIM2_SR1_UIF = 0;
+  /* Infinite loop */
+  // while (1)
+  // {
+  // }
 }
+
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

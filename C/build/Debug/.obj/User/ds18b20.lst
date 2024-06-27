@@ -1,0 +1,422 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 24/Jan/2024  16:39:12
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\User\ds18b20.c
+#    Command line =  
+#        -f "e:\Nas\µÁ¬∑\±£Œ¬œ‰\YZW-S803-EE22-
+#        KF7620-∑÷ÃÂ\C\build\Debug\.obj\User\ds18b20.args.txt" (--silent -lCN
+#        .\build\Debug\.obj\User\ds18b20.lst -I "d:/Program Files (x86)/IAR
+#        Systems/STM8/stm8/lib" -I Lib/H -I Lib/C -I User -D STM8S003
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\.obj\User\ds18b20.o .\User\ds18b20.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\.obj\User\ds18b20.lst
+#    Object file  =  .\build\Debug\.obj\User\ds18b20.o
+#
+###############################################################################
+
+e:\Nas\µÁ¬∑\±£Œ¬œ‰\YZW-S803-EE22- KF7620-∑÷ÃÂ\C\User\ds18b20.c
+      1          #include "ds18b20.h"
+
+   \                                 In section .near.noinit, at 0x500a
+   \   union <unnamed> volatile _A_PC_ODR
+   \                     _A_PC_ODR:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x500b
+   \   union <unnamed> const volatile _A_PC_IDR
+   \                     _A_PC_IDR:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x500c
+   \   union <unnamed> volatile _A_PC_DDR
+   \                     _A_PC_DDR:
+   \   000000              DS8 1
+      2          
+      3          // È¢ëÁéá: 16Mhz Âª∂Êó∂ÂáΩÊï∞
+      4          // void delay_us(u16 nus)
+      5          // {
+      6          //     u16 i = 0, j = 0;
+      7          //     for (i = 0; i < (nus >> 2); i++)
+      8          //     {
+      9          //         for (j = 0; j < 7; j++)
+     10          //             ;
+     11          //     }
+     12          // }
+     13          
+
+   \                                 In section .far_func.text, align 1
+     14          bool DS18B20_Init()
+     15          {
+   \                     DS18B20_Init:
+   \   000000 3B ....      PUSH      S:?b8
+     16              u8 retry = 0;
+   \   000003 3F ..        CLR       S:?b8
+     17              DS18B20_IO_OUT;
+   \   000005 721E 500C    BSET      L:0x500c, #0x7
+     18              DS18B20_DQ_CL;
+   \   000009 721F 500A    BRES      L:0x500a, #0x7
+     19              delay_us(600);
+   \   00000D AE 0258      LDW       X, #0x258
+   \   000010 8D ......    CALLF     delay_us
+     20              DS18B20_DQ_EN;
+   \   000014 721E 500A    BSET      L:0x500a, #0x7
+     21              delay_us(10);
+   \   000018 AE 000A      LDW       X, #0xa
+   \   00001B 8D ......    CALLF     delay_us
+     22              DS18B20_IO_IN;
+   \   00001F 721F 500C    BRES      L:0x500c, #0x7
+     23              while (DS18B20_DQ_IN && retry < 200)
+   \                     ??DS18B20_Init_0:
+   \   000023 720F 500B 10 BTJF      L:0x500b, #0x7, L:??DS18B20_Init_1
+   \   000028 B6 ..        LD        A, S:?b8
+   \   00002A A1 C8        CP        A, #0xc8
+   \   00002C 24 0A        JRNC      L:??DS18B20_Init_1
+     24              {
+     25                  retry++;
+   \   00002E 3C ..        INC       S:?b8
+     26                  delay_us(1);
+   \   000030 5F           CLRW      X
+   \   000031 5C           INCW      X
+   \   000032 8D ......    CALLF     delay_us
+   \   000036 20 EB        JRA       L:??DS18B20_Init_0
+     27              }
+     28              if (retry >= 200)
+   \                     ??DS18B20_Init_1:
+   \   000038 B6 ..        LD        A, S:?b8
+   \   00003A A1 C8        CP        A, #0xc8
+   \   00003C 25 03        JRC       L:??DS18B20_Init_2
+     29              {
+     30                  return FALSE;
+   \   00003E 4F           CLR       A
+   \   00003F 20 22        JRA       L:??DS18B20_Init_3
+     31              }
+     32              else
+     33              {
+     34                  retry = 0;
+   \                     ??DS18B20_Init_2:
+   \   000041 3F ..        CLR       S:?b8
+     35              }
+     36              while (!DS18B20_DQ_IN && retry < 240)
+   \                     ??DS18B20_Init_4:
+   \   000043 720E 500B 10 BTJT      L:0x500b, #0x7, L:??DS18B20_Init_5
+   \   000048 B6 ..        LD        A, S:?b8
+   \   00004A A1 F0        CP        A, #0xf0
+   \   00004C 24 0A        JRNC      L:??DS18B20_Init_5
+     37              {
+     38                  retry++;
+   \   00004E 3C ..        INC       S:?b8
+     39                  delay_us(1);
+   \   000050 5F           CLRW      X
+   \   000051 5C           INCW      X
+   \   000052 8D ......    CALLF     delay_us
+   \   000056 20 EB        JRA       L:??DS18B20_Init_4
+     40              }
+     41              if (retry >= 240)
+   \                     ??DS18B20_Init_5:
+   \   000058 B6 ..        LD        A, S:?b8
+   \   00005A A1 F0        CP        A, #0xf0
+   \   00005C 25 03        JRC       L:??DS18B20_Init_6
+     42              {
+     43                  return FALSE;
+   \   00005E 4F           CLR       A
+   \   00005F 20 02        JRA       L:??DS18B20_Init_3
+     44              }
+     45              else
+     46              {
+     47                  return TRUE;
+   \                     ??DS18B20_Init_6:
+   \   000061 A6 01        LD        A, #0x1
+   \                     ??DS18B20_Init_3:
+   \   000063 32 ....      POP       S:?b8
+   \   000066 87           RETF
+   \   000067              REQUIRE _A_PC_DDR
+   \   000067              REQUIRE _A_PC_ODR
+   \   000067              REQUIRE _A_PC_IDR
+     48              }
+     49          }
+     50          
+
+   \                                 In section .far_func.text, align 1
+     51          uint8_t DS18B20_R()
+     52          {
+   \                     DS18B20_R:
+   \   000000 8D ......    CALLF     L:?push_w4
+     53              uint8_t d, i;
+     54              for (i = 0; i < 8; i++)
+   \   000004 3F ..        CLR       S:?b8
+   \                     ??DS18B20_R_0:
+   \   000006 B6 ..        LD        A, S:?b8
+   \   000008 A1 08        CP        A, #0x8
+   \   00000A 24 39        JRNC      L:??DS18B20_R_1
+     55              {
+     56                  d >>= 1;
+   \   00000C B6 ..        LD        A, S:?b9
+   \   00000E 44           SRL       A
+   \   00000F B7 ..        LD        S:?b9, A
+     57                  DS18B20_IO_OUT;
+   \   000011 721E 500C    BSET      L:0x500c, #0x7
+     58                  DS18B20_DQ_CL;
+   \   000015 721F 500A    BRES      L:0x500a, #0x7
+     59                  delay_us(2);
+   \   000019 AE 0002      LDW       X, #0x2
+   \   00001C 8D ......    CALLF     delay_us
+     60                  DS18B20_DQ_EN;
+   \   000020 721E 500A    BSET      L:0x500a, #0x7
+     61                  DS18B20_IO_IN;
+   \   000024 721F 500C    BRES      L:0x500c, #0x7
+     62                  delay_us(12);
+   \   000028 AE 000C      LDW       X, #0xc
+   \   00002B 8D ......    CALLF     delay_us
+     63                  if (DS18B20_DQ_IN)
+   \   00002F 720F 500B 06 BTJF      L:0x500b, #0x7, L:??DS18B20_R_2
+     64                  {
+     65                      d |= 0x80;
+   \   000034 B6 ..        LD        A, S:?b9
+   \   000036 AA 80        OR        A, #0x80
+   \   000038 B7 ..        LD        S:?b9, A
+     66                  }
+     67                  delay_us(50);
+   \                     ??DS18B20_R_2:
+   \   00003A AE 0032      LDW       X, #0x32
+   \   00003D 8D ......    CALLF     delay_us
+     68              }
+   \   000041 3C ..        INC       S:?b8
+   \   000043 20 C1        JRA       L:??DS18B20_R_0
+     69              return d;
+   \                     ??DS18B20_R_1:
+   \   000045 B6 ..        LD        A, S:?b9
+   \   000047 AC ......    JPF       L:?epilogue_w4
+   \   00004B              REQUIRE _A_PC_DDR
+   \   00004B              REQUIRE _A_PC_ODR
+   \   00004B              REQUIRE _A_PC_IDR
+     70          }
+     71          
+
+   \                                 In section .far_func.text, align 1
+     72          void DS18B20_W(uint8_t d)
+     73          {
+   \                     DS18B20_W:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 3B ....      PUSH      S:?b10
+   \   000007 B7 ..        LD        S:?b10, A
+     74              uint8_t i;
+     75              DS18B20_IO_OUT;
+   \   000009 721E 500C    BSET      L:0x500c, #0x7
+     76              for (i = 0; i < 8; i++)
+   \   00000D 3F ..        CLR       S:?b9
+   \                     ??DS18B20_W_0:
+   \   00000F B6 ..        LD        A, S:?b9
+   \   000011 A1 08        CP        A, #0x8
+   \   000013 24 41        JRNC      L:??DS18B20_W_1
+     77              {
+     78                  bool d2 = (d & 0x01) ? TRUE : FALSE;
+   \   000015 B6 ..        LD        A, S:?b10
+   \   000017 A4 01        AND       A, #0x1
+   \   000019 B7 ..        LD        S:?b8, A
+     79                  if (d2)
+   \   00001B 3D ..        TNZ       S:?b8
+   \   00001D 27 18        JREQ      L:??DS18B20_W_2
+     80                  {
+     81                      DS18B20_DQ_CL;
+   \   00001F 721F 500A    BRES      L:0x500a, #0x7
+     82                      delay_us(2);
+   \   000023 AE 0002      LDW       X, #0x2
+   \   000026 8D ......    CALLF     delay_us
+     83                      DS18B20_DQ_EN;
+   \   00002A 721E 500A    BSET      L:0x500a, #0x7
+     84                      delay_us(60);
+   \   00002E AE 003C      LDW       X, #0x3c
+   \   000031 8D ......    CALLF     delay_us
+   \   000035 20 16        JRA       L:??DS18B20_W_3
+     85                  }
+     86                  else
+     87                  {
+     88                      DS18B20_DQ_CL;
+   \                     ??DS18B20_W_2:
+   \   000037 721F 500A    BRES      L:0x500a, #0x7
+     89                      delay_us(60);
+   \   00003B AE 003C      LDW       X, #0x3c
+   \   00003E 8D ......    CALLF     delay_us
+     90                      DS18B20_DQ_EN;
+   \   000042 721E 500A    BSET      L:0x500a, #0x7
+     91                      delay_us(2);
+   \   000046 AE 0002      LDW       X, #0x2
+   \   000049 8D ......    CALLF     delay_us
+     92                  }
+     93                  d >>= 1;
+   \                     ??DS18B20_W_3:
+   \   00004D B6 ..        LD        A, S:?b10
+   \   00004F 44           SRL       A
+   \   000050 B7 ..        LD        S:?b10, A
+     94              }
+   \   000052 3C ..        INC       S:?b9
+   \   000054 20 B9        JRA       L:??DS18B20_W_0
+     95          }
+   \                     ??DS18B20_W_1:
+   \   000056 32 ....      POP       S:?b10
+   \   000059 AC ......    JPF       L:?epilogue_w4
+   \   00005D              REQUIRE _A_PC_DDR
+   \   00005D              REQUIRE _A_PC_ODR
+     96          
+     97          // ËØªÂèñÊ∏©Â∫¶
+
+   \                                 In section .far_func.text, align 1
+     98          u16 DS18B20_Read()
+     99          {
+   \                     DS18B20_Read:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 8D ......    CALLF     L:?push_w6
+    100              u16 dat;
+    101              u8 th, tl;
+    102          
+    103              DS18B20_W(0xcc);
+   \   000008 A6 CC        LD        A, #0xcc
+   \   00000A 8D ......    CALLF     DS18B20_W
+    104              DS18B20_W(0xbe);
+   \   00000E A6 BE        LD        A, #0xbe
+   \   000010 8D ......    CALLF     DS18B20_W
+    105          
+    106              tl = DS18B20_R();
+   \   000014 8D ......    CALLF     DS18B20_R
+   \   000018 B7 ..        LD        S:?b13, A
+    107              th = DS18B20_R();
+   \   00001A 8D ......    CALLF     DS18B20_R
+   \   00001E B7 ..        LD        S:?b11, A
+    108              dat = th;
+   \   000020 3F ..        CLR       S:?b10
+   \   000022 8D ......    CALLF     L:?mov_w4_w5
+    109              dat <<= 8;
+   \   000026 BE ..        LDW       X, S:?w4
+   \   000028 4F           CLR       A
+   \   000029 02           RLWA      X, A
+   \   00002A BF ..        LDW       S:?w4, X
+    110              dat |= tl;
+   \   00002C 3F ..        CLR       S:?b12
+   \   00002E BE ..        LDW       X, S:?w4
+   \   000030 01           RRWA      X, A
+   \   000031 BA ..        OR        A, S:?b13
+   \   000033 01           RRWA      X, A
+   \   000034 BA ..        OR        A, S:?b12
+   \   000036 01           RRWA      X, A
+   \   000037 BF ..        LDW       S:?w4, X
+    111          
+    112              return dat;
+   \   000039 BE ..        LDW       X, S:?w4
+   \   00003B AC ......    JPF       L:?epilogue_l2_w6
+    113          }
+    114          
+    115          // ËΩ¨Êç¢Ê∏©Â∫¶ÔºåÂÆûÈôÖÊ∏©Â∫¶ * 10 ÂèñÊï¥„ÄÇ
+
+   \                                 In section .far_func.text, align 1
+    116          int DS18B20_Convert_Get_Tem(u16 temp)
+    117          {
+   \                     DS18B20_Convert_Get_Tem:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 8D ......    CALLF     L:?push_l3
+   \   000008 BF ..        LDW       S:?w4, X
+    118              int contem;
+    119              float tms;
+    120              if (temp >> 11 == 0x1f)
+   \   00000A BE ..        LDW       X, S:?w4
+   \   00000C 02           RLWA      X, A
+   \   00000D A4 F8        AND       A, #0xf8
+   \   00000F 02           RLWA      X, A
+   \   000010 A4 00        AND       A, #0x0
+   \   000012 02           RLWA      X, A
+   \   000013 A3 F800      CPW       X, #0xf800
+   \   000016 26 39        JRNE      L:??DS18B20_Convert_Get_Tem_0
+    121              {
+    122                  temp = temp & 0x07ff;
+   \   000018 BE ..        LDW       X, S:?w4
+   \   00001A 02           RLWA      X, A
+   \   00001B A4 07        AND       A, #0x7
+   \   00001D 02           RLWA      X, A
+   \   00001E A4 FF        AND       A, #0xff
+   \   000020 02           RLWA      X, A
+   \   000021 BF ..        LDW       S:?w4, X
+    123                  temp = ~temp;
+   \   000023 90BE ..      LDW       Y, S:?w4
+   \   000026 93           LDW       X, Y
+   \   000027 53           CPLW      X
+   \   000028 BF ..        LDW       S:?w4, X
+    124                  tms = (temp + 1) * 0.0625;
+   \   00002A BE ..        LDW       X, S:?w4
+   \   00002C 5C           INCW      X
+   \   00002D 8D ......    CALLF     L:?fcastf32u16_l0_x
+   \   000031 8D ......    CALLF     L:?fmul32_l0_l0_dc32
+   \   000035 3D800000     DC32      0x3d800000
+   \   000039 8D ......    CALLF     L:?mov_l3_l0
+    125                  contem = (int)(tms * 10);
+   \   00003D 8D ......    CALLF     L:?mov_l0_l3
+   \   000041 8D ......    CALLF     L:?fmul32_l0_l0_dc32
+   \   000045 41200000     DC32      0x41200000
+   \   000049 8D ......    CALLF     L:?fcasts16f32_x_l0
+   \   00004D BF ..        LDW       S:?w5, X
+   \   00004F 20 24        JRA       L:??DS18B20_Convert_Get_Tem_1
+    126              }
+    127              else
+    128              {
+    129                  tms = temp * 0.0625;
+   \                     ??DS18B20_Convert_Get_Tem_0:
+   \   000051 BE ..        LDW       X, S:?w4
+   \   000053 8D ......    CALLF     L:?fcastf32u16_l0_x
+   \   000057 8D ......    CALLF     L:?fmul32_l0_l0_dc32
+   \   00005B 3D800000     DC32      0x3d800000
+   \   00005F 8D ......    CALLF     L:?mov_l3_l0
+    130                  contem = (int)(tms * 10);
+   \   000063 8D ......    CALLF     L:?mov_l0_l3
+   \   000067 8D ......    CALLF     L:?fmul32_l0_l0_dc32
+   \   00006B 41200000     DC32      0x41200000
+   \   00006F 8D ......    CALLF     L:?fcasts16f32_x_l0
+   \   000073 BF ..        LDW       S:?w5, X
+    131              }
+    132              return contem;
+   \                     ??DS18B20_Convert_Get_Tem_1:
+   \   000075 BE ..        LDW       X, S:?w5
+   \   000077 AC ......    JPF       L:?epilogue_l2_l3
+    133          }
+    134          
+    135          // ÂêØÂä®Ê∏©Â∫¶ËΩ¨Êç¢
+
+   \                                 In section .far_func.text, align 1
+    136          void ds18b20_Conver()
+    137          {
+    138              DS18B20_W(0xcc);
+   \                     ds18b20_Conver:
+   \   000000 A6 CC        LD        A, #0xcc
+   \   000002 8D ......    CALLF     DS18B20_W
+    139              DS18B20_W(0x44);
+   \   000006 A6 44        LD        A, #0x44
+   \   000008 8D ......    CALLF     DS18B20_W
+    140          }
+   \   00000C 87           RETF
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+     123  DS18B20_Convert_Get_Tem
+     103  DS18B20_Init
+      75  DS18B20_R
+      63  DS18B20_Read
+      93  DS18B20_W
+       1  _A_PC_DDR
+       1  _A_PC_IDR
+       1  _A_PC_ODR
+      13  ds18b20_Conver
+
+ 
+ 470 bytes in section .far_func.text
+   3 bytes in section .near.noinit   (abs)
+ 
+ 470 bytes of CODE memory
+   0 bytes of DATA memory (+ 3 bytes shared)
+
+Errors: none
+Warnings: 258

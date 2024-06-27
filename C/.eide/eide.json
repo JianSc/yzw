@@ -1,11 +1,11 @@
 {
-  "name": "YFW",
+  "name": "STM8S003",
   "type": "C51",
   "dependenceList": [],
   "srcDirs": [
-    "User",
-    "inc",
-    "Readme"
+    "Lib",
+    "Readme",
+    "User"
   ],
   "virtualFolder": {
     "name": "<virtual_root>",
@@ -16,16 +16,20 @@
   "deviceName": null,
   "packDir": null,
   "miscInfo": {
-    "uid": "d79094454a8088ec53a8c1ad4188232b"
+    "uid": "0807e69d864a0d875b43d4cc84d4034c"
   },
   "targets": {
     "Debug": {
       "excludeList": [
-        "<virtual_root>/Device",
-        "Readme/ADC.c",
-        "Readme/NTC.c",
-        "Readme/TM150.c",
-        "Readme/DS18B20.c"
+        "Lib/C/stm8s_adc2.c",
+        "Lib/C/stm8s_can.c",
+        "Lib/C/stm8s_tim3.c",
+        "Lib/C/stm8s_tim5.c",
+        "Lib/C/stm8s_tim6.c",
+        "Lib/C/stm8s_uart2.c",
+        "Lib/C/stm8s_uart3.c",
+        "Lib/C/stm8s_uart4.c",
+        "Readme/stm8s_delay.c"
       ],
       "toolchain": "IAR_STM8",
       "compileConfig": {
@@ -39,18 +43,16 @@
         "optionByteFile": "null"
       },
       "uploadConfigMap": {
-        "Custom": {
+        "stcgal": {
           "bin": "",
-          "commandLine": "",
-          "eraseChipCommand": ""
+          "eepromImgPath": "null",
+          "extraOptions": "",
+          "options": ".eide/stc.flash.json"
         }
       },
       "custom_dep": {
         "name": "default",
-        "incList": [
-          "inc",
-          "User"
-        ],
+        "incList": [],
         "libList": [],
         "sourceDirList": [],
         "defineList": [

@@ -1,0 +1,133 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 24/Jan/2024  16:39:12
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\User\stm8s_delay.c
+#    Command line =  
+#        -f "e:\Nas\电路\保温箱\YZW-S803-EE22-
+#        KF7620-分体\C\build\Debug\.obj\User\stm8s_delay.args.txt" (--silent
+#        -lCN .\build\Debug\.obj\User\stm8s_delay.lst -I "d:/Program Files
+#        (x86)/IAR Systems/STM8/stm8/lib" -I Lib/H -I Lib/C -I User -D STM8S003
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\.obj\User\stm8s_delay.o .\User\stm8s_delay.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\.obj\User\stm8s_delay.lst
+#    Object file  =  .\build\Debug\.obj\User\stm8s_delay.o
+#
+###############################################################################
+
+e:\Nas\电路\保温箱\YZW-S803-EE22- KF7620-分体\C\User\stm8s_delay.c
+      1          #include "stm8s_delay.h"
+      2          
+
+   \                                 In section .far_func.text, align 1
+      3          void delay_ms(u16 nus)
+      4          {
+   \                     delay_ms:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 BF ..        LDW       S:?w4, X
+      5              TIM4_DeInit();
+   \   000006 8D ......    CALLF     TIM4_DeInit
+      6              TIM4_TimeBaseInit(TIM4_PRESCALER_128, 124);
+   \   00000A 35 7C ....   MOV       S:?b0, #0x7c
+   \   00000E A6 07        LD        A, #0x7
+   \   000010 8D ......    CALLF     TIM4_TimeBaseInit
+      7              TIM4_ClearFlag(TIM4_FLAG_UPDATE);
+   \   000014 A6 01        LD        A, #0x1
+   \   000016 8D ......    CALLF     TIM4_ClearFlag
+      8              TIM4_SetCounter(0);
+   \   00001A 4F           CLR       A
+   \   00001B 8D ......    CALLF     TIM4_SetCounter
+      9              TIM4_Cmd(ENABLE);
+   \   00001F A6 01        LD        A, #0x1
+   \   000021 8D ......    CALLF     TIM4_Cmd
+     10          
+     11              while (nus--)
+   \                     ??delay_ms_0:
+   \   000025 90BE ..      LDW       Y, S:?w4
+   \   000028 90BF ..      LDW       S:?w4, Y
+   \   00002B BE ..        LDW       X, S:?w4
+   \   00002D 5A           DECW      X
+   \   00002E BF ..        LDW       S:?w4, X
+   \   000030 93           LDW       X, Y
+   \   000031 5D           TNZW      X
+   \   000032 27 12        JREQ      L:??delay_ms_1
+     12              {
+     13                  while (SET != TIM4_GetFlagStatus(TIM4_FLAG_UPDATE))
+   \                     ??delay_ms_2:
+   \   000034 A6 01        LD        A, #0x1
+   \   000036 8D ......    CALLF     TIM4_GetFlagStatus
+   \   00003A A1 01        CP        A, #0x1
+   \   00003C 26 F6        JRNE      L:??delay_ms_2
+     14                      ;
+     15                  TIM4_ClearFlag(TIM4_FLAG_UPDATE);
+   \   00003E A6 01        LD        A, #0x1
+   \   000040 8D ......    CALLF     TIM4_ClearFlag
+   \   000044 20 DF        JRA       L:??delay_ms_0
+     16              }
+     17              TIM4_Cmd(DISABLE);
+   \                     ??delay_ms_1:
+   \   000046 4F           CLR       A
+   \   000047 8D ......    CALLF     TIM4_Cmd
+     18          }
+   \   00004B AC ......    JPF       L:?epilogue_w4
+     19          
+
+   \                                 In section .far_func.text, align 1
+     20          void delay_us(u16 nus)
+     21          {
+   \                     delay_us:
+   \   000000 BF ..        LDW       S:?w2, X
+     22              u16 i = 0, j = 0;
+   \   000002 3F ..        CLR       S:?b1
+   \   000004 3F ..        CLR       S:?b0
+   \   000006 905F         CLRW      Y
+     23              for (i = 0; i < (nus >> 2); i++)
+   \   000008 5F           CLRW      X
+   \   000009 BF ..        LDW       S:?w0, X
+   \                     ??delay_us_0:
+   \   00000B BE ..        LDW       X, S:?w2
+   \   00000D 54           SRLW      X
+   \   00000E 54           SRLW      X
+   \   00000F BF ..        LDW       S:?w1, X
+   \   000011 BE ..        LDW       X, S:?w0
+   \   000013 B3 ..        CPW       X, S:?w1
+   \   000015 24 14        JRNC      L:??delay_us_1
+     24              {
+     25                  for (j = 0; j < 7; j++)
+   \   000017 5F           CLRW      X
+   \   000018 9093         LDW       Y, X
+   \                     ??delay_us_2:
+   \   00001A 90A3 0007    CPW       Y, #0x7
+   \   00001E 24 04        JRNC      L:??delay_us_3
+   \   000020 905C         INCW      Y
+   \   000022 20 F6        JRA       L:??delay_us_2
+     26                      ;
+     27              }
+   \                     ??delay_us_3:
+   \   000024 BE ..        LDW       X, S:?w0
+   \   000026 5C           INCW      X
+   \   000027 BF ..        LDW       S:?w0, X
+   \   000029 20 E0        JRA       L:??delay_us_0
+     28          }
+   \                     ??delay_us_1:
+   \   00002B 87           RETF
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      79  delay_ms
+      44  delay_us
+
+ 
+ 123 bytes in section .far_func.text
+ 
+ 123 bytes of CODE memory
+
+Errors: none
+Warnings: none

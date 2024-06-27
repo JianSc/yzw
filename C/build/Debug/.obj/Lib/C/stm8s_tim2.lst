@@ -1,0 +1,2995 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 24/Jan/2024  16:39:11
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\Lib\C\stm8s_tim2.c
+#    Command line =  
+#        -f "e:\Nas\µÁ¬∑\±£Œ¬œ‰\YZW-S803-EE22-
+#        KF7620-∑÷ÃÂ\C\build\Debug\.obj\Lib\C\stm8s_tim2.args.txt" (--silent
+#        -lCN .\build\Debug\.obj\Lib\C\stm8s_tim2.lst -I "d:/Program Files
+#        (x86)/IAR Systems/STM8/stm8/lib" -I Lib/H -I Lib/C -I User -D STM8S003
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\.obj\Lib\C\stm8s_tim2.o .\Lib\C\stm8s_tim2.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\.obj\Lib\C\stm8s_tim2.lst
+#    Object file  =  .\build\Debug\.obj\Lib\C\stm8s_tim2.o
+#
+###############################################################################
+
+e:\Nas\µÁ¬∑\±£Œ¬œ‰\YZW-S803-EE22- KF7620-∑÷ÃÂ\C\Lib\C\stm8s_tim2.c
+      1          /**
+      2            ******************************************************************************
+      3            * @file    stm8s_tim2.c
+      4            * @author  MCD Application Team
+      5            * @version V2.3.0
+      6            * @date    16-June-2017
+      7            * @brief   This file contains all the functions for the TIM2 peripheral.
+      8             ******************************************************************************
+      9            * @attention
+     10            *
+     11            * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
+     12            *
+     13            * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+     14            * You may not use this file except in compliance with the License.
+     15            * You may obtain a copy of the License at:
+     16            *
+     17            *        http://www.st.com/software_license_agreement_liberty_v2
+     18            *
+     19            * Unless required by applicable law or agreed to in writing, software 
+     20            * distributed under the License is distributed on an "AS IS" BASIS, 
+     21            * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     22            * See the License for the specific language governing permissions and
+     23            * limitations under the License.
+     24            *
+     25            ******************************************************************************
+     26            */
+     27          
+     28          /* Includes ------------------------------------------------------------------*/
+     29          #include "stm8s_tim2.h"
+     30          
+     31          /** @addtogroup STM8S_StdPeriph_Driver
+     32            * @{
+     33            */
+     34          /* Private typedef -----------------------------------------------------------*/
+     35          /* Private define ------------------------------------------------------------*/
+     36          /* Private macro -------------------------------------------------------------*/
+     37          /* Private variables ---------------------------------------------------------*/
+     38          /* Private function prototypes -----------------------------------------------*/
+     39          static void TI1_Config(uint8_t TIM2_ICPolarity, uint8_t TIM2_ICSelection, uint8_t TIM2_ICFilter);
+     40          static void TI2_Config(uint8_t TIM2_ICPolarity, uint8_t TIM2_ICSelection, uint8_t TIM2_ICFilter);
+     41          static void TI3_Config(uint8_t TIM2_ICPolarity, uint8_t TIM2_ICSelection, uint8_t TIM2_ICFilter);
+     42          /**
+     43            * @addtogroup TIM2_Public_Functions
+     44            * @{
+     45            */
+     46          
+     47          /**
+     48            * @brief  Deinitializes the TIM2 peripheral registers to their default reset values.
+     49            * @param  None
+     50            * @retval None
+     51            */
+
+   \                                 In section .far_func.text, align 1
+     52          void TIM2_DeInit(void)
+     53          {
+     54            TIM2->CR1 = (uint8_t)TIM2_CR1_RESET_VALUE;
+   \                     TIM2_DeInit:
+   \   000000 725F 5300    CLR       L:0x5300
+     55            TIM2->IER = (uint8_t)TIM2_IER_RESET_VALUE;
+   \   000004 725F 5303    CLR       L:0x5303
+     56            TIM2->SR2 = (uint8_t)TIM2_SR2_RESET_VALUE;
+   \   000008 725F 5305    CLR       L:0x5305
+     57            
+     58            /* Disable channels */
+     59            TIM2->CCER1 = (uint8_t)TIM2_CCER1_RESET_VALUE;
+   \   00000C 725F 530A    CLR       L:0x530a
+     60            TIM2->CCER2 = (uint8_t)TIM2_CCER2_RESET_VALUE;
+   \   000010 725F 530B    CLR       L:0x530b
+     61            
+     62            
+     63            /* Then reset channel registers: it also works if lock level is equal to 2 or 3 */
+     64            TIM2->CCER1 = (uint8_t)TIM2_CCER1_RESET_VALUE;
+   \   000014 725F 530A    CLR       L:0x530a
+     65            TIM2->CCER2 = (uint8_t)TIM2_CCER2_RESET_VALUE;
+   \   000018 725F 530B    CLR       L:0x530b
+     66            TIM2->CCMR1 = (uint8_t)TIM2_CCMR1_RESET_VALUE;
+   \   00001C 725F 5307    CLR       L:0x5307
+     67            TIM2->CCMR2 = (uint8_t)TIM2_CCMR2_RESET_VALUE;
+   \   000020 725F 5308    CLR       L:0x5308
+     68            TIM2->CCMR3 = (uint8_t)TIM2_CCMR3_RESET_VALUE;
+   \   000024 725F 5309    CLR       L:0x5309
+     69            TIM2->CNTRH = (uint8_t)TIM2_CNTRH_RESET_VALUE;
+   \   000028 725F 530C    CLR       L:0x530c
+     70            TIM2->CNTRL = (uint8_t)TIM2_CNTRL_RESET_VALUE;
+   \   00002C 725F 530D    CLR       L:0x530d
+     71            TIM2->PSCR = (uint8_t)TIM2_PSCR_RESET_VALUE;
+   \   000030 725F 530E    CLR       L:0x530e
+     72            TIM2->ARRH  = (uint8_t)TIM2_ARRH_RESET_VALUE;
+   \   000034 35 FF 530F   MOV       L:0x530f, #0xff
+     73            TIM2->ARRL  = (uint8_t)TIM2_ARRL_RESET_VALUE;
+   \   000038 35 FF 5310   MOV       L:0x5310, #0xff
+     74            TIM2->CCR1H = (uint8_t)TIM2_CCR1H_RESET_VALUE;
+   \   00003C 725F 5311    CLR       L:0x5311
+     75            TIM2->CCR1L = (uint8_t)TIM2_CCR1L_RESET_VALUE;
+   \   000040 725F 5312    CLR       L:0x5312
+     76            TIM2->CCR2H = (uint8_t)TIM2_CCR2H_RESET_VALUE;
+   \   000044 725F 5313    CLR       L:0x5313
+     77            TIM2->CCR2L = (uint8_t)TIM2_CCR2L_RESET_VALUE;
+   \   000048 725F 5314    CLR       L:0x5314
+     78            TIM2->CCR3H = (uint8_t)TIM2_CCR3H_RESET_VALUE;
+   \   00004C 725F 5315    CLR       L:0x5315
+     79            TIM2->CCR3L = (uint8_t)TIM2_CCR3L_RESET_VALUE;
+   \   000050 725F 5316    CLR       L:0x5316
+     80            TIM2->SR1 = (uint8_t)TIM2_SR1_RESET_VALUE;
+   \   000054 725F 5304    CLR       L:0x5304
+     81          }
+   \   000058 87           RETF
+     82          
+     83          /**
+     84            * @brief  Initializes the TIM2 Time Base Unit according to the specified parameters.
+     85            * @param    TIM2_Prescaler specifies the Prescaler from TIM2_Prescaler_TypeDef.
+     86            * @param    TIM2_Period specifies the Period value.
+     87            * @retval None
+     88            */
+
+   \                                 In section .far_func.text, align 1
+     89          void TIM2_TimeBaseInit( TIM2_Prescaler_TypeDef TIM2_Prescaler,
+     90                                  uint16_t TIM2_Period)
+     91          {
+   \                     TIM2_TimeBaseInit:
+   \   000000 B7 ..        LD        S:?b0, A
+     92            /* Set the Prescaler value */
+     93            TIM2->PSCR = (uint8_t)(TIM2_Prescaler);
+   \   000002 B6 ..        LD        A, S:?b0
+   \   000004 C7 530E      LD        L:0x530e, A
+     94            /* Set the Autoreload value */
+     95            TIM2->ARRH = (uint8_t)(TIM2_Period >> 8);
+   \   000007 9E           LD        A, XH
+   \   000008 C7 530F      LD        L:0x530f, A
+     96            TIM2->ARRL = (uint8_t)(TIM2_Period);
+   \   00000B 9F           LD        A, XL
+   \   00000C C7 5310      LD        L:0x5310, A
+     97          }
+   \   00000F 87           RETF
+     98          
+     99          
+    100          /**
+    101            * @brief  Initializes the TIM2 Channel1 according to the specified parameters.
+    102            * @param   TIM2_OCMode specifies the Output Compare mode  from @ref TIM2_OCMode_TypeDef.
+    103            * @param   TIM2_OutputState specifies the Output State  from @ref TIM2_OutputState_TypeDef.
+    104            * @param   TIM2_Pulse specifies the Pulse width  value.
+    105            * @param   TIM2_OCPolarity specifies the Output Compare Polarity  from @ref TIM2_OCPolarity_TypeDef.
+    106            * @retval None
+    107            */
+
+   \                                 In section .far_func.text, align 1
+    108          void TIM2_OC1Init(TIM2_OCMode_TypeDef TIM2_OCMode,
+    109                            TIM2_OutputState_TypeDef TIM2_OutputState,
+    110                            uint16_t TIM2_Pulse,
+    111                            TIM2_OCPolarity_TypeDef TIM2_OCPolarity)
+    112          {
+   \                     TIM2_OC1Init:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 8D ......    CALLF     L:?push_w6
+   \   000008 3B ....      PUSH      S:?b10
+   \   00000B B7 ..        LD        S:?b8, A
+   \   00000D 45 .. ..     MOV       S:?b9, S:?b0
+   \   000010 BF ..        LDW       S:?w6, X
+   \   000012 45 .. ..     MOV       S:?b10, S:?b1
+    113            /* Check the parameters */
+    114            assert_param(IS_TIM2_OC_MODE_OK(TIM2_OCMode));
+   \   000015 3D ..        TNZ       S:?b8
+   \   000017 27 2D        JREQ      L:??TIM2_OC1Init_0
+   \   000019 B6 ..        LD        A, S:?b8
+   \   00001B A1 10        CP        A, #0x10
+   \   00001D 27 27        JREQ      L:??TIM2_OC1Init_0
+   \   00001F B6 ..        LD        A, S:?b8
+   \   000021 A1 20        CP        A, #0x20
+   \   000023 27 21        JREQ      L:??TIM2_OC1Init_0
+   \   000025 B6 ..        LD        A, S:?b8
+   \   000027 A1 30        CP        A, #0x30
+   \   000029 27 1B        JREQ      L:??TIM2_OC1Init_0
+   \   00002B B6 ..        LD        A, S:?b8
+   \   00002D A1 60        CP        A, #0x60
+   \   00002F 27 15        JREQ      L:??TIM2_OC1Init_0
+   \   000031 B6 ..        LD        A, S:?b8
+   \   000033 A1 70        CP        A, #0x70
+   \   000035 27 0F        JREQ      L:??TIM2_OC1Init_0
+   \   000037 AE 0072      LDW       X, #0x72
+   \   00003A BF ..        LDW       S:?w1, X
+   \   00003C 5F           CLRW      X
+   \   00003D BF ..        LDW       S:?w0, X
+   \   00003F AE ....      LDW       X, #?_0
+   \   000042 8D ......    CALLF     assert_failed
+    115            assert_param(IS_TIM2_OUTPUT_STATE_OK(TIM2_OutputState));
+   \                     ??TIM2_OC1Init_0:
+   \   000046 3D ..        TNZ       S:?b9
+   \   000048 27 15        JREQ      L:??TIM2_OC1Init_1
+   \   00004A B6 ..        LD        A, S:?b9
+   \   00004C A1 11        CP        A, #0x11
+   \   00004E 27 0F        JREQ      L:??TIM2_OC1Init_1
+   \   000050 AE 0073      LDW       X, #0x73
+   \   000053 BF ..        LDW       S:?w1, X
+   \   000055 5F           CLRW      X
+   \   000056 BF ..        LDW       S:?w0, X
+   \   000058 AE ....      LDW       X, #?_0
+   \   00005B 8D ......    CALLF     assert_failed
+    116            assert_param(IS_TIM2_OC_POLARITY_OK(TIM2_OCPolarity));
+   \                     ??TIM2_OC1Init_1:
+   \   00005F 3D ..        TNZ       S:?b10
+   \   000061 27 15        JREQ      L:??TIM2_OC1Init_2
+   \   000063 B6 ..        LD        A, S:?b10
+   \   000065 A1 22        CP        A, #0x22
+   \   000067 27 0F        JREQ      L:??TIM2_OC1Init_2
+   \   000069 AE 0074      LDW       X, #0x74
+   \   00006C BF ..        LDW       S:?w1, X
+   \   00006E 5F           CLRW      X
+   \   00006F BF ..        LDW       S:?w0, X
+   \   000071 AE ....      LDW       X, #?_0
+   \   000074 8D ......    CALLF     assert_failed
+    117            
+    118            /* Disable the Channel 1: Reset the CCE Bit, Set the Output State , the Output Polarity */
+    119            TIM2->CCER1 &= (uint8_t)(~( TIM2_CCER1_CC1E | TIM2_CCER1_CC1P));
+   \                     ??TIM2_OC1Init_2:
+   \   000078 C6 530A      LD        A, L:0x530a
+   \   00007B A4 FC        AND       A, #0xfc
+   \   00007D C7 530A      LD        L:0x530a, A
+    120            /* Set the Output State &  Set the Output Polarity  */
+    121            TIM2->CCER1 |= (uint8_t)((uint8_t)(TIM2_OutputState & TIM2_CCER1_CC1E ) | 
+    122                                     (uint8_t)(TIM2_OCPolarity & TIM2_CCER1_CC1P));
+   \   000080 B6 ..        LD        A, S:?b10
+   \   000082 A4 02        AND       A, #0x2
+   \   000084 88           PUSH      A
+   \   000085 B6 ..        LD        A, S:?b9
+   \   000087 A4 01        AND       A, #0x1
+   \   000089 B7 ..        LD        S:?b1, A
+   \   00008B 84           POP       A
+   \   00008C BA ..        OR        A, S:?b1
+   \   00008E CA 530A      OR        A, L:0x530a
+   \   000091 C7 530A      LD        L:0x530a, A
+    123            
+    124            /* Reset the Output Compare Bits  & Set the Ouput Compare Mode */
+    125            TIM2->CCMR1 = (uint8_t)((uint8_t)(TIM2->CCMR1 & (uint8_t)(~TIM2_CCMR_OCM)) |
+    126                                    (uint8_t)TIM2_OCMode);
+   \   000094 C6 5307      LD        A, L:0x5307
+   \   000097 A4 8F        AND       A, #0x8f
+   \   000099 BA ..        OR        A, S:?b8
+   \   00009B C7 5307      LD        L:0x5307, A
+    127            
+    128            /* Set the Pulse value */
+    129            TIM2->CCR1H = (uint8_t)(TIM2_Pulse >> 8);
+   \   00009E B6 ..        LD        A, S:?b12
+   \   0000A0 C7 5311      LD        L:0x5311, A
+    130            TIM2->CCR1L = (uint8_t)(TIM2_Pulse);
+   \   0000A3 B6 ..        LD        A, S:?b13
+   \   0000A5 C7 5312      LD        L:0x5312, A
+    131          }
+   \   0000A8 32 ....      POP       S:?b10
+   \   0000AB 8D ......    CALLF     L:?pop_w6
+   \   0000AF AC ......    JPF       L:?epilogue_w4
+    132          
+    133          
+    134          /**
+    135            * @brief  Initializes the TIM2 Channel2 according to the specified parameters.
+    136            * @param   TIM2_OCMode specifies the Output Compare mode  from @ref TIM2_OCMode_TypeDef.
+    137            * @param   TIM2_OutputState specifies the Output State  from @ref TIM2_OutputState_TypeDef.
+    138            * @param   TIM2_Pulse specifies the Pulse width  value.
+    139            * @param   TIM2_OCPolarity specifies the Output Compare Polarity  from @ref TIM2_OCPolarity_TypeDef.
+    140            * @retval None
+    141            */
+
+   \                                 In section .far_func.text, align 1
+    142          void TIM2_OC2Init(TIM2_OCMode_TypeDef TIM2_OCMode,
+    143                            TIM2_OutputState_TypeDef TIM2_OutputState,
+    144                            uint16_t TIM2_Pulse,
+    145                            TIM2_OCPolarity_TypeDef TIM2_OCPolarity)
+    146          {
+   \                     TIM2_OC2Init:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 8D ......    CALLF     L:?push_w6
+   \   000008 3B ....      PUSH      S:?b10
+   \   00000B B7 ..        LD        S:?b8, A
+   \   00000D 45 .. ..     MOV       S:?b9, S:?b0
+   \   000010 BF ..        LDW       S:?w6, X
+   \   000012 45 .. ..     MOV       S:?b10, S:?b1
+    147            /* Check the parameters */
+    148            assert_param(IS_TIM2_OC_MODE_OK(TIM2_OCMode));
+   \   000015 3D ..        TNZ       S:?b8
+   \   000017 27 2D        JREQ      L:??TIM2_OC2Init_0
+   \   000019 B6 ..        LD        A, S:?b8
+   \   00001B A1 10        CP        A, #0x10
+   \   00001D 27 27        JREQ      L:??TIM2_OC2Init_0
+   \   00001F B6 ..        LD        A, S:?b8
+   \   000021 A1 20        CP        A, #0x20
+   \   000023 27 21        JREQ      L:??TIM2_OC2Init_0
+   \   000025 B6 ..        LD        A, S:?b8
+   \   000027 A1 30        CP        A, #0x30
+   \   000029 27 1B        JREQ      L:??TIM2_OC2Init_0
+   \   00002B B6 ..        LD        A, S:?b8
+   \   00002D A1 60        CP        A, #0x60
+   \   00002F 27 15        JREQ      L:??TIM2_OC2Init_0
+   \   000031 B6 ..        LD        A, S:?b8
+   \   000033 A1 70        CP        A, #0x70
+   \   000035 27 0F        JREQ      L:??TIM2_OC2Init_0
+   \   000037 AE 0094      LDW       X, #0x94
+   \   00003A BF ..        LDW       S:?w1, X
+   \   00003C 5F           CLRW      X
+   \   00003D BF ..        LDW       S:?w0, X
+   \   00003F AE ....      LDW       X, #?_0
+   \   000042 8D ......    CALLF     assert_failed
+    149            assert_param(IS_TIM2_OUTPUT_STATE_OK(TIM2_OutputState));
+   \                     ??TIM2_OC2Init_0:
+   \   000046 3D ..        TNZ       S:?b9
+   \   000048 27 15        JREQ      L:??TIM2_OC2Init_1
+   \   00004A B6 ..        LD        A, S:?b9
+   \   00004C A1 11        CP        A, #0x11
+   \   00004E 27 0F        JREQ      L:??TIM2_OC2Init_1
+   \   000050 AE 0095      LDW       X, #0x95
+   \   000053 BF ..        LDW       S:?w1, X
+   \   000055 5F           CLRW      X
+   \   000056 BF ..        LDW       S:?w0, X
+   \   000058 AE ....      LDW       X, #?_0
+   \   00005B 8D ......    CALLF     assert_failed
+    150            assert_param(IS_TIM2_OC_POLARITY_OK(TIM2_OCPolarity));
+   \                     ??TIM2_OC2Init_1:
+   \   00005F 3D ..        TNZ       S:?b10
+   \   000061 27 15        JREQ      L:??TIM2_OC2Init_2
+   \   000063 B6 ..        LD        A, S:?b10
+   \   000065 A1 22        CP        A, #0x22
+   \   000067 27 0F        JREQ      L:??TIM2_OC2Init_2
+   \   000069 AE 0096      LDW       X, #0x96
+   \   00006C BF ..        LDW       S:?w1, X
+   \   00006E 5F           CLRW      X
+   \   00006F BF ..        LDW       S:?w0, X
+   \   000071 AE ....      LDW       X, #?_0
+   \   000074 8D ......    CALLF     assert_failed
+    151            
+    152            
+    153            /* Disable the Channel 1: Reset the CCE Bit, Set the Output State, the Output Polarity */
+    154            TIM2->CCER1 &= (uint8_t)(~( TIM2_CCER1_CC2E |  TIM2_CCER1_CC2P ));
+   \                     ??TIM2_OC2Init_2:
+   \   000078 C6 530A      LD        A, L:0x530a
+   \   00007B A4 CF        AND       A, #0xcf
+   \   00007D C7 530A      LD        L:0x530a, A
+    155            /* Set the Output State & Set the Output Polarity */
+    156            TIM2->CCER1 |= (uint8_t)((uint8_t)(TIM2_OutputState  & TIM2_CCER1_CC2E ) |
+    157                                     (uint8_t)(TIM2_OCPolarity & TIM2_CCER1_CC2P));
+   \   000080 B6 ..        LD        A, S:?b10
+   \   000082 A4 20        AND       A, #0x20
+   \   000084 88           PUSH      A
+   \   000085 B6 ..        LD        A, S:?b9
+   \   000087 A4 10        AND       A, #0x10
+   \   000089 B7 ..        LD        S:?b1, A
+   \   00008B 84           POP       A
+   \   00008C BA ..        OR        A, S:?b1
+   \   00008E CA 530A      OR        A, L:0x530a
+   \   000091 C7 530A      LD        L:0x530a, A
+    158            
+    159            
+    160            /* Reset the Output Compare Bits & Set the Output Compare Mode */
+    161            TIM2->CCMR2 = (uint8_t)((uint8_t)(TIM2->CCMR2 & (uint8_t)(~TIM2_CCMR_OCM)) | 
+    162                                    (uint8_t)TIM2_OCMode);
+   \   000094 C6 5308      LD        A, L:0x5308
+   \   000097 A4 8F        AND       A, #0x8f
+   \   000099 BA ..        OR        A, S:?b8
+   \   00009B C7 5308      LD        L:0x5308, A
+    163            
+    164            
+    165            /* Set the Pulse value */
+    166            TIM2->CCR2H = (uint8_t)(TIM2_Pulse >> 8);
+   \   00009E B6 ..        LD        A, S:?b12
+   \   0000A0 C7 5313      LD        L:0x5313, A
+    167            TIM2->CCR2L = (uint8_t)(TIM2_Pulse);
+   \   0000A3 B6 ..        LD        A, S:?b13
+   \   0000A5 C7 5314      LD        L:0x5314, A
+    168          }
+   \   0000A8 32 ....      POP       S:?b10
+   \   0000AB 8D ......    CALLF     L:?pop_w6
+   \   0000AF AC ......    JPF       L:?epilogue_w4
+    169          
+    170          
+    171          /**
+    172            * @brief  Initializes the TIM2 Channel3 according to the specified parameters.
+    173            * @param   TIM2_OCMode specifies the Output Compare mode from @ref TIM2_OCMode_TypeDef.
+    174            * @param   TIM2_OutputState specifies the Output State from @ref TIM2_OutputState_TypeDef.
+    175            * @param   TIM2_Pulse specifies the Pulse width value.
+    176            * @param   TIM2_OCPolarity specifies the Output Compare Polarity  from @ref TIM2_OCPolarity_TypeDef.
+    177            * @retval None
+    178            */
+
+   \                                 In section .far_func.text, align 1
+    179          void TIM2_OC3Init(TIM2_OCMode_TypeDef TIM2_OCMode,
+    180                            TIM2_OutputState_TypeDef TIM2_OutputState,
+    181                            uint16_t TIM2_Pulse,
+    182                            TIM2_OCPolarity_TypeDef TIM2_OCPolarity)
+    183          {
+   \                     TIM2_OC3Init:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 8D ......    CALLF     L:?push_w6
+   \   000008 3B ....      PUSH      S:?b10
+   \   00000B B7 ..        LD        S:?b8, A
+   \   00000D 45 .. ..     MOV       S:?b9, S:?b0
+   \   000010 BF ..        LDW       S:?w6, X
+   \   000012 45 .. ..     MOV       S:?b10, S:?b1
+    184            /* Check the parameters */
+    185            assert_param(IS_TIM2_OC_MODE_OK(TIM2_OCMode));
+   \   000015 3D ..        TNZ       S:?b8
+   \   000017 27 2D        JREQ      L:??TIM2_OC3Init_0
+   \   000019 B6 ..        LD        A, S:?b8
+   \   00001B A1 10        CP        A, #0x10
+   \   00001D 27 27        JREQ      L:??TIM2_OC3Init_0
+   \   00001F B6 ..        LD        A, S:?b8
+   \   000021 A1 20        CP        A, #0x20
+   \   000023 27 21        JREQ      L:??TIM2_OC3Init_0
+   \   000025 B6 ..        LD        A, S:?b8
+   \   000027 A1 30        CP        A, #0x30
+   \   000029 27 1B        JREQ      L:??TIM2_OC3Init_0
+   \   00002B B6 ..        LD        A, S:?b8
+   \   00002D A1 60        CP        A, #0x60
+   \   00002F 27 15        JREQ      L:??TIM2_OC3Init_0
+   \   000031 B6 ..        LD        A, S:?b8
+   \   000033 A1 70        CP        A, #0x70
+   \   000035 27 0F        JREQ      L:??TIM2_OC3Init_0
+   \   000037 AE 00B9      LDW       X, #0xb9
+   \   00003A BF ..        LDW       S:?w1, X
+   \   00003C 5F           CLRW      X
+   \   00003D BF ..        LDW       S:?w0, X
+   \   00003F AE ....      LDW       X, #?_0
+   \   000042 8D ......    CALLF     assert_failed
+    186            assert_param(IS_TIM2_OUTPUT_STATE_OK(TIM2_OutputState));
+   \                     ??TIM2_OC3Init_0:
+   \   000046 3D ..        TNZ       S:?b9
+   \   000048 27 15        JREQ      L:??TIM2_OC3Init_1
+   \   00004A B6 ..        LD        A, S:?b9
+   \   00004C A1 11        CP        A, #0x11
+   \   00004E 27 0F        JREQ      L:??TIM2_OC3Init_1
+   \   000050 AE 00BA      LDW       X, #0xba
+   \   000053 BF ..        LDW       S:?w1, X
+   \   000055 5F           CLRW      X
+   \   000056 BF ..        LDW       S:?w0, X
+   \   000058 AE ....      LDW       X, #?_0
+   \   00005B 8D ......    CALLF     assert_failed
+    187            assert_param(IS_TIM2_OC_POLARITY_OK(TIM2_OCPolarity));
+   \                     ??TIM2_OC3Init_1:
+   \   00005F 3D ..        TNZ       S:?b10
+   \   000061 27 15        JREQ      L:??TIM2_OC3Init_2
+   \   000063 B6 ..        LD        A, S:?b10
+   \   000065 A1 22        CP        A, #0x22
+   \   000067 27 0F        JREQ      L:??TIM2_OC3Init_2
+   \   000069 AE 00BB      LDW       X, #0xbb
+   \   00006C BF ..        LDW       S:?w1, X
+   \   00006E 5F           CLRW      X
+   \   00006F BF ..        LDW       S:?w0, X
+   \   000071 AE ....      LDW       X, #?_0
+   \   000074 8D ......    CALLF     assert_failed
+    188            /* Disable the Channel 1: Reset the CCE Bit, Set the Output State, the Output Polarity */
+    189            TIM2->CCER2 &= (uint8_t)(~( TIM2_CCER2_CC3E  | TIM2_CCER2_CC3P));
+   \                     ??TIM2_OC3Init_2:
+   \   000078 C6 530B      LD        A, L:0x530b
+   \   00007B A4 FC        AND       A, #0xfc
+   \   00007D C7 530B      LD        L:0x530b, A
+    190            /* Set the Output State & Set the Output Polarity */
+    191            TIM2->CCER2 |= (uint8_t)((uint8_t)(TIM2_OutputState & TIM2_CCER2_CC3E) |  
+    192                                     (uint8_t)(TIM2_OCPolarity & TIM2_CCER2_CC3P));
+   \   000080 B6 ..        LD        A, S:?b10
+   \   000082 A4 02        AND       A, #0x2
+   \   000084 88           PUSH      A
+   \   000085 B6 ..        LD        A, S:?b9
+   \   000087 A4 01        AND       A, #0x1
+   \   000089 B7 ..        LD        S:?b1, A
+   \   00008B 84           POP       A
+   \   00008C BA ..        OR        A, S:?b1
+   \   00008E CA 530B      OR        A, L:0x530b
+   \   000091 C7 530B      LD        L:0x530b, A
+    193            
+    194            /* Reset the Output Compare Bits & Set the Output Compare Mode */
+    195            TIM2->CCMR3 = (uint8_t)((uint8_t)(TIM2->CCMR3 & (uint8_t)(~TIM2_CCMR_OCM)) |
+    196                                    (uint8_t)TIM2_OCMode);
+   \   000094 C6 5309      LD        A, L:0x5309
+   \   000097 A4 8F        AND       A, #0x8f
+   \   000099 BA ..        OR        A, S:?b8
+   \   00009B C7 5309      LD        L:0x5309, A
+    197            
+    198            /* Set the Pulse value */
+    199            TIM2->CCR3H = (uint8_t)(TIM2_Pulse >> 8);
+   \   00009E B6 ..        LD        A, S:?b12
+   \   0000A0 C7 5315      LD        L:0x5315, A
+    200            TIM2->CCR3L = (uint8_t)(TIM2_Pulse);
+   \   0000A3 B6 ..        LD        A, S:?b13
+   \   0000A5 C7 5316      LD        L:0x5316, A
+    201          }
+   \   0000A8 32 ....      POP       S:?b10
+   \   0000AB 8D ......    CALLF     L:?pop_w6
+   \   0000AF AC ......    JPF       L:?epilogue_w4
+    202          
+    203          /**
+    204            * @brief  Initializes the TIM2 peripheral according to the specified parameters.
+    205            * @param    TIM2_Channel specifies the Input Capture Channel from @ref TIM2_Channel_TypeDef.
+    206            * @param   TIM2_ICPolarity specifies the Input Capture Polarity from @ref TIM2_ICPolarity_TypeDef.
+    207            * @param   TIM2_ICSelection specifies the Input Capture Selection from @ref TIM2_ICSelection_TypeDef.
+    208            * @param   TIM2_ICPrescaler specifies the Input Capture Prescaler from @ref TIM2_ICPSC_TypeDef.
+    209            * @param   TIM2_ICFilter specifies the Input Capture Filter value (value can be an integer from 0x00 to 0x0F).
+    210            * @retval None
+    211            */
+
+   \                                 In section .far_func.text, align 1
+    212          void TIM2_ICInit(TIM2_Channel_TypeDef TIM2_Channel,
+    213                           TIM2_ICPolarity_TypeDef TIM2_ICPolarity,
+    214                           TIM2_ICSelection_TypeDef TIM2_ICSelection,
+    215                           TIM2_ICPSC_TypeDef TIM2_ICPrescaler,
+    216                           uint8_t TIM2_ICFilter)
+    217          {
+   \                     TIM2_ICInit:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 3B ....      PUSH      S:?b12
+   \   000007 B7 ..        LD        S:?b8, A
+   \   000009 45 .. ..     MOV       S:?b9, S:?b0
+   \   00000C 45 .. ..     MOV       S:?b11, S:?b1
+   \   00000F 45 .. ..     MOV       S:?b10, S:?b2
+   \   000012 45 .. ..     MOV       S:?b12, S:?b3
+    218            /* Check the parameters */
+    219            assert_param(IS_TIM2_CHANNEL_OK(TIM2_Channel));
+   \   000015 3D ..        TNZ       S:?b8
+   \   000017 27 1B        JREQ      L:??TIM2_ICInit_0
+   \   000019 B6 ..        LD        A, S:?b8
+   \   00001B A1 01        CP        A, #0x1
+   \   00001D 27 15        JREQ      L:??TIM2_ICInit_0
+   \   00001F B6 ..        LD        A, S:?b8
+   \   000021 A1 02        CP        A, #0x2
+   \   000023 27 0F        JREQ      L:??TIM2_ICInit_0
+   \   000025 AE 00DB      LDW       X, #0xdb
+   \   000028 BF ..        LDW       S:?w1, X
+   \   00002A 5F           CLRW      X
+   \   00002B BF ..        LDW       S:?w0, X
+   \   00002D AE ....      LDW       X, #?_0
+   \   000030 8D ......    CALLF     assert_failed
+    220            assert_param(IS_TIM2_IC_POLARITY_OK(TIM2_ICPolarity));
+   \                     ??TIM2_ICInit_0:
+   \   000034 3D ..        TNZ       S:?b9
+   \   000036 27 15        JREQ      L:??TIM2_ICInit_1
+   \   000038 B6 ..        LD        A, S:?b9
+   \   00003A A1 44        CP        A, #0x44
+   \   00003C 27 0F        JREQ      L:??TIM2_ICInit_1
+   \   00003E AE 00DC      LDW       X, #0xdc
+   \   000041 BF ..        LDW       S:?w1, X
+   \   000043 5F           CLRW      X
+   \   000044 BF ..        LDW       S:?w0, X
+   \   000046 AE ....      LDW       X, #?_0
+   \   000049 8D ......    CALLF     assert_failed
+    221            assert_param(IS_TIM2_IC_SELECTION_OK(TIM2_ICSelection));
+   \                     ??TIM2_ICInit_1:
+   \   00004D B6 ..        LD        A, S:?b11
+   \   00004F A1 01        CP        A, #0x1
+   \   000051 27 1B        JREQ      L:??TIM2_ICInit_2
+   \   000053 B6 ..        LD        A, S:?b11
+   \   000055 A1 02        CP        A, #0x2
+   \   000057 27 15        JREQ      L:??TIM2_ICInit_2
+   \   000059 B6 ..        LD        A, S:?b11
+   \   00005B A1 03        CP        A, #0x3
+   \   00005D 27 0F        JREQ      L:??TIM2_ICInit_2
+   \   00005F AE 00DD      LDW       X, #0xdd
+   \   000062 BF ..        LDW       S:?w1, X
+   \   000064 5F           CLRW      X
+   \   000065 BF ..        LDW       S:?w0, X
+   \   000067 AE ....      LDW       X, #?_0
+   \   00006A 8D ......    CALLF     assert_failed
+    222            assert_param(IS_TIM2_IC_PRESCALER_OK(TIM2_ICPrescaler));
+   \                     ??TIM2_ICInit_2:
+   \   00006E 3D ..        TNZ       S:?b10
+   \   000070 27 21        JREQ      L:??TIM2_ICInit_3
+   \   000072 B6 ..        LD        A, S:?b10
+   \   000074 A1 04        CP        A, #0x4
+   \   000076 27 1B        JREQ      L:??TIM2_ICInit_3
+   \   000078 B6 ..        LD        A, S:?b10
+   \   00007A A1 08        CP        A, #0x8
+   \   00007C 27 15        JREQ      L:??TIM2_ICInit_3
+   \   00007E B6 ..        LD        A, S:?b10
+   \   000080 A1 0C        CP        A, #0xc
+   \   000082 27 0F        JREQ      L:??TIM2_ICInit_3
+   \   000084 AE 00DE      LDW       X, #0xde
+   \   000087 BF ..        LDW       S:?w1, X
+   \   000089 5F           CLRW      X
+   \   00008A BF ..        LDW       S:?w0, X
+   \   00008C AE ....      LDW       X, #?_0
+   \   00008F 8D ......    CALLF     assert_failed
+    223            assert_param(IS_TIM2_IC_FILTER_OK(TIM2_ICFilter));
+   \                     ??TIM2_ICInit_3:
+   \   000093 B6 ..        LD        A, S:?b12
+   \   000095 A1 10        CP        A, #0x10
+   \   000097 25 0F        JRC       L:??TIM2_ICInit_4
+   \   000099 AE 00DF      LDW       X, #0xdf
+   \   00009C BF ..        LDW       S:?w1, X
+   \   00009E 5F           CLRW      X
+   \   00009F BF ..        LDW       S:?w0, X
+   \   0000A1 AE ....      LDW       X, #?_0
+   \   0000A4 8D ......    CALLF     assert_failed
+    224            
+    225            if (TIM2_Channel == TIM2_CHANNEL_1)
+   \                     ??TIM2_ICInit_4:
+   \   0000A8 3D ..        TNZ       S:?b8
+   \   0000AA 26 14        JRNE      L:??TIM2_ICInit_5
+    226            {
+    227              /* TI1 Configuration */
+    228              TI1_Config((uint8_t)TIM2_ICPolarity,
+    229                         (uint8_t)TIM2_ICSelection,
+    230                         (uint8_t)TIM2_ICFilter);
+   \   0000AC 45 .. ..     MOV       S:?b1, S:?b12
+   \   0000AF 45 .. ..     MOV       S:?b0, S:?b11
+   \   0000B2 B6 ..        LD        A, S:?b9
+   \   0000B4 8D ......    CALLF     TI1_Config
+    231              
+    232              /* Set the Input Capture Prescaler value */
+    233              TIM2_SetIC1Prescaler(TIM2_ICPrescaler);
+   \   0000B8 B6 ..        LD        A, S:?b10
+   \   0000BA 8D ......    CALLF     TIM2_SetIC1Prescaler
+   \   0000BE 20 2C        JRA       L:??TIM2_ICInit_6
+    234            }
+    235            else if (TIM2_Channel == TIM2_CHANNEL_2)
+   \                     ??TIM2_ICInit_5:
+   \   0000C0 B6 ..        LD        A, S:?b8
+   \   0000C2 A1 01        CP        A, #0x1
+   \   0000C4 26 14        JRNE      L:??TIM2_ICInit_7
+    236            {
+    237              /* TI2 Configuration */
+    238              TI2_Config((uint8_t)TIM2_ICPolarity,
+    239                         (uint8_t)TIM2_ICSelection,
+    240                         (uint8_t)TIM2_ICFilter);
+   \   0000C6 45 .. ..     MOV       S:?b1, S:?b12
+   \   0000C9 45 .. ..     MOV       S:?b0, S:?b11
+   \   0000CC B6 ..        LD        A, S:?b9
+   \   0000CE 8D ......    CALLF     TI2_Config
+    241              
+    242              /* Set the Input Capture Prescaler value */
+    243              TIM2_SetIC2Prescaler(TIM2_ICPrescaler);
+   \   0000D2 B6 ..        LD        A, S:?b10
+   \   0000D4 8D ......    CALLF     TIM2_SetIC2Prescaler
+   \   0000D8 20 12        JRA       L:??TIM2_ICInit_6
+    244            }
+    245            else
+    246            {
+    247              /* TI3 Configuration */
+    248              TI3_Config((uint8_t)TIM2_ICPolarity,
+    249                         (uint8_t)TIM2_ICSelection,
+    250                         (uint8_t)TIM2_ICFilter);
+   \                     ??TIM2_ICInit_7:
+   \   0000DA 45 .. ..     MOV       S:?b1, S:?b12
+   \   0000DD 45 .. ..     MOV       S:?b0, S:?b11
+   \   0000E0 B6 ..        LD        A, S:?b9
+   \   0000E2 8D ......    CALLF     TI3_Config
+    251              
+    252              /* Set the Input Capture Prescaler value */
+    253              TIM2_SetIC3Prescaler(TIM2_ICPrescaler);
+   \   0000E6 B6 ..        LD        A, S:?b10
+   \   0000E8 8D ......    CALLF     TIM2_SetIC3Prescaler
+    254            }
+    255          }
+   \                     ??TIM2_ICInit_6:
+   \   0000EC 32 ....      POP       S:?b12
+   \   0000EF AC ......    JPF       L:?epilogue_l2
+    256          
+    257          /**
+    258            * @brief  Configures the TIM2 peripheral in PWM Input Mode according to the specified parameters.
+    259              * @param    TIM2_Channel specifies the Input Capture Channel from @ref TIM2_Channel_TypeDef.
+    260            * @param   TIM2_ICPolarity specifies the Input Capture Polarity from @ref TIM2_ICPolarity_TypeDef.
+    261            * @param   TIM2_ICSelection specifies the Input Capture Selection from @ref TIM2_ICSelection_TypeDef.
+    262            * @param   TIM2_ICPrescaler specifies the Input Capture Prescaler from @ref TIM2_ICPSC_TypeDef.
+    263            * @param   TIM2_ICFilter specifies the Input Capture Filter value (value can be an integer from 0x00 to 0x0F).
+    264            * @retval None
+    265            */
+
+   \                                 In section .far_func.text, align 1
+    266          void TIM2_PWMIConfig(TIM2_Channel_TypeDef TIM2_Channel,
+    267                               TIM2_ICPolarity_TypeDef TIM2_ICPolarity,
+    268                               TIM2_ICSelection_TypeDef TIM2_ICSelection,
+    269                               TIM2_ICPSC_TypeDef TIM2_ICPrescaler,
+    270                               uint8_t TIM2_ICFilter)
+    271          {
+   \                     TIM2_PWMIConfig:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 8D ......    CALLF     L:?push_w6
+   \   000008 3B ....      PUSH      S:?b14
+   \   00000B B7 ..        LD        S:?b8, A
+   \   00000D 45 .. ..     MOV       S:?b9, S:?b0
+   \   000010 45 .. ..     MOV       S:?b11, S:?b1
+   \   000013 45 .. ..     MOV       S:?b10, S:?b2
+   \   000016 45 .. ..     MOV       S:?b12, S:?b3
+    272            uint8_t icpolarity = (uint8_t)TIM2_ICPOLARITY_RISING;
+   \   000019 3F ..        CLR       S:?b14
+    273            uint8_t icselection = (uint8_t)TIM2_ICSELECTION_DIRECTTI;
+   \   00001B 35 01 ....   MOV       S:?b13, #0x1
+    274            
+    275            /* Check the parameters */
+    276            assert_param(IS_TIM2_PWMI_CHANNEL_OK(TIM2_Channel));
+   \   00001F 3D ..        TNZ       S:?b8
+   \   000021 27 15        JREQ      L:??TIM2_PWMIConfig_0
+   \   000023 B6 ..        LD        A, S:?b8
+   \   000025 A1 01        CP        A, #0x1
+   \   000027 27 0F        JREQ      L:??TIM2_PWMIConfig_0
+   \   000029 AE 0114      LDW       X, #0x114
+   \   00002C BF ..        LDW       S:?w1, X
+   \   00002E 5F           CLRW      X
+   \   00002F BF ..        LDW       S:?w0, X
+   \   000031 AE ....      LDW       X, #?_0
+   \   000034 8D ......    CALLF     assert_failed
+    277            assert_param(IS_TIM2_IC_POLARITY_OK(TIM2_ICPolarity));
+   \                     ??TIM2_PWMIConfig_0:
+   \   000038 3D ..        TNZ       S:?b9
+   \   00003A 27 15        JREQ      L:??TIM2_PWMIConfig_1
+   \   00003C B6 ..        LD        A, S:?b9
+   \   00003E A1 44        CP        A, #0x44
+   \   000040 27 0F        JREQ      L:??TIM2_PWMIConfig_1
+   \   000042 AE 0115      LDW       X, #0x115
+   \   000045 BF ..        LDW       S:?w1, X
+   \   000047 5F           CLRW      X
+   \   000048 BF ..        LDW       S:?w0, X
+   \   00004A AE ....      LDW       X, #?_0
+   \   00004D 8D ......    CALLF     assert_failed
+    278            assert_param(IS_TIM2_IC_SELECTION_OK(TIM2_ICSelection));
+   \                     ??TIM2_PWMIConfig_1:
+   \   000051 B6 ..        LD        A, S:?b11
+   \   000053 A1 01        CP        A, #0x1
+   \   000055 27 1B        JREQ      L:??TIM2_PWMIConfig_2
+   \   000057 B6 ..        LD        A, S:?b11
+   \   000059 A1 02        CP        A, #0x2
+   \   00005B 27 15        JREQ      L:??TIM2_PWMIConfig_2
+   \   00005D B6 ..        LD        A, S:?b11
+   \   00005F A1 03        CP        A, #0x3
+   \   000061 27 0F        JREQ      L:??TIM2_PWMIConfig_2
+   \   000063 AE 0116      LDW       X, #0x116
+   \   000066 BF ..        LDW       S:?w1, X
+   \   000068 5F           CLRW      X
+   \   000069 BF ..        LDW       S:?w0, X
+   \   00006B AE ....      LDW       X, #?_0
+   \   00006E 8D ......    CALLF     assert_failed
+    279            assert_param(IS_TIM2_IC_PRESCALER_OK(TIM2_ICPrescaler));
+   \                     ??TIM2_PWMIConfig_2:
+   \   000072 3D ..        TNZ       S:?b10
+   \   000074 27 21        JREQ      L:??TIM2_PWMIConfig_3
+   \   000076 B6 ..        LD        A, S:?b10
+   \   000078 A1 04        CP        A, #0x4
+   \   00007A 27 1B        JREQ      L:??TIM2_PWMIConfig_3
+   \   00007C B6 ..        LD        A, S:?b10
+   \   00007E A1 08        CP        A, #0x8
+   \   000080 27 15        JREQ      L:??TIM2_PWMIConfig_3
+   \   000082 B6 ..        LD        A, S:?b10
+   \   000084 A1 0C        CP        A, #0xc
+   \   000086 27 0F        JREQ      L:??TIM2_PWMIConfig_3
+   \   000088 AE 0117      LDW       X, #0x117
+   \   00008B BF ..        LDW       S:?w1, X
+   \   00008D 5F           CLRW      X
+   \   00008E BF ..        LDW       S:?w0, X
+   \   000090 AE ....      LDW       X, #?_0
+   \   000093 8D ......    CALLF     assert_failed
+    280            
+    281            /* Select the Opposite Input Polarity */
+    282            if (TIM2_ICPolarity != TIM2_ICPOLARITY_FALLING)
+   \                     ??TIM2_PWMIConfig_3:
+   \   000097 B6 ..        LD        A, S:?b9
+   \   000099 A1 44        CP        A, #0x44
+   \   00009B 27 06        JREQ      L:??TIM2_PWMIConfig_4
+    283            {
+    284              icpolarity = (uint8_t)TIM2_ICPOLARITY_FALLING;
+   \   00009D A6 44        LD        A, #0x44
+   \   00009F B7 ..        LD        S:?b14, A
+   \   0000A1 20 02        JRA       L:??TIM2_PWMIConfig_5
+    285            }
+    286            else
+    287            {
+    288              icpolarity = (uint8_t)TIM2_ICPOLARITY_RISING;
+   \                     ??TIM2_PWMIConfig_4:
+   \   0000A3 3F ..        CLR       S:?b14
+    289            }
+    290            
+    291            /* Select the Opposite Input */
+    292            if (TIM2_ICSelection == TIM2_ICSELECTION_DIRECTTI)
+   \                     ??TIM2_PWMIConfig_5:
+   \   0000A5 B6 ..        LD        A, S:?b11
+   \   0000A7 A1 01        CP        A, #0x1
+   \   0000A9 26 06        JRNE      L:??TIM2_PWMIConfig_6
+    293            {
+    294              icselection = (uint8_t)TIM2_ICSELECTION_INDIRECTTI;
+   \   0000AB A6 02        LD        A, #0x2
+   \   0000AD B7 ..        LD        S:?b13, A
+   \   0000AF 20 04        JRA       L:??TIM2_PWMIConfig_7
+    295            }
+    296            else
+    297            {
+    298              icselection = (uint8_t)TIM2_ICSELECTION_DIRECTTI;
+   \                     ??TIM2_PWMIConfig_6:
+   \   0000B1 A6 01        LD        A, #0x1
+   \   0000B3 B7 ..        LD        S:?b13, A
+    299            }
+    300            
+    301            if (TIM2_Channel == TIM2_CHANNEL_1)
+   \                     ??TIM2_PWMIConfig_7:
+   \   0000B5 3D ..        TNZ       S:?b8
+   \   0000B7 26 26        JRNE      L:??TIM2_PWMIConfig_8
+    302            {
+    303              /* TI1 Configuration */
+    304              TI1_Config((uint8_t)TIM2_ICPolarity, (uint8_t)TIM2_ICSelection,
+    305                         (uint8_t)TIM2_ICFilter);
+   \   0000B9 45 .. ..     MOV       S:?b1, S:?b12
+   \   0000BC 45 .. ..     MOV       S:?b0, S:?b11
+   \   0000BF B6 ..        LD        A, S:?b9
+   \   0000C1 8D ......    CALLF     TI1_Config
+    306              
+    307              /* Set the Input Capture Prescaler value */
+    308              TIM2_SetIC1Prescaler(TIM2_ICPrescaler);
+   \   0000C5 B6 ..        LD        A, S:?b10
+   \   0000C7 8D ......    CALLF     TIM2_SetIC1Prescaler
+    309              
+    310              /* TI2 Configuration */
+    311              TI2_Config(icpolarity, icselection, TIM2_ICFilter);
+   \   0000CB 45 .. ..     MOV       S:?b1, S:?b12
+   \   0000CE 45 .. ..     MOV       S:?b0, S:?b13
+   \   0000D1 B6 ..        LD        A, S:?b14
+   \   0000D3 8D ......    CALLF     TI2_Config
+    312              
+    313              /* Set the Input Capture Prescaler value */
+    314              TIM2_SetIC2Prescaler(TIM2_ICPrescaler);
+   \   0000D7 B6 ..        LD        A, S:?b10
+   \   0000D9 8D ......    CALLF     TIM2_SetIC2Prescaler
+   \   0000DD 20 24        JRA       L:??TIM2_PWMIConfig_9
+    315            }
+    316            else
+    317            {
+    318              /* TI2 Configuration */
+    319              TI2_Config((uint8_t)TIM2_ICPolarity, (uint8_t)TIM2_ICSelection,
+    320                         (uint8_t)TIM2_ICFilter);
+   \                     ??TIM2_PWMIConfig_8:
+   \   0000DF 45 .. ..     MOV       S:?b1, S:?b12
+   \   0000E2 45 .. ..     MOV       S:?b0, S:?b11
+   \   0000E5 B6 ..        LD        A, S:?b9
+   \   0000E7 8D ......    CALLF     TI2_Config
+    321              
+    322              /* Set the Input Capture Prescaler value */
+    323              TIM2_SetIC2Prescaler(TIM2_ICPrescaler);
+   \   0000EB B6 ..        LD        A, S:?b10
+   \   0000ED 8D ......    CALLF     TIM2_SetIC2Prescaler
+    324              
+    325              /* TI1 Configuration */
+    326              TI1_Config((uint8_t)icpolarity, icselection, (uint8_t)TIM2_ICFilter);
+   \   0000F1 45 .. ..     MOV       S:?b1, S:?b12
+   \   0000F4 45 .. ..     MOV       S:?b0, S:?b13
+   \   0000F7 B6 ..        LD        A, S:?b14
+   \   0000F9 8D ......    CALLF     TI1_Config
+    327              
+    328              /* Set the Input Capture Prescaler value */
+    329              TIM2_SetIC1Prescaler(TIM2_ICPrescaler);
+   \   0000FD B6 ..        LD        A, S:?b10
+   \   0000FF 8D ......    CALLF     TIM2_SetIC1Prescaler
+    330            }
+    331          }
+   \                     ??TIM2_PWMIConfig_9:
+   \   000103 32 ....      POP       S:?b14
+   \   000106 AC ......    JPF       L:?epilogue_l2_w6
+    332          
+    333          /**
+    334            * @brief  Enables or disables the TIM2 peripheral.
+    335            * @param   NewState new state of the TIM2 peripheral. This parameter can
+    336            * be ENABLE or DISABLE.
+    337            * @retval None
+    338            */
+
+   \                                 In section .far_func.text, align 1
+    339          void TIM2_Cmd(FunctionalState NewState)
+    340          {
+   \                     TIM2_Cmd:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    341            /* Check the parameters */
+    342            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM2_Cmd_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??TIM2_Cmd_0
+   \   00000F AE 0156      LDW       X, #0x156
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    343            
+    344            /* set or Reset the CEN Bit */
+    345            if (NewState != DISABLE)
+   \                     ??TIM2_Cmd_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM2_Cmd_1
+    346            {
+    347              TIM2->CR1 |= (uint8_t)TIM2_CR1_CEN;
+   \   000022 7210 5300    BSET      L:0x5300, #0x0
+   \   000026 20 04        JRA       L:??TIM2_Cmd_2
+    348            }
+    349            else
+    350            {
+    351              TIM2->CR1 &= (uint8_t)(~TIM2_CR1_CEN);
+   \                     ??TIM2_Cmd_1:
+   \   000028 7211 5300    BRES      L:0x5300, #0x0
+    352            }
+    353          }
+   \                     ??TIM2_Cmd_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    354          
+    355          /**
+    356            * @brief  Enables or disables the specified TIM2 interrupts.
+    357            * @param   NewState new state of the TIM2 peripheral.
+    358            * This parameter can be: ENABLE or DISABLE.
+    359            * @param   TIM2_IT specifies the TIM2 interrupts sources to be enabled or disabled.
+    360            * This parameter can be any combination of the following values:
+    361            *                       - TIM2_IT_UPDATE: TIM2 update Interrupt source
+    362            *                       - TIM2_IT_CC1: TIM2 Capture Compare 1 Interrupt source
+    363            *                       - TIM2_IT_CC2: TIM2 Capture Compare 2 Interrupt source
+    364            *                       - TIM2_IT_CC3: TIM2 Capture Compare 3 Interrupt source
+    365            * @param   NewState new state of the TIM2 peripheral.
+    366            * @retval None
+    367            */
+
+   \                                 In section .far_func.text, align 1
+    368          void TIM2_ITConfig(TIM2_IT_TypeDef TIM2_IT, FunctionalState NewState)
+    369          {
+   \                     TIM2_ITConfig:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 B7 ..        LD        S:?b9, A
+   \   000006 45 .. ..     MOV       S:?b8, S:?b0
+    370            /* Check the parameters */
+    371            assert_param(IS_TIM2_IT_OK(TIM2_IT));
+   \   000009 3D ..        TNZ       S:?b9
+   \   00000B 27 06        JREQ      L:??TIM2_ITConfig_0
+   \   00000D B6 ..        LD        A, S:?b9
+   \   00000F A1 10        CP        A, #0x10
+   \   000011 25 0F        JRC       L:??TIM2_ITConfig_1
+   \                     ??TIM2_ITConfig_0:
+   \   000013 AE 0173      LDW       X, #0x173
+   \   000016 BF ..        LDW       S:?w1, X
+   \   000018 5F           CLRW      X
+   \   000019 BF ..        LDW       S:?w0, X
+   \   00001B AE ....      LDW       X, #?_0
+   \   00001E 8D ......    CALLF     assert_failed
+    372            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \                     ??TIM2_ITConfig_1:
+   \   000022 3D ..        TNZ       S:?b8
+   \   000024 27 15        JREQ      L:??TIM2_ITConfig_2
+   \   000026 B6 ..        LD        A, S:?b8
+   \   000028 A1 01        CP        A, #0x1
+   \   00002A 27 0F        JREQ      L:??TIM2_ITConfig_2
+   \   00002C AE 0174      LDW       X, #0x174
+   \   00002F BF ..        LDW       S:?w1, X
+   \   000031 5F           CLRW      X
+   \   000032 BF ..        LDW       S:?w0, X
+   \   000034 AE ....      LDW       X, #?_0
+   \   000037 8D ......    CALLF     assert_failed
+    373            
+    374            if (NewState != DISABLE)
+   \                     ??TIM2_ITConfig_2:
+   \   00003B 3D ..        TNZ       S:?b8
+   \   00003D 27 0A        JREQ      L:??TIM2_ITConfig_3
+    375            {
+    376              /* Enable the Interrupt sources */
+    377              TIM2->IER |= (uint8_t)TIM2_IT;
+   \   00003F C6 5303      LD        A, L:0x5303
+   \   000042 BA ..        OR        A, S:?b9
+   \   000044 C7 5303      LD        L:0x5303, A
+   \   000047 20 09        JRA       L:??TIM2_ITConfig_4
+    378            }
+    379            else
+    380            {
+    381              /* Disable the Interrupt sources */
+    382              TIM2->IER &= (uint8_t)(~TIM2_IT);
+   \                     ??TIM2_ITConfig_3:
+   \   000049 B6 ..        LD        A, S:?b9
+   \   00004B 43           CPL       A
+   \   00004C C4 5303      AND       A, L:0x5303
+   \   00004F C7 5303      LD        L:0x5303, A
+    383            }
+    384          }
+   \                     ??TIM2_ITConfig_4:
+   \   000052 AC ......    JPF       L:?epilogue_w4
+    385          
+    386          /**
+    387            * @brief  Enables or Disables the TIM2 Update event.
+    388            * @param   NewState new state of the TIM2 peripheral Preload register. This parameter can
+    389            * be ENABLE or DISABLE.
+    390            * @retval None
+    391            */
+
+   \                                 In section .far_func.text, align 1
+    392          void TIM2_UpdateDisableConfig(FunctionalState NewState)
+    393          {
+   \                     TIM2_UpdateDisableConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    394            /* Check the parameters */
+    395            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM2_UpdateDisableConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??TIM2_UpdateDisableConfig_0
+   \   00000F AE 018B      LDW       X, #0x18b
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    396            
+    397            /* Set or Reset the UDIS Bit */
+    398            if (NewState != DISABLE)
+   \                     ??TIM2_UpdateDisableConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM2_UpdateDisableConfig_1
+    399            {
+    400              TIM2->CR1 |= (uint8_t)TIM2_CR1_UDIS;
+   \   000022 7212 5300    BSET      L:0x5300, #0x1
+   \   000026 20 04        JRA       L:??TIM2_UpdateDisableConfig_2
+    401            }
+    402            else
+    403            {
+    404              TIM2->CR1 &= (uint8_t)(~TIM2_CR1_UDIS);
+   \                     ??TIM2_UpdateDisableConfig_1:
+   \   000028 7213 5300    BRES      L:0x5300, #0x1
+    405            }
+    406          }
+   \                     ??TIM2_UpdateDisableConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    407          
+    408          /**
+    409            * @brief  Selects the TIM2 Update Request Interrupt source.
+    410            * @param   TIM2_UpdateSource specifies the Update source.
+    411            * This parameter can be one of the following values
+    412            *                       - TIM2_UPDATESOURCE_REGULAR
+    413            *                       - TIM2_UPDATESOURCE_GLOBAL
+    414            * @retval None
+    415            */
+
+   \                                 In section .far_func.text, align 1
+    416          void TIM2_UpdateRequestConfig(TIM2_UpdateSource_TypeDef TIM2_UpdateSource)
+    417          {
+   \                     TIM2_UpdateRequestConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    418            /* Check the parameters */
+    419            assert_param(IS_TIM2_UPDATE_SOURCE_OK(TIM2_UpdateSource));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM2_UpdateRequestConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??TIM2_UpdateRequestConfig_0
+   \   00000F AE 01A3      LDW       X, #0x1a3
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    420            
+    421            /* Set or Reset the URS Bit */
+    422            if (TIM2_UpdateSource != TIM2_UPDATESOURCE_GLOBAL)
+   \                     ??TIM2_UpdateRequestConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM2_UpdateRequestConfig_1
+    423            {
+    424              TIM2->CR1 |= (uint8_t)TIM2_CR1_URS;
+   \   000022 7214 5300    BSET      L:0x5300, #0x2
+   \   000026 20 04        JRA       L:??TIM2_UpdateRequestConfig_2
+    425            }
+    426            else
+    427            {
+    428              TIM2->CR1 &= (uint8_t)(~TIM2_CR1_URS);
+   \                     ??TIM2_UpdateRequestConfig_1:
+   \   000028 7215 5300    BRES      L:0x5300, #0x2
+    429            }
+    430          }
+   \                     ??TIM2_UpdateRequestConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    431          
+    432          /**
+    433            * @brief  Selects the TIM2ís One Pulse Mode.
+    434            * @param   TIM2_OPMode specifies the OPM Mode to be used.
+    435            * This parameter can be one of the following values
+    436            *                    - TIM2_OPMODE_SINGLE
+    437            *                    - TIM2_OPMODE_REPETITIVE
+    438            * @retval None
+    439            */
+
+   \                                 In section .far_func.text, align 1
+    440          void TIM2_SelectOnePulseMode(TIM2_OPMode_TypeDef TIM2_OPMode)
+    441          {
+   \                     TIM2_SelectOnePulseMode:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    442            /* Check the parameters */
+    443            assert_param(IS_TIM2_OPM_MODE_OK(TIM2_OPMode));
+   \   000005 B6 ..        LD        A, S:?b8
+   \   000007 A1 01        CP        A, #0x1
+   \   000009 27 13        JREQ      L:??TIM2_SelectOnePulseMode_0
+   \   00000B 3D ..        TNZ       S:?b8
+   \   00000D 27 0F        JREQ      L:??TIM2_SelectOnePulseMode_0
+   \   00000F AE 01BB      LDW       X, #0x1bb
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    444            
+    445            /* Set or Reset the OPM Bit */
+    446            if (TIM2_OPMode != TIM2_OPMODE_REPETITIVE)
+   \                     ??TIM2_SelectOnePulseMode_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM2_SelectOnePulseMode_1
+    447            {
+    448              TIM2->CR1 |= (uint8_t)TIM2_CR1_OPM;
+   \   000022 7216 5300    BSET      L:0x5300, #0x3
+   \   000026 20 04        JRA       L:??TIM2_SelectOnePulseMode_2
+    449            }
+    450            else
+    451            {
+    452              TIM2->CR1 &= (uint8_t)(~TIM2_CR1_OPM);
+   \                     ??TIM2_SelectOnePulseMode_1:
+   \   000028 7217 5300    BRES      L:0x5300, #0x3
+    453            }
+    454          }
+   \                     ??TIM2_SelectOnePulseMode_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    455          
+    456          /**
+    457            * @brief  Configures the TIM2 Prescaler.
+    458            * @param   Prescaler specifies the Prescaler Register value
+    459            * This parameter can be one of the following values
+    460            *                       -  TIM2_PRESCALER_1
+    461            *                       -  TIM2_PRESCALER_2
+    462            *                       -  TIM2_PRESCALER_4
+    463            *                       -  TIM2_PRESCALER_8
+    464            *                       -  TIM2_PRESCALER_16
+    465            *                       -  TIM2_PRESCALER_32
+    466            *                       -  TIM2_PRESCALER_64
+    467            *                       -  TIM2_PRESCALER_128
+    468            *                       -  TIM2_PRESCALER_256
+    469            *                       -  TIM2_PRESCALER_512
+    470            *                       -  TIM2_PRESCALER_1024
+    471            *                       -  TIM2_PRESCALER_2048
+    472            *                       -  TIM2_PRESCALER_4096
+    473            *                       -  TIM2_PRESCALER_8192
+    474            *                       -  TIM2_PRESCALER_16384
+    475            *                       -  TIM2_PRESCALER_32768
+    476            * @param   TIM2_PSCReloadMode specifies the TIM2 Prescaler Reload mode.
+    477            * This parameter can be one of the following values
+    478            *                       - TIM2_PSCRELOADMODE_IMMEDIATE: The Prescaler is loaded
+    479            *                         immediately.
+    480            *                       - TIM2_PSCRELOADMODE_UPDATE: The Prescaler is loaded at
+    481            *                         the update event.
+    482            * @retval None
+    483            */
+
+   \                                 In section .far_func.text, align 1
+    484          void TIM2_PrescalerConfig(TIM2_Prescaler_TypeDef Prescaler,
+    485                                    TIM2_PSCReloadMode_TypeDef TIM2_PSCReloadMode)
+    486          {
+   \                     TIM2_PrescalerConfig:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 B7 ..        LD        S:?b9, A
+   \   000006 45 .. ..     MOV       S:?b8, S:?b0
+    487            /* Check the parameters */
+    488            assert_param(IS_TIM2_PRESCALER_RELOAD_OK(TIM2_PSCReloadMode));
+   \   000009 3D ..        TNZ       S:?b8
+   \   00000B 27 15        JREQ      L:??TIM2_PrescalerConfig_0
+   \   00000D B6 ..        LD        A, S:?b8
+   \   00000F A1 01        CP        A, #0x1
+   \   000011 27 0F        JREQ      L:??TIM2_PrescalerConfig_0
+   \   000013 AE 01E8      LDW       X, #0x1e8
+   \   000016 BF ..        LDW       S:?w1, X
+   \   000018 5F           CLRW      X
+   \   000019 BF ..        LDW       S:?w0, X
+   \   00001B AE ....      LDW       X, #?_0
+   \   00001E 8D ......    CALLF     assert_failed
+    489            assert_param(IS_TIM2_PRESCALER_OK(Prescaler));
+   \                     ??TIM2_PrescalerConfig_0:
+   \   000022 3D ..        TNZ       S:?b9
+   \   000024 27 69        JREQ      L:??TIM2_PrescalerConfig_1
+   \   000026 B6 ..        LD        A, S:?b9
+   \   000028 A1 01        CP        A, #0x1
+   \   00002A 27 63        JREQ      L:??TIM2_PrescalerConfig_1
+   \   00002C B6 ..        LD        A, S:?b9
+   \   00002E A1 02        CP        A, #0x2
+   \   000030 27 5D        JREQ      L:??TIM2_PrescalerConfig_1
+   \   000032 B6 ..        LD        A, S:?b9
+   \   000034 A1 03        CP        A, #0x3
+   \   000036 27 57        JREQ      L:??TIM2_PrescalerConfig_1
+   \   000038 B6 ..        LD        A, S:?b9
+   \   00003A A1 04        CP        A, #0x4
+   \   00003C 27 51        JREQ      L:??TIM2_PrescalerConfig_1
+   \   00003E B6 ..        LD        A, S:?b9
+   \   000040 A1 05        CP        A, #0x5
+   \   000042 27 4B        JREQ      L:??TIM2_PrescalerConfig_1
+   \   000044 B6 ..        LD        A, S:?b9
+   \   000046 A1 06        CP        A, #0x6
+   \   000048 27 45        JREQ      L:??TIM2_PrescalerConfig_1
+   \   00004A B6 ..        LD        A, S:?b9
+   \   00004C A1 07        CP        A, #0x7
+   \   00004E 27 3F        JREQ      L:??TIM2_PrescalerConfig_1
+   \   000050 B6 ..        LD        A, S:?b9
+   \   000052 A1 08        CP        A, #0x8
+   \   000054 27 39        JREQ      L:??TIM2_PrescalerConfig_1
+   \   000056 B6 ..        LD        A, S:?b9
+   \   000058 A1 09        CP        A, #0x9
+   \   00005A 27 33        JREQ      L:??TIM2_PrescalerConfig_1
+   \   00005C B6 ..        LD        A, S:?b9
+   \   00005E A1 0A        CP        A, #0xa
+   \   000060 27 2D        JREQ      L:??TIM2_PrescalerConfig_1
+   \   000062 B6 ..        LD        A, S:?b9
+   \   000064 A1 0B        CP        A, #0xb
+   \   000066 27 27        JREQ      L:??TIM2_PrescalerConfig_1
+   \   000068 B6 ..        LD        A, S:?b9
+   \   00006A A1 0C        CP        A, #0xc
+   \   00006C 27 21        JREQ      L:??TIM2_PrescalerConfig_1
+   \   00006E B6 ..        LD        A, S:?b9
+   \   000070 A1 0D        CP        A, #0xd
+   \   000072 27 1B        JREQ      L:??TIM2_PrescalerConfig_1
+   \   000074 B6 ..        LD        A, S:?b9
+   \   000076 A1 0E        CP        A, #0xe
+   \   000078 27 15        JREQ      L:??TIM2_PrescalerConfig_1
+   \   00007A B6 ..        LD        A, S:?b9
+   \   00007C A1 0F        CP        A, #0xf
+   \   00007E 27 0F        JREQ      L:??TIM2_PrescalerConfig_1
+   \   000080 AE 01E9      LDW       X, #0x1e9
+   \   000083 BF ..        LDW       S:?w1, X
+   \   000085 5F           CLRW      X
+   \   000086 BF ..        LDW       S:?w0, X
+   \   000088 AE ....      LDW       X, #?_0
+   \   00008B 8D ......    CALLF     assert_failed
+    490            
+    491            /* Set the Prescaler value */
+    492            TIM2->PSCR = (uint8_t)Prescaler;
+   \                     ??TIM2_PrescalerConfig_1:
+   \   00008F B6 ..        LD        A, S:?b9
+   \   000091 C7 530E      LD        L:0x530e, A
+    493            
+    494            /* Set or reset the UG Bit */
+    495            TIM2->EGR = (uint8_t)TIM2_PSCReloadMode;
+   \   000094 B6 ..        LD        A, S:?b8
+   \   000096 C7 5306      LD        L:0x5306, A
+    496          }
+   \   000099 AC ......    JPF       L:?epilogue_w4
+    497          
+    498          /**
+    499            * @brief  Forces the TIM2 Channel1 output waveform to active or inactive level.
+    500            * @param   TIM2_ForcedAction specifies the forced Action to be set to the output waveform.
+    501            * This parameter can be one of the following values:
+    502            *                       - TIM2_FORCEDACTION_ACTIVE: Force active level on OC1REF
+    503            *                       - TIM2_FORCEDACTION_INACTIVE: Force inactive level on
+    504            *                         OC1REF.
+    505            * @retval None
+    506            */
+
+   \                                 In section .far_func.text, align 1
+    507          void TIM2_ForcedOC1Config(TIM2_ForcedAction_TypeDef TIM2_ForcedAction)
+    508          {
+   \                     TIM2_ForcedOC1Config:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    509            /* Check the parameters */
+    510            assert_param(IS_TIM2_FORCED_ACTION_OK(TIM2_ForcedAction));
+   \   000005 B6 ..        LD        A, S:?b8
+   \   000007 A1 50        CP        A, #0x50
+   \   000009 27 15        JREQ      L:??TIM2_ForcedOC1Config_0
+   \   00000B B6 ..        LD        A, S:?b8
+   \   00000D A1 40        CP        A, #0x40
+   \   00000F 27 0F        JREQ      L:??TIM2_ForcedOC1Config_0
+   \   000011 AE 01FE      LDW       X, #0x1fe
+   \   000014 BF ..        LDW       S:?w1, X
+   \   000016 5F           CLRW      X
+   \   000017 BF ..        LDW       S:?w0, X
+   \   000019 AE ....      LDW       X, #?_0
+   \   00001C 8D ......    CALLF     assert_failed
+    511            
+    512            /* Reset the OCM Bits & Configure the Forced output Mode */
+    513            TIM2->CCMR1  =  (uint8_t)((uint8_t)(TIM2->CCMR1 & (uint8_t)(~TIM2_CCMR_OCM))  
+    514                                      | (uint8_t)TIM2_ForcedAction);
+   \                     ??TIM2_ForcedOC1Config_0:
+   \   000020 C6 5307      LD        A, L:0x5307
+   \   000023 A4 8F        AND       A, #0x8f
+   \   000025 BA ..        OR        A, S:?b8
+   \   000027 C7 5307      LD        L:0x5307, A
+    515          }
+   \   00002A 32 ....      POP       S:?b8
+   \   00002D 87           RETF
+    516          
+    517          /**
+    518            * @brief  Forces the TIM2 Channel2 output waveform to active or inactive level.
+    519            * @param   TIM2_ForcedAction specifies the forced Action to be set to the output waveform.
+    520            * This parameter can be one of the following values:
+    521            *                       - TIM2_FORCEDACTION_ACTIVE: Force active level on OC2REF
+    522            *                       - TIM2_FORCEDACTION_INACTIVE: Force inactive level on
+    523            *                         OC2REF.
+    524            * @retval None
+    525            */
+
+   \                                 In section .far_func.text, align 1
+    526          void TIM2_ForcedOC2Config(TIM2_ForcedAction_TypeDef TIM2_ForcedAction)
+    527          {
+   \                     TIM2_ForcedOC2Config:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    528            /* Check the parameters */
+    529            assert_param(IS_TIM2_FORCED_ACTION_OK(TIM2_ForcedAction));
+   \   000005 B6 ..        LD        A, S:?b8
+   \   000007 A1 50        CP        A, #0x50
+   \   000009 27 15        JREQ      L:??TIM2_ForcedOC2Config_0
+   \   00000B B6 ..        LD        A, S:?b8
+   \   00000D A1 40        CP        A, #0x40
+   \   00000F 27 0F        JREQ      L:??TIM2_ForcedOC2Config_0
+   \   000011 AE 0211      LDW       X, #0x211
+   \   000014 BF ..        LDW       S:?w1, X
+   \   000016 5F           CLRW      X
+   \   000017 BF ..        LDW       S:?w0, X
+   \   000019 AE ....      LDW       X, #?_0
+   \   00001C 8D ......    CALLF     assert_failed
+    530            
+    531            /* Reset the OCM Bits & Configure the Forced output Mode */
+    532            TIM2->CCMR2 = (uint8_t)((uint8_t)(TIM2->CCMR2 & (uint8_t)(~TIM2_CCMR_OCM))  
+    533                                    | (uint8_t)TIM2_ForcedAction);
+   \                     ??TIM2_ForcedOC2Config_0:
+   \   000020 C6 5308      LD        A, L:0x5308
+   \   000023 A4 8F        AND       A, #0x8f
+   \   000025 BA ..        OR        A, S:?b8
+   \   000027 C7 5308      LD        L:0x5308, A
+    534          }
+   \   00002A 32 ....      POP       S:?b8
+   \   00002D 87           RETF
+    535          
+    536          /**
+    537            * @brief  Forces the TIM2 Channel3 output waveform to active or inactive level.
+    538            * @param   TIM2_ForcedAction specifies the forced Action to be set to the output waveform.
+    539            * This parameter can be one of the following values:
+    540            *                       - TIM2_FORCEDACTION_ACTIVE: Force active level on OC3REF
+    541            *                       - TIM2_FORCEDACTION_INACTIVE: Force inactive level on
+    542            *                         OC3REF.
+    543            * @retval None
+    544            */
+
+   \                                 In section .far_func.text, align 1
+    545          void TIM2_ForcedOC3Config(TIM2_ForcedAction_TypeDef TIM2_ForcedAction)
+    546          {
+   \                     TIM2_ForcedOC3Config:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    547            /* Check the parameters */
+    548            assert_param(IS_TIM2_FORCED_ACTION_OK(TIM2_ForcedAction));
+   \   000005 B6 ..        LD        A, S:?b8
+   \   000007 A1 50        CP        A, #0x50
+   \   000009 27 15        JREQ      L:??TIM2_ForcedOC3Config_0
+   \   00000B B6 ..        LD        A, S:?b8
+   \   00000D A1 40        CP        A, #0x40
+   \   00000F 27 0F        JREQ      L:??TIM2_ForcedOC3Config_0
+   \   000011 AE 0224      LDW       X, #0x224
+   \   000014 BF ..        LDW       S:?w1, X
+   \   000016 5F           CLRW      X
+   \   000017 BF ..        LDW       S:?w0, X
+   \   000019 AE ....      LDW       X, #?_0
+   \   00001C 8D ......    CALLF     assert_failed
+    549            
+    550            /* Reset the OCM Bits & Configure the Forced output Mode */
+    551            TIM2->CCMR3  =  (uint8_t)((uint8_t)(TIM2->CCMR3 & (uint8_t)(~TIM2_CCMR_OCM))
+    552                                      | (uint8_t)TIM2_ForcedAction);
+   \                     ??TIM2_ForcedOC3Config_0:
+   \   000020 C6 5309      LD        A, L:0x5309
+   \   000023 A4 8F        AND       A, #0x8f
+   \   000025 BA ..        OR        A, S:?b8
+   \   000027 C7 5309      LD        L:0x5309, A
+    553          }
+   \   00002A 32 ....      POP       S:?b8
+   \   00002D 87           RETF
+    554          
+    555          /**
+    556            * @brief  Enables or disables TIM2 peripheral Preload register on ARR.
+    557            * @param   NewState new state of the TIM2 peripheral Preload register.
+    558            * This parameter can be ENABLE or DISABLE.
+    559            * @retval None
+    560            */
+
+   \                                 In section .far_func.text, align 1
+    561          void TIM2_ARRPreloadConfig(FunctionalState NewState)
+    562          {
+   \                     TIM2_ARRPreloadConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    563            /* Check the parameters */
+    564            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM2_ARRPreloadConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??TIM2_ARRPreloadConfig_0
+   \   00000F AE 0234      LDW       X, #0x234
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    565            
+    566            /* Set or Reset the ARPE Bit */
+    567            if (NewState != DISABLE)
+   \                     ??TIM2_ARRPreloadConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM2_ARRPreloadConfig_1
+    568            {
+    569              TIM2->CR1 |= (uint8_t)TIM2_CR1_ARPE;
+   \   000022 721E 5300    BSET      L:0x5300, #0x7
+   \   000026 20 04        JRA       L:??TIM2_ARRPreloadConfig_2
+    570            }
+    571            else
+    572            {
+    573              TIM2->CR1 &= (uint8_t)(~TIM2_CR1_ARPE);
+   \                     ??TIM2_ARRPreloadConfig_1:
+   \   000028 721F 5300    BRES      L:0x5300, #0x7
+    574            }
+    575          }
+   \                     ??TIM2_ARRPreloadConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    576          
+    577          /**
+    578            * @brief  Enables or disables the TIM2 peripheral Preload Register on CCR1.
+    579            * @param   NewState new state of the Capture Compare Preload register.
+    580            * This parameter can be ENABLE or DISABLE.
+    581            * @retval None
+    582            */
+
+   \                                 In section .far_func.text, align 1
+    583          void TIM2_OC1PreloadConfig(FunctionalState NewState)
+    584          {
+   \                     TIM2_OC1PreloadConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    585            /* Check the parameters */
+    586            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM2_OC1PreloadConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??TIM2_OC1PreloadConfig_0
+   \   00000F AE 024A      LDW       X, #0x24a
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    587            
+    588            /* Set or Reset the OC1PE Bit */
+    589            if (NewState != DISABLE)
+   \                     ??TIM2_OC1PreloadConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM2_OC1PreloadConfig_1
+    590            {
+    591              TIM2->CCMR1 |= (uint8_t)TIM2_CCMR_OCxPE;
+   \   000022 7216 5307    BSET      L:0x5307, #0x3
+   \   000026 20 04        JRA       L:??TIM2_OC1PreloadConfig_2
+    592            }
+    593            else
+    594            {
+    595              TIM2->CCMR1 &= (uint8_t)(~TIM2_CCMR_OCxPE);
+   \                     ??TIM2_OC1PreloadConfig_1:
+   \   000028 7217 5307    BRES      L:0x5307, #0x3
+    596            }
+    597          }
+   \                     ??TIM2_OC1PreloadConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    598          
+    599          /**
+    600            * @brief  Enables or disables the TIM2 peripheral Preload Register on CCR2.
+    601            * @param   NewState new state of the Capture Compare Preload register.
+    602            * This parameter can be ENABLE or DISABLE.
+    603            * @retval None
+    604            */
+
+   \                                 In section .far_func.text, align 1
+    605          void TIM2_OC2PreloadConfig(FunctionalState NewState)
+    606          {
+   \                     TIM2_OC2PreloadConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    607            /* Check the parameters */
+    608            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM2_OC2PreloadConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??TIM2_OC2PreloadConfig_0
+   \   00000F AE 0260      LDW       X, #0x260
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    609            
+    610            /* Set or Reset the OC2PE Bit */
+    611            if (NewState != DISABLE)
+   \                     ??TIM2_OC2PreloadConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM2_OC2PreloadConfig_1
+    612            {
+    613              TIM2->CCMR2 |= (uint8_t)TIM2_CCMR_OCxPE;
+   \   000022 7216 5308    BSET      L:0x5308, #0x3
+   \   000026 20 04        JRA       L:??TIM2_OC2PreloadConfig_2
+    614            }
+    615            else
+    616            {
+    617              TIM2->CCMR2 &= (uint8_t)(~TIM2_CCMR_OCxPE);
+   \                     ??TIM2_OC2PreloadConfig_1:
+   \   000028 7217 5308    BRES      L:0x5308, #0x3
+    618            }
+    619          }
+   \                     ??TIM2_OC2PreloadConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    620          
+    621          /**
+    622            * @brief  Enables or disables the TIM2 peripheral Preload Register on CCR3.
+    623            * @param   NewState new state of the Capture Compare Preload register.
+    624            * This parameter can be ENABLE or DISABLE.
+    625            * @retval None
+    626            */
+
+   \                                 In section .far_func.text, align 1
+    627          void TIM2_OC3PreloadConfig(FunctionalState NewState)
+    628          {
+   \                     TIM2_OC3PreloadConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    629            /* Check the parameters */
+    630            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM2_OC3PreloadConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??TIM2_OC3PreloadConfig_0
+   \   00000F AE 0276      LDW       X, #0x276
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    631            
+    632            /* Set or Reset the OC3PE Bit */
+    633            if (NewState != DISABLE)
+   \                     ??TIM2_OC3PreloadConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM2_OC3PreloadConfig_1
+    634            {
+    635              TIM2->CCMR3 |= (uint8_t)TIM2_CCMR_OCxPE;
+   \   000022 7216 5309    BSET      L:0x5309, #0x3
+   \   000026 20 04        JRA       L:??TIM2_OC3PreloadConfig_2
+    636            }
+    637            else
+    638            {
+    639              TIM2->CCMR3 &= (uint8_t)(~TIM2_CCMR_OCxPE);
+   \                     ??TIM2_OC3PreloadConfig_1:
+   \   000028 7217 5309    BRES      L:0x5309, #0x3
+    640            }
+    641          }
+   \                     ??TIM2_OC3PreloadConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    642          
+    643          /**
+    644            * @brief  Configures the TIM2 event to be generated by software.
+    645            * @param   TIM2_EventSource specifies the event source.
+    646            * This parameter can be one of the following values:
+    647            *                       - TIM2_EVENTSOURCE_UPDATE: TIM2 update Event source
+    648            *                       - TIM2_EVENTSOURCE_CC1: TIM2 Capture Compare 1 Event source
+    649            *                       - TIM2_EVENTSOURCE_CC2: TIM2 Capture Compare 2 Event source
+    650            *                       - TIM2_EVENTSOURCE_CC3: TIM2 Capture Compare 3 Event source
+    651            * @retval None
+    652            */
+
+   \                                 In section .far_func.text, align 1
+    653          void TIM2_GenerateEvent(TIM2_EventSource_TypeDef TIM2_EventSource)
+    654          {
+   \                     TIM2_GenerateEvent:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    655            /* Check the parameters */
+    656            assert_param(IS_TIM2_EVENT_SOURCE_OK(TIM2_EventSource));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 26 0F        JRNE      L:??TIM2_GenerateEvent_0
+   \   000009 AE 0290      LDW       X, #0x290
+   \   00000C BF ..        LDW       S:?w1, X
+   \   00000E 5F           CLRW      X
+   \   00000F BF ..        LDW       S:?w0, X
+   \   000011 AE ....      LDW       X, #?_0
+   \   000014 8D ......    CALLF     assert_failed
+    657            
+    658            /* Set the event sources */
+    659            TIM2->EGR = (uint8_t)TIM2_EventSource;
+   \                     ??TIM2_GenerateEvent_0:
+   \   000018 B6 ..        LD        A, S:?b8
+   \   00001A C7 5306      LD        L:0x5306, A
+    660          }
+   \   00001D 32 ....      POP       S:?b8
+   \   000020 87           RETF
+    661          
+    662          /**
+    663            * @brief  Configures the TIM2 Channel 1 polarity.
+    664            * @param   TIM2_OCPolarity specifies the OC1 Polarity.
+    665            * This parameter can be one of the following values:
+    666            *                       - TIM2_OCPOLARITY_LOW: Output Compare active low
+    667            *                       - TIM2_OCPOLARITY_HIGH: Output Compare active high
+    668            * @retval None
+    669            */
+
+   \                                 In section .far_func.text, align 1
+    670          void TIM2_OC1PolarityConfig(TIM2_OCPolarity_TypeDef TIM2_OCPolarity)
+    671          {
+   \                     TIM2_OC1PolarityConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    672            /* Check the parameters */
+    673            assert_param(IS_TIM2_OC_POLARITY_OK(TIM2_OCPolarity));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM2_OC1PolarityConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 22        CP        A, #0x22
+   \   00000D 27 0F        JREQ      L:??TIM2_OC1PolarityConfig_0
+   \   00000F AE 02A1      LDW       X, #0x2a1
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    674            
+    675            /* Set or Reset the CC1P Bit */
+    676            if (TIM2_OCPolarity != TIM2_OCPOLARITY_HIGH)
+   \                     ??TIM2_OC1PolarityConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM2_OC1PolarityConfig_1
+    677            {
+    678              TIM2->CCER1 |= (uint8_t)TIM2_CCER1_CC1P;
+   \   000022 7212 530A    BSET      L:0x530a, #0x1
+   \   000026 20 04        JRA       L:??TIM2_OC1PolarityConfig_2
+    679            }
+    680            else
+    681            {
+    682              TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC1P);
+   \                     ??TIM2_OC1PolarityConfig_1:
+   \   000028 7213 530A    BRES      L:0x530a, #0x1
+    683            }
+    684          }
+   \                     ??TIM2_OC1PolarityConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    685          
+    686          /**
+    687            * @brief  Configures the TIM2 Channel 2 polarity.
+    688            * @param   TIM2_OCPolarity specifies the OC2 Polarity.
+    689            * This parameter can be one of the following values:
+    690            *                       - TIM2_OCPOLARITY_LOW: Output Compare active low
+    691            *                       - TIM2_OCPOLARITY_HIGH: Output Compare active high
+    692            * @retval None
+    693            */
+
+   \                                 In section .far_func.text, align 1
+    694          void TIM2_OC2PolarityConfig(TIM2_OCPolarity_TypeDef TIM2_OCPolarity)
+    695          {
+   \                     TIM2_OC2PolarityConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    696            /* Check the parameters */
+    697            assert_param(IS_TIM2_OC_POLARITY_OK(TIM2_OCPolarity));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM2_OC2PolarityConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 22        CP        A, #0x22
+   \   00000D 27 0F        JREQ      L:??TIM2_OC2PolarityConfig_0
+   \   00000F AE 02B9      LDW       X, #0x2b9
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    698            
+    699            /* Set or Reset the CC2P Bit */
+    700            if (TIM2_OCPolarity != TIM2_OCPOLARITY_HIGH)
+   \                     ??TIM2_OC2PolarityConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM2_OC2PolarityConfig_1
+    701            {
+    702              TIM2->CCER1 |= TIM2_CCER1_CC2P;
+   \   000022 721A 530A    BSET      L:0x530a, #0x5
+   \   000026 20 04        JRA       L:??TIM2_OC2PolarityConfig_2
+    703            }
+    704            else
+    705            {
+    706              TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC2P);
+   \                     ??TIM2_OC2PolarityConfig_1:
+   \   000028 721B 530A    BRES      L:0x530a, #0x5
+    707            }
+    708          }
+   \                     ??TIM2_OC2PolarityConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    709          
+    710          /**
+    711            * @brief  Configures the TIM2 Channel 3 polarity.
+    712            * @param   TIM2_OCPolarity specifies the OC3 Polarity.
+    713            * This parameter can be one of the following values:
+    714            *                       - TIM2_OCPOLARITY_LOW: Output Compare active low
+    715            *                       - TIM2_OCPOLARITY_HIGH: Output Compare active high
+    716            * @retval None
+    717            */
+
+   \                                 In section .far_func.text, align 1
+    718          void TIM2_OC3PolarityConfig(TIM2_OCPolarity_TypeDef TIM2_OCPolarity)
+    719          {
+   \                     TIM2_OC3PolarityConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    720            /* Check the parameters */
+    721            assert_param(IS_TIM2_OC_POLARITY_OK(TIM2_OCPolarity));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??TIM2_OC3PolarityConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 22        CP        A, #0x22
+   \   00000D 27 0F        JREQ      L:??TIM2_OC3PolarityConfig_0
+   \   00000F AE 02D1      LDW       X, #0x2d1
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    722            
+    723            /* Set or Reset the CC3P Bit */
+    724            if (TIM2_OCPolarity != TIM2_OCPOLARITY_HIGH)
+   \                     ??TIM2_OC3PolarityConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??TIM2_OC3PolarityConfig_1
+    725            {
+    726              TIM2->CCER2 |= (uint8_t)TIM2_CCER2_CC3P;
+   \   000022 7212 530B    BSET      L:0x530b, #0x1
+   \   000026 20 04        JRA       L:??TIM2_OC3PolarityConfig_2
+    727            }
+    728            else
+    729            {
+    730              TIM2->CCER2 &= (uint8_t)(~TIM2_CCER2_CC3P);
+   \                     ??TIM2_OC3PolarityConfig_1:
+   \   000028 7213 530B    BRES      L:0x530b, #0x1
+    731            }
+    732          }
+   \                     ??TIM2_OC3PolarityConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    733          
+    734          /**
+    735            * @brief  Enables or disables the TIM2 Capture Compare Channel x.
+    736            * @param   TIM2_Channel specifies the TIM2 Channel.
+    737            * This parameter can be one of the following values:
+    738            *                       - TIM2_CHANNEL_1: TIM2 Channel1
+    739            *                       - TIM2_CHANNEL_2: TIM2 Channel2
+    740            *                       - TIM2_CHANNEL_3: TIM2 Channel3
+    741            * @param   NewState specifies the TIM2 Channel CCxE bit new state.
+    742            * This parameter can be: ENABLE or DISABLE.
+    743            * @retval None
+    744            */
+
+   \                                 In section .far_func.text, align 1
+    745          void TIM2_CCxCmd(TIM2_Channel_TypeDef TIM2_Channel, FunctionalState NewState)
+    746          {
+   \                     TIM2_CCxCmd:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 B7 ..        LD        S:?b9, A
+   \   000006 45 .. ..     MOV       S:?b8, S:?b0
+    747            /* Check the parameters */
+    748            assert_param(IS_TIM2_CHANNEL_OK(TIM2_Channel));
+   \   000009 3D ..        TNZ       S:?b9
+   \   00000B 27 1B        JREQ      L:??TIM2_CCxCmd_0
+   \   00000D B6 ..        LD        A, S:?b9
+   \   00000F A1 01        CP        A, #0x1
+   \   000011 27 15        JREQ      L:??TIM2_CCxCmd_0
+   \   000013 B6 ..        LD        A, S:?b9
+   \   000015 A1 02        CP        A, #0x2
+   \   000017 27 0F        JREQ      L:??TIM2_CCxCmd_0
+   \   000019 AE 02EC      LDW       X, #0x2ec
+   \   00001C BF ..        LDW       S:?w1, X
+   \   00001E 5F           CLRW      X
+   \   00001F BF ..        LDW       S:?w0, X
+   \   000021 AE ....      LDW       X, #?_0
+   \   000024 8D ......    CALLF     assert_failed
+    749            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \                     ??TIM2_CCxCmd_0:
+   \   000028 3D ..        TNZ       S:?b8
+   \   00002A 27 15        JREQ      L:??TIM2_CCxCmd_1
+   \   00002C B6 ..        LD        A, S:?b8
+   \   00002E A1 01        CP        A, #0x1
+   \   000030 27 0F        JREQ      L:??TIM2_CCxCmd_1
+   \   000032 AE 02ED      LDW       X, #0x2ed
+   \   000035 BF ..        LDW       S:?w1, X
+   \   000037 5F           CLRW      X
+   \   000038 BF ..        LDW       S:?w0, X
+   \   00003A AE ....      LDW       X, #?_0
+   \   00003D 8D ......    CALLF     assert_failed
+    750            
+    751            if (TIM2_Channel == TIM2_CHANNEL_1)
+   \                     ??TIM2_CCxCmd_1:
+   \   000041 3D ..        TNZ       S:?b9
+   \   000043 26 10        JRNE      L:??TIM2_CCxCmd_2
+    752            {
+    753              /* Set or Reset the CC1E Bit */
+    754              if (NewState != DISABLE)
+   \   000045 3D ..        TNZ       S:?b8
+   \   000047 27 06        JREQ      L:??TIM2_CCxCmd_3
+    755              {
+    756                TIM2->CCER1 |= (uint8_t)TIM2_CCER1_CC1E;
+   \   000049 7210 530A    BSET      L:0x530a, #0x0
+   \   00004D 20 2A        JRA       L:??TIM2_CCxCmd_4
+    757              }
+    758              else
+    759              {
+    760                TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC1E);
+   \                     ??TIM2_CCxCmd_3:
+   \   00004F 7211 530A    BRES      L:0x530a, #0x0
+   \   000053 20 24        JRA       L:??TIM2_CCxCmd_4
+    761              }
+    762              
+    763            }
+    764            else if (TIM2_Channel == TIM2_CHANNEL_2)
+   \                     ??TIM2_CCxCmd_2:
+   \   000055 B6 ..        LD        A, S:?b9
+   \   000057 A1 01        CP        A, #0x1
+   \   000059 26 10        JRNE      L:??TIM2_CCxCmd_5
+    765            {
+    766              /* Set or Reset the CC2E Bit */
+    767              if (NewState != DISABLE)
+   \   00005B 3D ..        TNZ       S:?b8
+   \   00005D 27 06        JREQ      L:??TIM2_CCxCmd_6
+    768              {
+    769                TIM2->CCER1 |= (uint8_t)TIM2_CCER1_CC2E;
+   \   00005F 7218 530A    BSET      L:0x530a, #0x4
+   \   000063 20 14        JRA       L:??TIM2_CCxCmd_4
+    770              }
+    771              else
+    772              {
+    773                TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC2E);
+   \                     ??TIM2_CCxCmd_6:
+   \   000065 7219 530A    BRES      L:0x530a, #0x4
+   \   000069 20 0E        JRA       L:??TIM2_CCxCmd_4
+    774              }
+    775            }
+    776            else
+    777            {
+    778              /* Set or Reset the CC3E Bit */
+    779              if (NewState != DISABLE)
+   \                     ??TIM2_CCxCmd_5:
+   \   00006B 3D ..        TNZ       S:?b8
+   \   00006D 27 06        JREQ      L:??TIM2_CCxCmd_7
+    780              {
+    781                TIM2->CCER2 |= (uint8_t)TIM2_CCER2_CC3E;
+   \   00006F 7210 530B    BSET      L:0x530b, #0x0
+   \   000073 20 04        JRA       L:??TIM2_CCxCmd_4
+    782              }
+    783              else
+    784              {
+    785                TIM2->CCER2 &= (uint8_t)(~TIM2_CCER2_CC3E);
+   \                     ??TIM2_CCxCmd_7:
+   \   000075 7211 530B    BRES      L:0x530b, #0x0
+    786              }
+    787            }
+    788          }
+   \                     ??TIM2_CCxCmd_4:
+   \   000079 AC ......    JPF       L:?epilogue_w4
+    789          
+    790          /**
+    791            * @brief  Selects the TIM2 Output Compare Mode. This function disables the
+    792            * selected channel before changing the Output Compare Mode. User has to
+    793            * enable this channel using TIM2_CCxCmd and TIM2_CCxNCmd functions.
+    794            * @param   TIM2_Channel specifies the TIM2 Channel.
+    795            * This parameter can be one of the following values:
+    796            *                       - TIM2_CHANNEL_1: TIM2 Channel1
+    797            *                       - TIM2_CHANNEL_2: TIM2 Channel2
+    798            *                       - TIM2_CHANNEL_3: TIM2 Channel3
+    799            * @param   TIM2_OCMode specifies the TIM2 Output Compare Mode.
+    800            * This parameter can be one of the following values:
+    801            *                       - TIM2_OCMODE_TIMING
+    802            *                       - TIM2_OCMODE_ACTIVE
+    803            *                       - TIM2_OCMODE_TOGGLE
+    804            *                       - TIM2_OCMODE_PWM1
+    805            *                       - TIM2_OCMODE_PWM2
+    806            *                       - TIM2_FORCEDACTION_ACTIVE
+    807            *                       - TIM2_FORCEDACTION_INACTIVE
+    808            * @retval None
+    809            */
+
+   \                                 In section .far_func.text, align 1
+    810          void TIM2_SelectOCxM(TIM2_Channel_TypeDef TIM2_Channel, TIM2_OCMode_TypeDef TIM2_OCMode)
+    811          {
+   \                     TIM2_SelectOCxM:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 B7 ..        LD        S:?b8, A
+   \   000006 45 .. ..     MOV       S:?b9, S:?b0
+    812            /* Check the parameters */
+    813            assert_param(IS_TIM2_CHANNEL_OK(TIM2_Channel));
+   \   000009 3D ..        TNZ       S:?b8
+   \   00000B 27 1B        JREQ      L:??TIM2_SelectOCxM_0
+   \   00000D B6 ..        LD        A, S:?b8
+   \   00000F A1 01        CP        A, #0x1
+   \   000011 27 15        JREQ      L:??TIM2_SelectOCxM_0
+   \   000013 B6 ..        LD        A, S:?b8
+   \   000015 A1 02        CP        A, #0x2
+   \   000017 27 0F        JREQ      L:??TIM2_SelectOCxM_0
+   \   000019 AE 032D      LDW       X, #0x32d
+   \   00001C BF ..        LDW       S:?w1, X
+   \   00001E 5F           CLRW      X
+   \   00001F BF ..        LDW       S:?w0, X
+   \   000021 AE ....      LDW       X, #?_0
+   \   000024 8D ......    CALLF     assert_failed
+    814            assert_param(IS_TIM2_OCM_OK(TIM2_OCMode));
+   \                     ??TIM2_SelectOCxM_0:
+   \   000028 3D ..        TNZ       S:?b9
+   \   00002A 27 39        JREQ      L:??TIM2_SelectOCxM_1
+   \   00002C B6 ..        LD        A, S:?b9
+   \   00002E A1 10        CP        A, #0x10
+   \   000030 27 33        JREQ      L:??TIM2_SelectOCxM_1
+   \   000032 B6 ..        LD        A, S:?b9
+   \   000034 A1 20        CP        A, #0x20
+   \   000036 27 2D        JREQ      L:??TIM2_SelectOCxM_1
+   \   000038 B6 ..        LD        A, S:?b9
+   \   00003A A1 30        CP        A, #0x30
+   \   00003C 27 27        JREQ      L:??TIM2_SelectOCxM_1
+   \   00003E B6 ..        LD        A, S:?b9
+   \   000040 A1 60        CP        A, #0x60
+   \   000042 27 21        JREQ      L:??TIM2_SelectOCxM_1
+   \   000044 B6 ..        LD        A, S:?b9
+   \   000046 A1 70        CP        A, #0x70
+   \   000048 27 1B        JREQ      L:??TIM2_SelectOCxM_1
+   \   00004A B6 ..        LD        A, S:?b9
+   \   00004C A1 50        CP        A, #0x50
+   \   00004E 27 15        JREQ      L:??TIM2_SelectOCxM_1
+   \   000050 B6 ..        LD        A, S:?b9
+   \   000052 A1 40        CP        A, #0x40
+   \   000054 27 0F        JREQ      L:??TIM2_SelectOCxM_1
+   \   000056 AE 032E      LDW       X, #0x32e
+   \   000059 BF ..        LDW       S:?w1, X
+   \   00005B 5F           CLRW      X
+   \   00005C BF ..        LDW       S:?w0, X
+   \   00005E AE ....      LDW       X, #?_0
+   \   000061 8D ......    CALLF     assert_failed
+    815            
+    816            if (TIM2_Channel == TIM2_CHANNEL_1)
+   \                     ??TIM2_SelectOCxM_1:
+   \   000065 3D ..        TNZ       S:?b8
+   \   000067 26 10        JRNE      L:??TIM2_SelectOCxM_2
+    817            {
+    818              /* Disable the Channel 1: Reset the CCE Bit */
+    819              TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC1E);
+   \   000069 7211 530A    BRES      L:0x530a, #0x0
+    820              
+    821              /* Reset the Output Compare Bits & Set the Output Compare Mode */
+    822              TIM2->CCMR1 = (uint8_t)((uint8_t)(TIM2->CCMR1 & (uint8_t)(~TIM2_CCMR_OCM))
+    823                                      | (uint8_t)TIM2_OCMode);
+   \   00006D C6 5307      LD        A, L:0x5307
+   \   000070 A4 8F        AND       A, #0x8f
+   \   000072 BA ..        OR        A, S:?b9
+   \   000074 C7 5307      LD        L:0x5307, A
+   \   000077 20 24        JRA       L:??TIM2_SelectOCxM_3
+    824            }
+    825            else if (TIM2_Channel == TIM2_CHANNEL_2)
+   \                     ??TIM2_SelectOCxM_2:
+   \   000079 B6 ..        LD        A, S:?b8
+   \   00007B A1 01        CP        A, #0x1
+   \   00007D 26 10        JRNE      L:??TIM2_SelectOCxM_4
+    826            {
+    827              /* Disable the Channel 2: Reset the CCE Bit */
+    828              TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC2E);
+   \   00007F 7219 530A    BRES      L:0x530a, #0x4
+    829              
+    830              /* Reset the Output Compare Bits & Set the Output Compare Mode */
+    831              TIM2->CCMR2 = (uint8_t)((uint8_t)(TIM2->CCMR2 & (uint8_t)(~TIM2_CCMR_OCM))
+    832                                      | (uint8_t)TIM2_OCMode);
+   \   000083 C6 5308      LD        A, L:0x5308
+   \   000086 A4 8F        AND       A, #0x8f
+   \   000088 BA ..        OR        A, S:?b9
+   \   00008A C7 5308      LD        L:0x5308, A
+   \   00008D 20 0E        JRA       L:??TIM2_SelectOCxM_3
+    833            }
+    834            else
+    835            {
+    836              /* Disable the Channel 3: Reset the CCE Bit */
+    837              TIM2->CCER2 &= (uint8_t)(~TIM2_CCER2_CC3E);
+   \                     ??TIM2_SelectOCxM_4:
+   \   00008F 7211 530B    BRES      L:0x530b, #0x0
+    838              
+    839              /* Reset the Output Compare Bits & Set the Output Compare Mode */
+    840              TIM2->CCMR3 = (uint8_t)((uint8_t)(TIM2->CCMR3 & (uint8_t)(~TIM2_CCMR_OCM))
+    841                                      | (uint8_t)TIM2_OCMode);
+   \   000093 C6 5309      LD        A, L:0x5309
+   \   000096 A4 8F        AND       A, #0x8f
+   \   000098 BA ..        OR        A, S:?b9
+   \   00009A C7 5309      LD        L:0x5309, A
+    842            }
+    843          }
+   \                     ??TIM2_SelectOCxM_3:
+   \   00009D AC ......    JPF       L:?epilogue_w4
+    844          
+    845          /**
+    846            * @brief  Sets the TIM2 Counter Register value.
+    847            * @param   Counter specifies the Counter register new value.
+    848            * This parameter is between 0x0000 and 0xFFFF.
+    849            * @retval None
+    850            */
+
+   \                                 In section .far_func.text, align 1
+    851          void TIM2_SetCounter(uint16_t Counter)
+    852          {
+    853            /* Set the Counter Register value */
+    854            TIM2->CNTRH = (uint8_t)(Counter >> 8);
+   \                     TIM2_SetCounter:
+   \   000000 9E           LD        A, XH
+   \   000001 C7 530C      LD        L:0x530c, A
+    855            TIM2->CNTRL = (uint8_t)(Counter);
+   \   000004 9F           LD        A, XL
+   \   000005 C7 530D      LD        L:0x530d, A
+    856          }
+   \   000008 87           RETF
+    857          
+    858          /**
+    859            * @brief  Sets the TIM2 Autoreload Register value.
+    860            * @param   Autoreload specifies the Autoreload register new value.
+    861            * This parameter is between 0x0000 and 0xFFFF.
+    862            * @retval None
+    863            */
+
+   \                                 In section .far_func.text, align 1
+    864          void TIM2_SetAutoreload(uint16_t Autoreload)
+    865          {
+    866            /* Set the Autoreload Register value */
+    867            TIM2->ARRH = (uint8_t)(Autoreload >> 8);
+   \                     TIM2_SetAutoreload:
+   \   000000 9E           LD        A, XH
+   \   000001 C7 530F      LD        L:0x530f, A
+    868            TIM2->ARRL = (uint8_t)(Autoreload);
+   \   000004 9F           LD        A, XL
+   \   000005 C7 5310      LD        L:0x5310, A
+    869          }
+   \   000008 87           RETF
+    870          
+    871          /**
+    872            * @brief  Sets the TIM2 Capture Compare1 Register value.
+    873            * @param   Compare1 specifies the Capture Compare1 register new value.
+    874            * This parameter is between 0x0000 and 0xFFFF.
+    875            * @retval None
+    876            */
+
+   \                                 In section .far_func.text, align 1
+    877          void TIM2_SetCompare1(uint16_t Compare1)
+    878          {
+    879            /* Set the Capture Compare1 Register value */
+    880            TIM2->CCR1H = (uint8_t)(Compare1 >> 8);
+   \                     TIM2_SetCompare1:
+   \   000000 9E           LD        A, XH
+   \   000001 C7 5311      LD        L:0x5311, A
+    881            TIM2->CCR1L = (uint8_t)(Compare1);
+   \   000004 9F           LD        A, XL
+   \   000005 C7 5312      LD        L:0x5312, A
+    882          }
+   \   000008 87           RETF
+    883          
+    884          /**
+    885            * @brief  Sets the TIM2 Capture Compare2 Register value.
+    886            * @param   Compare2 specifies the Capture Compare2 register new value.
+    887            * This parameter is between 0x0000 and 0xFFFF.
+    888            * @retval None
+    889            */
+
+   \                                 In section .far_func.text, align 1
+    890          void TIM2_SetCompare2(uint16_t Compare2)
+    891          {
+    892            /* Set the Capture Compare2 Register value */
+    893            TIM2->CCR2H = (uint8_t)(Compare2 >> 8);
+   \                     TIM2_SetCompare2:
+   \   000000 9E           LD        A, XH
+   \   000001 C7 5313      LD        L:0x5313, A
+    894            TIM2->CCR2L = (uint8_t)(Compare2);
+   \   000004 9F           LD        A, XL
+   \   000005 C7 5314      LD        L:0x5314, A
+    895          }
+   \   000008 87           RETF
+    896          
+    897          /**
+    898            * @brief  Sets the TIM2 Capture Compare3 Register value.
+    899            * @param   Compare3 specifies the Capture Compare3 register new value.
+    900            * This parameter is between 0x0000 and 0xFFFF.
+    901            * @retval None
+    902            */
+
+   \                                 In section .far_func.text, align 1
+    903          void TIM2_SetCompare3(uint16_t Compare3)
+    904          {
+    905            /* Set the Capture Compare3 Register value */
+    906            TIM2->CCR3H = (uint8_t)(Compare3 >> 8);
+   \                     TIM2_SetCompare3:
+   \   000000 9E           LD        A, XH
+   \   000001 C7 5315      LD        L:0x5315, A
+    907            TIM2->CCR3L = (uint8_t)(Compare3);
+   \   000004 9F           LD        A, XL
+   \   000005 C7 5316      LD        L:0x5316, A
+    908          }
+   \   000008 87           RETF
+    909          
+    910          /**
+    911            * @brief  Sets the TIM2 Input Capture 1 Prescaler.
+    912            * @param   TIM2_IC1Prescaler specifies the Input Capture prescaler new value
+    913            * This parameter can be one of the following values:
+    914            *                       - TIM2_ICPSC_DIV1: no prescaler
+    915            *                       - TIM2_ICPSC_DIV2: capture is done once every 2 events
+    916            *                       - TIM2_ICPSC_DIV4: capture is done once every 4 events
+    917            *                       - TIM2_ICPSC_DIV8: capture is done once every 8 events
+    918            * @retval None
+    919            */
+
+   \                                 In section .far_func.text, align 1
+    920          void TIM2_SetIC1Prescaler(TIM2_ICPSC_TypeDef TIM2_IC1Prescaler)
+    921          {
+   \                     TIM2_SetIC1Prescaler:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    922            /* Check the parameters */
+    923            assert_param(IS_TIM2_IC_PRESCALER_OK(TIM2_IC1Prescaler));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 21        JREQ      L:??TIM2_SetIC1Prescaler_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 04        CP        A, #0x4
+   \   00000D 27 1B        JREQ      L:??TIM2_SetIC1Prescaler_0
+   \   00000F B6 ..        LD        A, S:?b8
+   \   000011 A1 08        CP        A, #0x8
+   \   000013 27 15        JREQ      L:??TIM2_SetIC1Prescaler_0
+   \   000015 B6 ..        LD        A, S:?b8
+   \   000017 A1 0C        CP        A, #0xc
+   \   000019 27 0F        JREQ      L:??TIM2_SetIC1Prescaler_0
+   \   00001B AE 039B      LDW       X, #0x39b
+   \   00001E BF ..        LDW       S:?w1, X
+   \   000020 5F           CLRW      X
+   \   000021 BF ..        LDW       S:?w0, X
+   \   000023 AE ....      LDW       X, #?_0
+   \   000026 8D ......    CALLF     assert_failed
+    924            
+    925            /* Reset the IC1PSC Bits &Set the IC1PSC value */
+    926            TIM2->CCMR1 = (uint8_t)((uint8_t)(TIM2->CCMR1 & (uint8_t)(~TIM2_CCMR_ICxPSC))
+    927                                    | (uint8_t)TIM2_IC1Prescaler);
+   \                     ??TIM2_SetIC1Prescaler_0:
+   \   00002A C6 5307      LD        A, L:0x5307
+   \   00002D A4 F3        AND       A, #0xf3
+   \   00002F BA ..        OR        A, S:?b8
+   \   000031 C7 5307      LD        L:0x5307, A
+    928          }
+   \   000034 32 ....      POP       S:?b8
+   \   000037 87           RETF
+    929          
+    930          /**
+    931            * @brief  Sets the TIM2 Input Capture 2 prescaler.
+    932            * @param   TIM2_IC2Prescaler specifies the Input Capture prescaler new value
+    933            * This parameter can be one of the following values:
+    934            *                       - TIM2_ICPSC_DIV1: no prescaler
+    935            *                       - TIM2_ICPSC_DIV2: capture is done once every 2 events
+    936            *                       - TIM2_ICPSC_DIV4: capture is done once every 4 events
+    937            *                       - TIM2_ICPSC_DIV8: capture is done once every 8 events
+    938            * @retval None
+    939            */
+
+   \                                 In section .far_func.text, align 1
+    940          void TIM2_SetIC2Prescaler(TIM2_ICPSC_TypeDef TIM2_IC2Prescaler)
+    941          {
+   \                     TIM2_SetIC2Prescaler:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    942            /* Check the parameters */
+    943            assert_param(IS_TIM2_IC_PRESCALER_OK(TIM2_IC2Prescaler));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 21        JREQ      L:??TIM2_SetIC2Prescaler_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 04        CP        A, #0x4
+   \   00000D 27 1B        JREQ      L:??TIM2_SetIC2Prescaler_0
+   \   00000F B6 ..        LD        A, S:?b8
+   \   000011 A1 08        CP        A, #0x8
+   \   000013 27 15        JREQ      L:??TIM2_SetIC2Prescaler_0
+   \   000015 B6 ..        LD        A, S:?b8
+   \   000017 A1 0C        CP        A, #0xc
+   \   000019 27 0F        JREQ      L:??TIM2_SetIC2Prescaler_0
+   \   00001B AE 03AF      LDW       X, #0x3af
+   \   00001E BF ..        LDW       S:?w1, X
+   \   000020 5F           CLRW      X
+   \   000021 BF ..        LDW       S:?w0, X
+   \   000023 AE ....      LDW       X, #?_0
+   \   000026 8D ......    CALLF     assert_failed
+    944            
+    945            /* Reset the IC1PSC Bits &Set the IC1PSC value */
+    946            TIM2->CCMR2 = (uint8_t)((uint8_t)(TIM2->CCMR2 & (uint8_t)(~TIM2_CCMR_ICxPSC))
+    947                                    | (uint8_t)TIM2_IC2Prescaler);
+   \                     ??TIM2_SetIC2Prescaler_0:
+   \   00002A C6 5308      LD        A, L:0x5308
+   \   00002D A4 F3        AND       A, #0xf3
+   \   00002F BA ..        OR        A, S:?b8
+   \   000031 C7 5308      LD        L:0x5308, A
+    948          }
+   \   000034 32 ....      POP       S:?b8
+   \   000037 87           RETF
+    949          
+    950          /**
+    951            * @brief  Sets the TIM2 Input Capture 3 prescaler.
+    952            * @param   TIM2_IC3Prescaler specifies the Input Capture prescaler new value
+    953            * This parameter can be one of the following values:
+    954            *                       - TIM2_ICPSC_DIV1: no prescaler
+    955            *                       - TIM2_ICPSC_DIV2: capture is done once every 2 events
+    956            *                       - TIM2_ICPSC_DIV4: capture is done once every 4 events
+    957            *                       - TIM2_ICPSC_DIV8: capture is done once every 8 events
+    958            * @retval None
+    959            */
+
+   \                                 In section .far_func.text, align 1
+    960          void TIM2_SetIC3Prescaler(TIM2_ICPSC_TypeDef TIM2_IC3Prescaler)
+    961          {
+   \                     TIM2_SetIC3Prescaler:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    962            
+    963            /* Check the parameters */
+    964            assert_param(IS_TIM2_IC_PRESCALER_OK(TIM2_IC3Prescaler));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 21        JREQ      L:??TIM2_SetIC3Prescaler_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 04        CP        A, #0x4
+   \   00000D 27 1B        JREQ      L:??TIM2_SetIC3Prescaler_0
+   \   00000F B6 ..        LD        A, S:?b8
+   \   000011 A1 08        CP        A, #0x8
+   \   000013 27 15        JREQ      L:??TIM2_SetIC3Prescaler_0
+   \   000015 B6 ..        LD        A, S:?b8
+   \   000017 A1 0C        CP        A, #0xc
+   \   000019 27 0F        JREQ      L:??TIM2_SetIC3Prescaler_0
+   \   00001B AE 03C4      LDW       X, #0x3c4
+   \   00001E BF ..        LDW       S:?w1, X
+   \   000020 5F           CLRW      X
+   \   000021 BF ..        LDW       S:?w0, X
+   \   000023 AE ....      LDW       X, #?_0
+   \   000026 8D ......    CALLF     assert_failed
+    965            /* Reset the IC1PSC Bits &Set the IC1PSC value */
+    966            TIM2->CCMR3 = (uint8_t)((uint8_t)(TIM2->CCMR3 & (uint8_t)(~TIM2_CCMR_ICxPSC))
+    967                                    | (uint8_t)TIM2_IC3Prescaler);
+   \                     ??TIM2_SetIC3Prescaler_0:
+   \   00002A C6 5309      LD        A, L:0x5309
+   \   00002D A4 F3        AND       A, #0xf3
+   \   00002F BA ..        OR        A, S:?b8
+   \   000031 C7 5309      LD        L:0x5309, A
+    968          }
+   \   000034 32 ....      POP       S:?b8
+   \   000037 87           RETF
+    969          
+    970          /**
+    971            * @brief  Gets the TIM2 Input Capture 1 value.
+    972            * @param  None
+    973            * @retval Capture Compare 1 Register value.
+    974            */
+
+   \                                 In section .far_func.text, align 1
+    975          uint16_t TIM2_GetCapture1(void)
+    976          {
+    977            /* Get the Capture 1 Register value */
+    978            uint16_t tmpccr1 = 0;
+   \                     TIM2_GetCapture1:
+   \   000000 905F         CLRW      Y
+    979            uint8_t tmpccr1l=0, tmpccr1h=0;
+   \   000002 3F ..        CLR       S:?b1
+   \   000004 3F ..        CLR       S:?b0
+    980            
+    981            tmpccr1h = TIM2->CCR1H;
+   \   000006 C6 5311      LD        A, L:0x5311
+   \   000009 B7 ..        LD        S:?b0, A
+    982            tmpccr1l = TIM2->CCR1L;
+   \   00000B C6 5312      LD        A, L:0x5312
+   \   00000E B7 ..        LD        S:?b1, A
+    983            
+    984            tmpccr1 = (uint16_t)(tmpccr1l);
+   \   000010 5F           CLRW      X
+   \   000011 B6 ..        LD        A, S:?b1
+   \   000013 97           LD        XL, A
+   \   000014 9093         LDW       Y, X
+    985            tmpccr1 |= (uint16_t)((uint16_t)tmpccr1h << 8);
+   \   000016 5F           CLRW      X
+   \   000017 B6 ..        LD        A, S:?b0
+   \   000019 97           LD        XL, A
+   \   00001A 4F           CLR       A
+   \   00001B 02           RLWA      X, A
+   \   00001C BF ..        LDW       S:?w1, X
+   \   00001E 9001         RRWA      Y, A
+   \   000020 BA ..        OR        A, S:?b3
+   \   000022 9001         RRWA      Y, A
+   \   000024 BA ..        OR        A, S:?b2
+   \   000026 9001         RRWA      Y, A
+    986            /* Get the Capture 1 Register value */
+    987            return (uint16_t)tmpccr1;
+   \   000028 93           LDW       X, Y
+   \   000029 87           RETF
+    988          }
+    989          
+    990          /**
+    991            * @brief  Gets the TIM2 Input Capture 2 value.
+    992            * @param  None
+    993            * @retval Capture Compare 2 Register value.
+    994            */
+
+   \                                 In section .far_func.text, align 1
+    995          uint16_t TIM2_GetCapture2(void)
+    996          {
+    997            /* Get the Capture 2 Register value */
+    998            uint16_t tmpccr2 = 0;
+   \                     TIM2_GetCapture2:
+   \   000000 905F         CLRW      Y
+    999            uint8_t tmpccr2l=0, tmpccr2h=0;
+   \   000002 3F ..        CLR       S:?b1
+   \   000004 3F ..        CLR       S:?b0
+   1000            
+   1001            tmpccr2h = TIM2->CCR2H;
+   \   000006 C6 5313      LD        A, L:0x5313
+   \   000009 B7 ..        LD        S:?b0, A
+   1002            tmpccr2l = TIM2->CCR2L;
+   \   00000B C6 5314      LD        A, L:0x5314
+   \   00000E B7 ..        LD        S:?b1, A
+   1003            
+   1004            tmpccr2 = (uint16_t)(tmpccr2l);
+   \   000010 5F           CLRW      X
+   \   000011 B6 ..        LD        A, S:?b1
+   \   000013 97           LD        XL, A
+   \   000014 9093         LDW       Y, X
+   1005            tmpccr2 |= (uint16_t)((uint16_t)tmpccr2h << 8);
+   \   000016 5F           CLRW      X
+   \   000017 B6 ..        LD        A, S:?b0
+   \   000019 97           LD        XL, A
+   \   00001A 4F           CLR       A
+   \   00001B 02           RLWA      X, A
+   \   00001C BF ..        LDW       S:?w1, X
+   \   00001E 9001         RRWA      Y, A
+   \   000020 BA ..        OR        A, S:?b3
+   \   000022 9001         RRWA      Y, A
+   \   000024 BA ..        OR        A, S:?b2
+   \   000026 9001         RRWA      Y, A
+   1006            /* Get the Capture 2 Register value */
+   1007            return (uint16_t)tmpccr2;
+   \   000028 93           LDW       X, Y
+   \   000029 87           RETF
+   1008          }
+   1009          
+   1010          /**
+   1011            * @brief  Gets the TIM2 Input Capture 3 value.
+   1012            * @param  None
+   1013            * @retval Capture Compare 3 Register value.
+   1014            */
+
+   \                                 In section .far_func.text, align 1
+   1015          uint16_t TIM2_GetCapture3(void)
+   1016          {
+   1017            /* Get the Capture 3 Register value */
+   1018            uint16_t tmpccr3 = 0;
+   \                     TIM2_GetCapture3:
+   \   000000 905F         CLRW      Y
+   1019            uint8_t tmpccr3l=0, tmpccr3h=0;
+   \   000002 3F ..        CLR       S:?b1
+   \   000004 3F ..        CLR       S:?b0
+   1020            
+   1021            tmpccr3h = TIM2->CCR3H;
+   \   000006 C6 5315      LD        A, L:0x5315
+   \   000009 B7 ..        LD        S:?b0, A
+   1022            tmpccr3l = TIM2->CCR3L;
+   \   00000B C6 5316      LD        A, L:0x5316
+   \   00000E B7 ..        LD        S:?b1, A
+   1023            
+   1024            tmpccr3 = (uint16_t)(tmpccr3l);
+   \   000010 5F           CLRW      X
+   \   000011 B6 ..        LD        A, S:?b1
+   \   000013 97           LD        XL, A
+   \   000014 9093         LDW       Y, X
+   1025            tmpccr3 |= (uint16_t)((uint16_t)tmpccr3h << 8);
+   \   000016 5F           CLRW      X
+   \   000017 B6 ..        LD        A, S:?b0
+   \   000019 97           LD        XL, A
+   \   00001A 4F           CLR       A
+   \   00001B 02           RLWA      X, A
+   \   00001C BF ..        LDW       S:?w1, X
+   \   00001E 9001         RRWA      Y, A
+   \   000020 BA ..        OR        A, S:?b3
+   \   000022 9001         RRWA      Y, A
+   \   000024 BA ..        OR        A, S:?b2
+   \   000026 9001         RRWA      Y, A
+   1026            /* Get the Capture 3 Register value */
+   1027            return (uint16_t)tmpccr3;
+   \   000028 93           LDW       X, Y
+   \   000029 87           RETF
+   1028          }
+   1029          
+   1030          /**
+   1031            * @brief  Gets the TIM2 Counter value.
+   1032            * @param  None
+   1033            * @retval Counter Register value.
+   1034            */
+
+   \                                 In section .far_func.text, align 1
+   1035          uint16_t TIM2_GetCounter(void)
+   1036          {
+   1037            uint16_t tmpcntr = 0;
+   \                     TIM2_GetCounter:
+   \   000000 905F         CLRW      Y
+   1038            
+   1039            tmpcntr =  ((uint16_t)TIM2->CNTRH << 8);
+   \   000002 C6 530C      LD        A, L:0x530c
+   \   000005 5F           CLRW      X
+   \   000006 97           LD        XL, A
+   \   000007 4F           CLR       A
+   \   000008 02           RLWA      X, A
+   \   000009 9093         LDW       Y, X
+   1040            /* Get the Counter Register value */
+   1041            return (uint16_t)( tmpcntr| (uint16_t)(TIM2->CNTRL));
+   \   00000B C6 530D      LD        A, L:0x530d
+   \   00000E 3F ..        CLR       S:?b0
+   \   000010 B7 ..        LD        S:?b1, A
+   \   000012 93           LDW       X, Y
+   \   000013 01           RRWA      X, A
+   \   000014 BA ..        OR        A, S:?b1
+   \   000016 01           RRWA      X, A
+   \   000017 BA ..        OR        A, S:?b0
+   \   000019 01           RRWA      X, A
+   \   00001A 87           RETF
+   1042          }
+   1043          
+   1044          /**
+   1045            * @brief  Gets the TIM2 Prescaler value.
+   1046            * @param  None
+   1047            * @retval Prescaler Register configuration value  @ref TIM2_Prescaler_TypeDef.
+   1048            */
+
+   \                                 In section .far_func.text, align 1
+   1049          TIM2_Prescaler_TypeDef TIM2_GetPrescaler(void)
+   1050          {
+   1051            /* Get the Prescaler Register value */
+   1052            return (TIM2_Prescaler_TypeDef)(TIM2->PSCR);
+   \                     TIM2_GetPrescaler:
+   \   000000 C6 530E      LD        A, L:0x530e
+   \   000003 87           RETF
+   1053          }
+   1054          
+   1055          /**
+   1056            * @brief  Checks whether the specified TIM2 flag is set or not.
+   1057            * @param   TIM2_FLAG specifies the flag to check.
+   1058            * This parameter can be one of the following values:
+   1059            *                       - TIM2_FLAG_UPDATE: TIM2 update Flag
+   1060            *                       - TIM2_FLAG_CC1: TIM2 Capture Compare 1 Flag
+   1061            *                       - TIM2_FLAG_CC2: TIM2 Capture Compare 2 Flag
+   1062            *                       - TIM2_FLAG_CC3: TIM2 Capture Compare 3 Flag
+   1063            *                       - TIM2_FLAG_CC1OF: TIM2 Capture Compare 1 over capture Flag
+   1064            *                       - TIM2_FLAG_CC2OF: TIM2 Capture Compare 2 over capture Flag
+   1065            *                       - TIM2_FLAG_CC3OF: TIM2 Capture Compare 3 over capture Flag
+   1066            * @retval FlagStatus The new state of TIM2_FLAG (SET or RESET).
+   1067            */
+
+   \                                 In section .far_func.text, align 1
+   1068          FlagStatus TIM2_GetFlagStatus(TIM2_FLAG_TypeDef TIM2_FLAG)
+   1069          {
+   \                     TIM2_GetFlagStatus:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 3B ....      PUSH      S:?b12
+   \   000007 BF ..        LDW       S:?w4, X
+   1070            FlagStatus bitstatus = RESET;
+   \   000009 3F ..        CLR       S:?b10
+   1071            uint8_t tim2_flag_l = 0, tim2_flag_h = 0;
+   \   00000B 3F ..        CLR       S:?b12
+   \   00000D 3F ..        CLR       S:?b11
+   1072            
+   1073            /* Check the parameters */
+   1074            assert_param(IS_TIM2_GET_FLAG_OK(TIM2_FLAG));
+   \   00000F BE ..        LDW       X, S:?w4
+   \   000011 A3 0001      CPW       X, #0x1
+   \   000014 27 39        JREQ      L:??TIM2_GetFlagStatus_0
+   \   000016 BE ..        LDW       X, S:?w4
+   \   000018 A3 0002      CPW       X, #0x2
+   \   00001B 27 32        JREQ      L:??TIM2_GetFlagStatus_0
+   \   00001D BE ..        LDW       X, S:?w4
+   \   00001F A3 0004      CPW       X, #0x4
+   \   000022 27 2B        JREQ      L:??TIM2_GetFlagStatus_0
+   \   000024 BE ..        LDW       X, S:?w4
+   \   000026 A3 0008      CPW       X, #0x8
+   \   000029 27 24        JREQ      L:??TIM2_GetFlagStatus_0
+   \   00002B BE ..        LDW       X, S:?w4
+   \   00002D A3 0200      CPW       X, #0x200
+   \   000030 27 1D        JREQ      L:??TIM2_GetFlagStatus_0
+   \   000032 BE ..        LDW       X, S:?w4
+   \   000034 A3 0400      CPW       X, #0x400
+   \   000037 27 16        JREQ      L:??TIM2_GetFlagStatus_0
+   \   000039 BE ..        LDW       X, S:?w4
+   \   00003B A3 0800      CPW       X, #0x800
+   \   00003E 27 0F        JREQ      L:??TIM2_GetFlagStatus_0
+   \   000040 AE 0432      LDW       X, #0x432
+   \   000043 BF ..        LDW       S:?w1, X
+   \   000045 5F           CLRW      X
+   \   000046 BF ..        LDW       S:?w0, X
+   \   000048 AE ....      LDW       X, #?_0
+   \   00004B 8D ......    CALLF     assert_failed
+   1075            
+   1076            tim2_flag_l = (uint8_t)(TIM2->SR1 & (uint8_t)TIM2_FLAG);
+   \                     ??TIM2_GetFlagStatus_0:
+   \   00004F B6 ..        LD        A, S:?b9
+   \   000051 C4 5304      AND       A, L:0x5304
+   \   000054 B7 ..        LD        S:?b12, A
+   1077            tim2_flag_h = (uint8_t)((uint16_t)TIM2_FLAG >> 8);
+   \   000056 45 .. ..     MOV       S:?b11, S:?b8
+   1078            
+   1079            if ((tim2_flag_l | (uint8_t)(TIM2->SR2 & tim2_flag_h)) != (uint8_t)RESET )
+   \   000059 C6 5305      LD        A, L:0x5305
+   \   00005C B4 ..        AND       A, S:?b11
+   \   00005E BA ..        OR        A, S:?b12
+   \   000060 A1 00        CP        A, #0x0
+   \   000062 27 06        JREQ      L:??TIM2_GetFlagStatus_1
+   1080            {
+   1081              bitstatus = SET;
+   \   000064 A6 01        LD        A, #0x1
+   \   000066 B7 ..        LD        S:?b10, A
+   \   000068 20 02        JRA       L:??TIM2_GetFlagStatus_2
+   1082            }
+   1083            else
+   1084            {
+   1085              bitstatus = RESET;
+   \                     ??TIM2_GetFlagStatus_1:
+   \   00006A 3F ..        CLR       S:?b10
+   1086            }
+   1087            return (FlagStatus)bitstatus;
+   \                     ??TIM2_GetFlagStatus_2:
+   \   00006C B6 ..        LD        A, S:?b10
+   \   00006E 32 ....      POP       S:?b12
+   \   000071 AC ......    JPF       L:?epilogue_l2
+   1088          }
+   1089          
+   1090          /**
+   1091            * @brief  Clears the TIM2ís pending flags.
+   1092            * @param   TIM2_FLAG specifies the flag to clear.
+   1093            * This parameter can be one of the following values:
+   1094            *                       - TIM2_FLAG_UPDATE: TIM2 update Flag
+   1095            *                       - TIM2_FLAG_CC1: TIM2 Capture Compare 1 Flag
+   1096            *                       - TIM2_FLAG_CC2: TIM2 Capture Compare 2 Flag
+   1097            *                       - TIM2_FLAG_CC3: TIM2 Capture Compare 3 Flag
+   1098            *                       - TIM2_FLAG_CC1OF: TIM2 Capture Compare 1 over capture Flag
+   1099            *                       - TIM2_FLAG_CC2OF: TIM2 Capture Compare 2 over capture Flag
+   1100            *                       - TIM2_FLAG_CC3OF: TIM2 Capture Compare 3 over capture Flag
+   1101            * @retval None.
+   1102            */
+
+   \                                 In section .far_func.text, align 1
+   1103          void TIM2_ClearFlag(TIM2_FLAG_TypeDef TIM2_FLAG)
+   1104          {
+   \                     TIM2_ClearFlag:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 BF ..        LDW       S:?w4, X
+   1105            /* Check the parameters */
+   1106            assert_param(IS_TIM2_CLEAR_FLAG_OK(TIM2_FLAG));
+   \   000006 BE ..        LDW       X, S:?w4
+   \   000008 02           RLWA      X, A
+   \   000009 A4 F1        AND       A, #0xf1
+   \   00000B 02           RLWA      X, A
+   \   00000C A4 F0        AND       A, #0xf0
+   \   00000E 02           RLWA      X, A
+   \   00000F 5D           TNZW      X
+   \   000010 26 05        JRNE      L:??TIM2_ClearFlag_0
+   \   000012 BE ..        LDW       X, S:?w4
+   \   000014 5D           TNZW      X
+   \   000015 26 0F        JRNE      L:??TIM2_ClearFlag_1
+   \                     ??TIM2_ClearFlag_0:
+   \   000017 AE 0452      LDW       X, #0x452
+   \   00001A BF ..        LDW       S:?w1, X
+   \   00001C 5F           CLRW      X
+   \   00001D BF ..        LDW       S:?w0, X
+   \   00001F AE ....      LDW       X, #?_0
+   \   000022 8D ......    CALLF     assert_failed
+   1107            
+   1108            /* Clear the flags (rc_w0) clear this bit by writing 0. Writing ë1í has no effect*/
+   1109            TIM2->SR1 = (uint8_t)(~((uint8_t)(TIM2_FLAG)));
+   \                     ??TIM2_ClearFlag_1:
+   \   000026 B6 ..        LD        A, S:?b9
+   \   000028 43           CPL       A
+   \   000029 C7 5304      LD        L:0x5304, A
+   1110            TIM2->SR2 = (uint8_t)(~((uint8_t)((uint8_t)TIM2_FLAG >> 8)));
+   \   00002C 35 FF 5305   MOV       L:0x5305, #0xff
+   1111          }
+   \   000030 AC ......    JPF       L:?epilogue_w4
+   1112          
+   1113          /**
+   1114            * @brief  Checks whether the TIM2 interrupt has occurred or not.
+   1115            * @param   TIM2_IT specifies the TIM2 interrupt source to check.
+   1116            * This parameter can be one of the following values:
+   1117            *                       - TIM2_IT_UPDATE: TIM2 update Interrupt source
+   1118            *                       - TIM2_IT_CC1: TIM2 Capture Compare 1 Interrupt source
+   1119            *                       - TIM2_IT_CC2: TIM2 Capture Compare 2 Interrupt source
+   1120            *                       - TIM2_IT_CC3: TIM2 Capture Compare 3 Interrupt source
+   1121            * @retval ITStatus The new state of the TIM2_IT(SET or RESET).
+   1122            */
+
+   \                                 In section .far_func.text, align 1
+   1123          ITStatus TIM2_GetITStatus(TIM2_IT_TypeDef TIM2_IT)
+   1124          {
+   \                     TIM2_GetITStatus:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 B7 ..        LD        S:?b11, A
+   1125            ITStatus bitstatus = RESET;
+   \   000006 3F ..        CLR       S:?b8
+   1126            uint8_t TIM2_itStatus = 0, TIM2_itEnable = 0;
+   \   000008 3F ..        CLR       S:?b9
+   \   00000A 3F ..        CLR       S:?b10
+   1127            
+   1128            /* Check the parameters */
+   1129            assert_param(IS_TIM2_GET_IT_OK(TIM2_IT));
+   \   00000C B6 ..        LD        A, S:?b11
+   \   00000E A1 01        CP        A, #0x1
+   \   000010 27 21        JREQ      L:??TIM2_GetITStatus_0
+   \   000012 B6 ..        LD        A, S:?b11
+   \   000014 A1 02        CP        A, #0x2
+   \   000016 27 1B        JREQ      L:??TIM2_GetITStatus_0
+   \   000018 B6 ..        LD        A, S:?b11
+   \   00001A A1 04        CP        A, #0x4
+   \   00001C 27 15        JREQ      L:??TIM2_GetITStatus_0
+   \   00001E B6 ..        LD        A, S:?b11
+   \   000020 A1 08        CP        A, #0x8
+   \   000022 27 0F        JREQ      L:??TIM2_GetITStatus_0
+   \   000024 AE 0469      LDW       X, #0x469
+   \   000027 BF ..        LDW       S:?w1, X
+   \   000029 5F           CLRW      X
+   \   00002A BF ..        LDW       S:?w0, X
+   \   00002C AE ....      LDW       X, #?_0
+   \   00002F 8D ......    CALLF     assert_failed
+   1130            
+   1131            TIM2_itStatus = (uint8_t)(TIM2->SR1 & TIM2_IT);
+   \                     ??TIM2_GetITStatus_0:
+   \   000033 C6 5304      LD        A, L:0x5304
+   \   000036 B4 ..        AND       A, S:?b11
+   \   000038 B7 ..        LD        S:?b9, A
+   1132            
+   1133            TIM2_itEnable = (uint8_t)(TIM2->IER & TIM2_IT);
+   \   00003A C6 5303      LD        A, L:0x5303
+   \   00003D B4 ..        AND       A, S:?b11
+   \   00003F B7 ..        LD        S:?b10, A
+   1134            
+   1135            if ((TIM2_itStatus != (uint8_t)RESET ) && (TIM2_itEnable != (uint8_t)RESET ))
+   \   000041 3D ..        TNZ       S:?b9
+   \   000043 27 0A        JREQ      L:??TIM2_GetITStatus_1
+   \   000045 3D ..        TNZ       S:?b10
+   \   000047 27 06        JREQ      L:??TIM2_GetITStatus_1
+   1136            {
+   1137              bitstatus = SET;
+   \   000049 A6 01        LD        A, #0x1
+   \   00004B B7 ..        LD        S:?b8, A
+   \   00004D 20 02        JRA       L:??TIM2_GetITStatus_2
+   1138            }
+   1139            else
+   1140            {
+   1141              bitstatus = RESET;
+   \                     ??TIM2_GetITStatus_1:
+   \   00004F 3F ..        CLR       S:?b8
+   1142            }
+   1143            return (ITStatus)(bitstatus);
+   \                     ??TIM2_GetITStatus_2:
+   \   000051 B6 ..        LD        A, S:?b8
+   \   000053 AC ......    JPF       L:?epilogue_l2
+   1144          }
+   1145          
+   1146          /**
+   1147            * @brief  Clears the TIM2's interrupt pending bits.
+   1148            * @param   TIM2_IT specifies the pending bit to clear.
+   1149            * This parameter can be one of the following values:
+   1150            *                       - TIM2_IT_UPDATE: TIM2 update Interrupt source
+   1151            *                       - TIM2_IT_CC1: TIM2 Capture Compare 1 Interrupt source
+   1152            *                       - TIM2_IT_CC2: TIM2 Capture Compare 2 Interrupt source
+   1153            *                       - TIM2_IT_CC3: TIM2 Capture Compare 3 Interrupt source
+   1154            * @retval None.
+   1155            */
+
+   \                                 In section .far_func.text, align 1
+   1156          void TIM2_ClearITPendingBit(TIM2_IT_TypeDef TIM2_IT)
+   1157          {
+   \                     TIM2_ClearITPendingBit:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+   1158            /* Check the parameters */
+   1159            assert_param(IS_TIM2_IT_OK(TIM2_IT));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 06        JREQ      L:??TIM2_ClearITPendingBit_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 10        CP        A, #0x10
+   \   00000D 25 0F        JRC       L:??TIM2_ClearITPendingBit_1
+   \                     ??TIM2_ClearITPendingBit_0:
+   \   00000F AE 0487      LDW       X, #0x487
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+   1160            
+   1161            /* Clear the IT pending Bit */
+   1162            TIM2->SR1 = (uint8_t)(~TIM2_IT);
+   \                     ??TIM2_ClearITPendingBit_1:
+   \   00001E B6 ..        LD        A, S:?b8
+   \   000020 43           CPL       A
+   \   000021 C7 5304      LD        L:0x5304, A
+   1163          }
+   \   000024 32 ....      POP       S:?b8
+   \   000027 87           RETF
+   1164          
+   1165          /**
+   1166            * @brief  Configure the TI1 as Input.
+   1167            * @param   TIM2_ICPolarity  The Input Polarity.
+   1168            * This parameter can be one of the following values:
+   1169            *                       - TIM2_ICPOLARITY_FALLING
+   1170            *                       - TIM2_ICPOLARITY_RISING
+   1171            * @param   TIM2_ICSelection specifies the input to be used.
+   1172            * This parameter can be one of the following values:
+   1173            *                       - TIM2_ICSELECTION_DIRECTTI: TIM2 Input 1 is selected to
+   1174            *                         be connected to IC1.
+   1175            *                       - TIM2_ICSELECTION_INDIRECTTI: TIM2 Input 1 is selected to
+   1176            *                         be connected to IC2.
+   1177            * @param   TIM2_ICFilter Specifies the Input Capture Filter.
+   1178            * This parameter must be a value between 0x00 and 0x0F.
+   1179            * @retval None
+   1180            */
+
+   \                                 In section .far_func.text, align 1
+   1181          static void TI1_Config(uint8_t TIM2_ICPolarity,
+   1182                                 uint8_t TIM2_ICSelection,
+   1183                                 uint8_t TIM2_ICFilter)
+   1184          {
+   \                     TI1_Config:
+   \   000000 B7 ..        LD        S:?b2, A
+   1185            /* Disable the Channel 1: Reset the CCE Bit */
+   1186            TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC1E);
+   \   000002 7211 530A    BRES      L:0x530a, #0x0
+   1187            
+   1188            /* Select the Input and set the filter */
+   1189            TIM2->CCMR1  = (uint8_t)((uint8_t)(TIM2->CCMR1 & (uint8_t)(~(uint8_t)( TIM2_CCMR_CCxS | TIM2_CCMR_ICxF )))
+   1190                                     | (uint8_t)(((TIM2_ICSelection)) | ((uint8_t)( TIM2_ICFilter << 4))));
+   \   000006 B6 ..        LD        A, S:?b1
+   \   000008 4E           SWAP      A
+   \   000009 A4 F0        AND       A, #0xf0
+   \   00000B BA ..        OR        A, S:?b0
+   \   00000D 88           PUSH      A
+   \   00000E C6 5307      LD        A, L:0x5307
+   \   000011 A4 0C        AND       A, #0xc
+   \   000013 B7 ..        LD        S:?b4, A
+   \   000015 84           POP       A
+   \   000016 BA ..        OR        A, S:?b4
+   \   000018 C7 5307      LD        L:0x5307, A
+   1191            
+   1192            /* Select the Polarity */
+   1193            if (TIM2_ICPolarity != TIM2_ICPOLARITY_RISING)
+   \   00001B 3D ..        TNZ       S:?b2
+   \   00001D 27 06        JREQ      L:??TI1_Config_0
+   1194            {
+   1195              TIM2->CCER1 |= TIM2_CCER1_CC1P;
+   \   00001F 7212 530A    BSET      L:0x530a, #0x1
+   \   000023 20 04        JRA       L:??TI1_Config_1
+   1196            }
+   1197            else
+   1198            {
+   1199              TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC1P);
+   \                     ??TI1_Config_0:
+   \   000025 7213 530A    BRES      L:0x530a, #0x1
+   1200            }
+   1201            /* Set the CCE Bit */
+   1202            TIM2->CCER1 |= TIM2_CCER1_CC1E;
+   \                     ??TI1_Config_1:
+   \   000029 7210 530A    BSET      L:0x530a, #0x0
+   1203          }
+   \   00002D 87           RETF
+   1204          
+   1205          /**
+   1206            * @brief  Configure the TI2 as Input.
+   1207            * @param   TIM2_ICPolarity  The Input Polarity.
+   1208            * This parameter can be one of the following values:
+   1209            *                       - TIM2_ICPOLARITY_FALLING
+   1210            *                       - TIM2_ICPOLARITY_RISING
+   1211            * @param   TIM2_ICSelection specifies the input to be used.
+   1212            * This parameter can be one of the following values:
+   1213            *                       - TIM2_ICSELECTION_DIRECTTI: TIM2 Input 2 is selected to
+   1214            *                         be connected to IC2.
+   1215            *                       - TIM2_ICSELECTION_INDIRECTTI: TIM2 Input 2 is selected to
+   1216            *                         be connected to IC1.
+   1217            * @param   TIM2_ICFilter Specifies the Input Capture Filter.
+   1218            * This parameter must be a value between 0x00 and 0x0F.
+   1219            * @retval None
+   1220            */
+
+   \                                 In section .far_func.text, align 1
+   1221          static void TI2_Config(uint8_t TIM2_ICPolarity,
+   1222                                 uint8_t TIM2_ICSelection,
+   1223                                 uint8_t TIM2_ICFilter)
+   1224          {
+   \                     TI2_Config:
+   \   000000 B7 ..        LD        S:?b2, A
+   1225            /* Disable the Channel 2: Reset the CCE Bit */
+   1226            TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC2E);
+   \   000002 7219 530A    BRES      L:0x530a, #0x4
+   1227            
+   1228            /* Select the Input and set the filter */
+   1229            TIM2->CCMR2 = (uint8_t)((uint8_t)(TIM2->CCMR2 & (uint8_t)(~(uint8_t)( TIM2_CCMR_CCxS | TIM2_CCMR_ICxF ))) 
+   1230                                    | (uint8_t)(( (TIM2_ICSelection)) | ((uint8_t)( TIM2_ICFilter << 4))));
+   \   000006 B6 ..        LD        A, S:?b1
+   \   000008 4E           SWAP      A
+   \   000009 A4 F0        AND       A, #0xf0
+   \   00000B BA ..        OR        A, S:?b0
+   \   00000D 88           PUSH      A
+   \   00000E C6 5308      LD        A, L:0x5308
+   \   000011 A4 0C        AND       A, #0xc
+   \   000013 B7 ..        LD        S:?b4, A
+   \   000015 84           POP       A
+   \   000016 BA ..        OR        A, S:?b4
+   \   000018 C7 5308      LD        L:0x5308, A
+   1231            
+   1232            
+   1233            /* Select the Polarity */
+   1234            if (TIM2_ICPolarity != TIM2_ICPOLARITY_RISING)
+   \   00001B 3D ..        TNZ       S:?b2
+   \   00001D 27 06        JREQ      L:??TI2_Config_0
+   1235            {
+   1236              TIM2->CCER1 |= TIM2_CCER1_CC2P;
+   \   00001F 721A 530A    BSET      L:0x530a, #0x5
+   \   000023 20 04        JRA       L:??TI2_Config_1
+   1237            }
+   1238            else
+   1239            {
+   1240              TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC2P);
+   \                     ??TI2_Config_0:
+   \   000025 721B 530A    BRES      L:0x530a, #0x5
+   1241            }
+   1242            
+   1243            /* Set the CCE Bit */
+   1244            TIM2->CCER1 |= TIM2_CCER1_CC2E;
+   \                     ??TI2_Config_1:
+   \   000029 7218 530A    BSET      L:0x530a, #0x4
+   1245          }
+   \   00002D 87           RETF
+   1246          
+   1247          /**
+   1248            * @brief  Configure the TI3 as Input.
+   1249            * @param   TIM2_ICPolarity  The Input Polarity.
+   1250            * This parameter can be one of the following values:
+   1251            *                       - TIM2_ICPOLARITY_FALLING
+   1252            *                       - TIM2_ICPOLARITY_RISING
+   1253            * @param   TIM2_ICSelection specifies the input to be used.
+   1254            * This parameter can be one of the following values:
+   1255            *                       - TIM2_ICSELECTION_DIRECTTI: TIM2 Input 3 is selected to
+   1256            *                         be connected to IC3.
+   1257            * @param   TIM2_ICFilter Specifies the Input Capture Filter.
+   1258            * This parameter must be a value between 0x00 and 0x0F.
+   1259            * @retval None
+   1260            */
+
+   \                                 In section .far_func.text, align 1
+   1261          static void TI3_Config(uint8_t TIM2_ICPolarity, uint8_t TIM2_ICSelection,
+   1262                                 uint8_t TIM2_ICFilter)
+   1263          {
+   \                     TI3_Config:
+   \   000000 B7 ..        LD        S:?b2, A
+   1264            /* Disable the Channel 3: Reset the CCE Bit */
+   1265            TIM2->CCER2 &=  (uint8_t)(~TIM2_CCER2_CC3E);
+   \   000002 7211 530B    BRES      L:0x530b, #0x0
+   1266            
+   1267            /* Select the Input and set the filter */
+   1268            TIM2->CCMR3 = (uint8_t)((uint8_t)(TIM2->CCMR3 & (uint8_t)(~( TIM2_CCMR_CCxS | TIM2_CCMR_ICxF))) 
+   1269                                    | (uint8_t)(( (TIM2_ICSelection)) | ((uint8_t)( TIM2_ICFilter << 4))));
+   \   000006 B6 ..        LD        A, S:?b1
+   \   000008 4E           SWAP      A
+   \   000009 A4 F0        AND       A, #0xf0
+   \   00000B BA ..        OR        A, S:?b0
+   \   00000D 88           PUSH      A
+   \   00000E C6 5309      LD        A, L:0x5309
+   \   000011 A4 0C        AND       A, #0xc
+   \   000013 B7 ..        LD        S:?b4, A
+   \   000015 84           POP       A
+   \   000016 BA ..        OR        A, S:?b4
+   \   000018 C7 5309      LD        L:0x5309, A
+   1270            
+   1271            
+   1272            /* Select the Polarity */
+   1273            if (TIM2_ICPolarity != TIM2_ICPOLARITY_RISING)
+   \   00001B 3D ..        TNZ       S:?b2
+   \   00001D 27 06        JREQ      L:??TI3_Config_0
+   1274            {
+   1275              TIM2->CCER2 |= TIM2_CCER2_CC3P;
+   \   00001F 7212 530B    BSET      L:0x530b, #0x1
+   \   000023 20 04        JRA       L:??TI3_Config_1
+   1276            }
+   1277            else
+   1278            {
+   1279              TIM2->CCER2 &= (uint8_t)(~TIM2_CCER2_CC3P);
+   \                     ??TI3_Config_0:
+   \   000025 7213 530B    BRES      L:0x530b, #0x1
+   1280            }
+   1281            /* Set the CCE Bit */
+   1282            TIM2->CCER2 |= TIM2_CCER2_CC3E;
+   \                     ??TI3_Config_1:
+   \   000029 7210 530B    BSET      L:0x530b, #0x0
+   1283          }
+   \   00002D 87           RETF
+
+   \                                 In section .near.rodata, align 1
+   \                     ?_0:
+   \   000000 2E 5C 4C 69  DC8 ".\\Lib\\C\\stm8s_tim2.c"
+   \          62 5C 43 5C 
+   1284          
+   1285          /**
+   1286            * @}
+   1287            */
+   1288            
+   1289            /**
+   1290            * @}
+   1291            */
+   1292          
+   1293          
+   1294          /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      21  ?_0
+      46  TI1_Config
+      46  TI2_Config
+      46  TI3_Config
+      48  TIM2_ARRPreloadConfig
+     125  TIM2_CCxCmd
+      52  TIM2_ClearFlag
+      40  TIM2_ClearITPendingBit
+      48  TIM2_Cmd
+      89  TIM2_DeInit
+      46  TIM2_ForcedOC1Config
+      46  TIM2_ForcedOC2Config
+      46  TIM2_ForcedOC3Config
+      33  TIM2_GenerateEvent
+      42  TIM2_GetCapture1
+      42  TIM2_GetCapture2
+      42  TIM2_GetCapture3
+      27  TIM2_GetCounter
+     117  TIM2_GetFlagStatus
+      87  TIM2_GetITStatus
+       4  TIM2_GetPrescaler
+     243  TIM2_ICInit
+      86  TIM2_ITConfig
+     179  TIM2_OC1Init
+      48  TIM2_OC1PolarityConfig
+      48  TIM2_OC1PreloadConfig
+     179  TIM2_OC2Init
+      48  TIM2_OC2PolarityConfig
+      48  TIM2_OC2PreloadConfig
+     179  TIM2_OC3Init
+      48  TIM2_OC3PolarityConfig
+      48  TIM2_OC3PreloadConfig
+     266  TIM2_PWMIConfig
+     157  TIM2_PrescalerConfig
+     161  TIM2_SelectOCxM
+      48  TIM2_SelectOnePulseMode
+       9  TIM2_SetAutoreload
+       9  TIM2_SetCompare1
+       9  TIM2_SetCompare2
+       9  TIM2_SetCompare3
+       9  TIM2_SetCounter
+      56  TIM2_SetIC1Prescaler
+      56  TIM2_SetIC2Prescaler
+      56  TIM2_SetIC3Prescaler
+      16  TIM2_TimeBaseInit
+      48  TIM2_UpdateDisableConfig
+      48  TIM2_UpdateRequestConfig
+
+ 
+ 3 183 bytes in section .far_func.text
+    21 bytes in section .near.rodata
+ 
+ 3 183 bytes of CODE  memory
+    21 bytes of CONST memory
+
+Errors: none
+Warnings: none
