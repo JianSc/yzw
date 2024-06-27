@@ -1,0 +1,67 @@
+{
+  "name": "STM8S003",
+  "type": "C51",
+  "dependenceList": [],
+  "srcDirs": [
+    "Lib",
+    "Readme",
+    "User"
+  ],
+  "virtualFolder": {
+    "name": "<virtual_root>",
+    "files": [],
+    "folders": []
+  },
+  "outDir": "build",
+  "deviceName": null,
+  "packDir": null,
+  "miscInfo": {
+    "uid": "0807e69d864a0d875b43d4cc84d4034c"
+  },
+  "targets": {
+    "Debug": {
+      "excludeList": [
+        "Lib/C/stm8s_adc2.c",
+        "Lib/C/stm8s_can.c",
+        "Lib/C/stm8s_tim3.c",
+        "Lib/C/stm8s_tim5.c",
+        "Lib/C/stm8s_tim6.c",
+        "Lib/C/stm8s_uart2.c",
+        "Lib/C/stm8s_uart3.c",
+        "Lib/C/stm8s_uart4.c",
+        "Readme/stm8s_delay.c"
+      ],
+      "toolchain": "IAR_STM8",
+      "compileConfig": {
+        "options": "null"
+      },
+      "uploader": "STVP",
+      "uploadConfig": {
+        "deviceName": "STM8S003F3",
+        "bin": "",
+        "eepromFile": "null",
+        "optionByteFile": "null"
+      },
+      "uploadConfigMap": {
+        "stcgal": {
+          "bin": "",
+          "eepromImgPath": "null",
+          "extraOptions": "",
+          "options": ".eide/stc.flash.json"
+        }
+      },
+      "custom_dep": {
+        "name": "default",
+        "incList": [
+          "d:/Program Files (x86)/IAR Systems/STM8"
+        ],
+        "libList": [],
+        "sourceDirList": [],
+        "defineList": [
+          "STM8S003"
+        ]
+      }
+    }
+  },
+  "version": "3.3"
+}

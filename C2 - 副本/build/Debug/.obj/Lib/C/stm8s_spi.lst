@@ -1,0 +1,1053 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 28/Jan/2024  21:49:10
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\Lib\C\stm8s_spi.c
+#    Command line =  
+#        -f
+#        c:\Users\Administrator\Desktop\新建文件夹\C\build\Debug\.obj\Lib\C\stm8s_spi.args.txt
+#        (--silent -lCN .\build\Debug\.obj\Lib\C\stm8s_spi.lst -I "d:/Program
+#        Files (x86)/IAR Systems/STM8" -I "d:/Program Files (x86)/IAR
+#        Systems/STM8/stm8/lib" -I Lib/H -I Lib/C -I User -D STM8S003
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\.obj\Lib\C\stm8s_spi.o .\Lib\C\stm8s_spi.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\.obj\Lib\C\stm8s_spi.lst
+#    Object file  =  .\build\Debug\.obj\Lib\C\stm8s_spi.o
+#
+###############################################################################
+
+c:\Users\Administrator\Desktop\新建文件夹\C\Lib\C\stm8s_spi.c
+      1          /**
+      2            ******************************************************************************
+      3            * @file    stm8s_spi.c
+      4            * @author  MCD Application Team
+      5            * @version V2.3.0
+      6            * @date    16-June-2017
+      7            * @brief   This file contains all the functions for the SPI peripheral.
+      8             ******************************************************************************
+      9            * @attention
+     10            *
+     11            * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
+     12            *
+     13            * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+     14            * You may not use this file except in compliance with the License.
+     15            * You may obtain a copy of the License at:
+     16            *
+     17            *        http://www.st.com/software_license_agreement_liberty_v2
+     18            *
+     19            * Unless required by applicable law or agreed to in writing, software 
+     20            * distributed under the License is distributed on an "AS IS" BASIS, 
+     21            * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     22            * See the License for the specific language governing permissions and
+     23            * limitations under the License.
+     24            *
+     25            ******************************************************************************
+     26            */
+     27          
+     28          /* Includes ------------------------------------------------------------------*/
+     29          #include "stm8s_spi.h"
+     30          
+     31          /** @addtogroup STM8S_StdPeriph_Driver
+     32            * @{
+     33            */
+     34            
+     35          /* Private define ------------------------------------------------------------*/
+     36          /* Private macro -------------------------------------------------------------*/
+     37          /* Private variables ---------------------------------------------------------*/
+     38          /* Private function prototypes -----------------------------------------------*/
+     39          /* Private functions ---------------------------------------------------------*/
+     40          
+     41          /** @addtogroup SPI_Public_Functions
+     42            * @{
+     43            */
+     44          
+     45          /**
+     46            * @brief  Deinitializes the SPI peripheral registers to their default reset values.
+     47            * @param  None
+     48            * @retval None
+     49            */
+
+   \                                 In section .far_func.text, align 1
+     50          void SPI_DeInit(void)
+     51          {
+     52            SPI->CR1    = SPI_CR1_RESET_VALUE;
+   \                     SPI_DeInit:
+   \   000000 725F 5200    CLR       L:0x5200
+     53            SPI->CR2    = SPI_CR2_RESET_VALUE;
+   \   000004 725F 5201    CLR       L:0x5201
+     54            SPI->ICR    = SPI_ICR_RESET_VALUE;
+   \   000008 725F 5202    CLR       L:0x5202
+     55            SPI->SR     = SPI_SR_RESET_VALUE;
+   \   00000C 35 02 5203   MOV       L:0x5203, #0x2
+     56            SPI->CRCPR  = SPI_CRCPR_RESET_VALUE;
+   \   000010 35 07 5205   MOV       L:0x5205, #0x7
+     57          }
+   \   000014 87           RETF
+     58          
+     59          /**
+     60            * @brief  Initializes the SPI according to the specified parameters.
+     61            * @param  FirstBit : This parameter can be any of the 
+     62            *         @ref SPI_FirstBit_TypeDef enumeration.
+     63            * @param  BaudRatePrescaler : This parameter can be any of the 
+     64            *         @ref SPI_BaudRatePrescaler_TypeDef enumeration.
+     65            * @param  Mode : This parameter can be any of the  
+     66            *         @ref SPI_Mode_TypeDef enumeration.
+     67            * @param  ClockPolarity : This parameter can be any of the 
+     68            *         @ref SPI_ClockPolarity_TypeDef enumeration.
+     69            * @param  ClockPhase : This parameter can be any of the 
+     70            *         @ref SPI_ClockPhase_TypeDef enumeration.
+     71            * @param  Data_Direction : This parameter can be any of the 
+     72            *         @ref SPI_DataDirection_TypeDef enumeration.
+     73            * @param  Slave_Management : This parameter can be any of the 
+     74            *         @ref SPI_NSS_TypeDef enumeration.
+     75            * @param  CRCPolynomial : Configures the CRC polynomial.
+     76            * @retval None
+     77            */
+
+   \                                 In section .far_func.text, align 1
+     78          void SPI_Init(SPI_FirstBit_TypeDef FirstBit, SPI_BaudRatePrescaler_TypeDef BaudRatePrescaler, SPI_Mode_TypeDef Mode, SPI_ClockPolarity_TypeDef ClockPolarity, SPI_ClockPhase_TypeDef ClockPhase, SPI_DataDirection_TypeDef Data_Direction, SPI_NSS_TypeDef Slave_Management, uint8_t CRCPolynomial)
+     79          {
+   \                     SPI_Init:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 8D ......    CALLF     L:?push_l3
+   \   000008 B7 ..        LD        S:?b15, A
+   \   00000A 45 .. ..     MOV       S:?b8, S:?b0
+   \   00000D 45 .. ..     MOV       S:?b13, S:?b1
+   \   000010 45 .. ..     MOV       S:?b14, S:?b2
+   \   000013 45 .. ..     MOV       S:?b12, S:?b3
+   \   000016 45 .. ..     MOV       S:?b9, S:?b4
+   \   000019 45 .. ..     MOV       S:?b10, S:?b5
+   \   00001C 45 .. ..     MOV       S:?b11, S:?b6
+     80            /* Check structure elements */
+     81            assert_param(IS_SPI_FIRSTBIT_OK(FirstBit));
+   \   00001F 3D ..        TNZ       S:?b15
+   \   000021 27 15        JREQ      L:??SPI_Init_0
+   \   000023 B6 ..        LD        A, S:?b15
+   \   000025 A1 80        CP        A, #0x80
+   \   000027 27 0F        JREQ      L:??SPI_Init_0
+   \   000029 AE 0051      LDW       X, #0x51
+   \   00002C BF ..        LDW       S:?w1, X
+   \   00002E 5F           CLRW      X
+   \   00002F BF ..        LDW       S:?w0, X
+   \   000031 AE ....      LDW       X, #?_0
+   \   000034 8D ......    CALLF     assert_failed
+     82            assert_param(IS_SPI_BAUDRATE_PRESCALER_OK(BaudRatePrescaler));
+   \                     ??SPI_Init_0:
+   \   000038 3D ..        TNZ       S:?b8
+   \   00003A 27 39        JREQ      L:??SPI_Init_1
+   \   00003C B6 ..        LD        A, S:?b8
+   \   00003E A1 08        CP        A, #0x8
+   \   000040 27 33        JREQ      L:??SPI_Init_1
+   \   000042 B6 ..        LD        A, S:?b8
+   \   000044 A1 10        CP        A, #0x10
+   \   000046 27 2D        JREQ      L:??SPI_Init_1
+   \   000048 B6 ..        LD        A, S:?b8
+   \   00004A A1 18        CP        A, #0x18
+   \   00004C 27 27        JREQ      L:??SPI_Init_1
+   \   00004E B6 ..        LD        A, S:?b8
+   \   000050 A1 20        CP        A, #0x20
+   \   000052 27 21        JREQ      L:??SPI_Init_1
+   \   000054 B6 ..        LD        A, S:?b8
+   \   000056 A1 28        CP        A, #0x28
+   \   000058 27 1B        JREQ      L:??SPI_Init_1
+   \   00005A B6 ..        LD        A, S:?b8
+   \   00005C A1 30        CP        A, #0x30
+   \   00005E 27 15        JREQ      L:??SPI_Init_1
+   \   000060 B6 ..        LD        A, S:?b8
+   \   000062 A1 38        CP        A, #0x38
+   \   000064 27 0F        JREQ      L:??SPI_Init_1
+   \   000066 AE 0052      LDW       X, #0x52
+   \   000069 BF ..        LDW       S:?w1, X
+   \   00006B 5F           CLRW      X
+   \   00006C BF ..        LDW       S:?w0, X
+   \   00006E AE ....      LDW       X, #?_0
+   \   000071 8D ......    CALLF     assert_failed
+     83            assert_param(IS_SPI_MODE_OK(Mode));
+   \                     ??SPI_Init_1:
+   \   000075 B6 ..        LD        A, S:?b13
+   \   000077 A1 04        CP        A, #0x4
+   \   000079 27 13        JREQ      L:??SPI_Init_2
+   \   00007B 3D ..        TNZ       S:?b13
+   \   00007D 27 0F        JREQ      L:??SPI_Init_2
+   \   00007F AE 0053      LDW       X, #0x53
+   \   000082 BF ..        LDW       S:?w1, X
+   \   000084 5F           CLRW      X
+   \   000085 BF ..        LDW       S:?w0, X
+   \   000087 AE ....      LDW       X, #?_0
+   \   00008A 8D ......    CALLF     assert_failed
+     84            assert_param(IS_SPI_POLARITY_OK(ClockPolarity));
+   \                     ??SPI_Init_2:
+   \   00008E 3D ..        TNZ       S:?b14
+   \   000090 27 15        JREQ      L:??SPI_Init_3
+   \   000092 B6 ..        LD        A, S:?b14
+   \   000094 A1 02        CP        A, #0x2
+   \   000096 27 0F        JREQ      L:??SPI_Init_3
+   \   000098 AE 0054      LDW       X, #0x54
+   \   00009B BF ..        LDW       S:?w1, X
+   \   00009D 5F           CLRW      X
+   \   00009E BF ..        LDW       S:?w0, X
+   \   0000A0 AE ....      LDW       X, #?_0
+   \   0000A3 8D ......    CALLF     assert_failed
+     85            assert_param(IS_SPI_PHASE_OK(ClockPhase));
+   \                     ??SPI_Init_3:
+   \   0000A7 3D ..        TNZ       S:?b12
+   \   0000A9 27 15        JREQ      L:??SPI_Init_4
+   \   0000AB B6 ..        LD        A, S:?b12
+   \   0000AD A1 01        CP        A, #0x1
+   \   0000AF 27 0F        JREQ      L:??SPI_Init_4
+   \   0000B1 AE 0055      LDW       X, #0x55
+   \   0000B4 BF ..        LDW       S:?w1, X
+   \   0000B6 5F           CLRW      X
+   \   0000B7 BF ..        LDW       S:?w0, X
+   \   0000B9 AE ....      LDW       X, #?_0
+   \   0000BC 8D ......    CALLF     assert_failed
+     86            assert_param(IS_SPI_DATA_DIRECTION_OK(Data_Direction));
+   \                     ??SPI_Init_4:
+   \   0000C0 3D ..        TNZ       S:?b9
+   \   0000C2 27 21        JREQ      L:??SPI_Init_5
+   \   0000C4 B6 ..        LD        A, S:?b9
+   \   0000C6 A1 04        CP        A, #0x4
+   \   0000C8 27 1B        JREQ      L:??SPI_Init_5
+   \   0000CA B6 ..        LD        A, S:?b9
+   \   0000CC A1 80        CP        A, #0x80
+   \   0000CE 27 15        JREQ      L:??SPI_Init_5
+   \   0000D0 B6 ..        LD        A, S:?b9
+   \   0000D2 A1 C0        CP        A, #0xc0
+   \   0000D4 27 0F        JREQ      L:??SPI_Init_5
+   \   0000D6 AE 0056      LDW       X, #0x56
+   \   0000D9 BF ..        LDW       S:?w1, X
+   \   0000DB 5F           CLRW      X
+   \   0000DC BF ..        LDW       S:?w0, X
+   \   0000DE AE ....      LDW       X, #?_0
+   \   0000E1 8D ......    CALLF     assert_failed
+     87            assert_param(IS_SPI_SLAVEMANAGEMENT_OK(Slave_Management));
+   \                     ??SPI_Init_5:
+   \   0000E5 B6 ..        LD        A, S:?b10
+   \   0000E7 A1 02        CP        A, #0x2
+   \   0000E9 27 13        JREQ      L:??SPI_Init_6
+   \   0000EB 3D ..        TNZ       S:?b10
+   \   0000ED 27 0F        JREQ      L:??SPI_Init_6
+   \   0000EF AE 0057      LDW       X, #0x57
+   \   0000F2 BF ..        LDW       S:?w1, X
+   \   0000F4 5F           CLRW      X
+   \   0000F5 BF ..        LDW       S:?w0, X
+   \   0000F7 AE ....      LDW       X, #?_0
+   \   0000FA 8D ......    CALLF     assert_failed
+     88            assert_param(IS_SPI_CRC_POLYNOMIAL_OK(CRCPolynomial));
+   \                     ??SPI_Init_6:
+   \   0000FE 3D ..        TNZ       S:?b11
+   \   000100 26 0F        JRNE      L:??SPI_Init_7
+   \   000102 AE 0058      LDW       X, #0x58
+   \   000105 BF ..        LDW       S:?w1, X
+   \   000107 5F           CLRW      X
+   \   000108 BF ..        LDW       S:?w0, X
+   \   00010A AE ....      LDW       X, #?_0
+   \   00010D 8D ......    CALLF     assert_failed
+     89            
+     90            /* Frame Format, BaudRate, Clock Polarity and Phase configuration */
+     91            SPI->CR1 = (uint8_t)((uint8_t)((uint8_t)FirstBit | BaudRatePrescaler) |
+     92                                 (uint8_t)((uint8_t)ClockPolarity | ClockPhase));
+   \                     ??SPI_Init_7:
+   \   000111 B6 ..        LD        A, S:?b12
+   \   000113 BA ..        OR        A, S:?b14
+   \   000115 88           PUSH      A
+   \   000116 B6 ..        LD        A, S:?b8
+   \   000118 BA ..        OR        A, S:?b15
+   \   00011A B7 ..        LD        S:?b1, A
+   \   00011C 84           POP       A
+   \   00011D BA ..        OR        A, S:?b1
+   \   00011F C7 5200      LD        L:0x5200, A
+     93            
+     94            /* Data direction configuration: BDM, BDOE and RXONLY bits */
+     95            SPI->CR2 = (uint8_t)((uint8_t)(Data_Direction) | (uint8_t)(Slave_Management));
+   \   000122 B6 ..        LD        A, S:?b10
+   \   000124 BA ..        OR        A, S:?b9
+   \   000126 C7 5201      LD        L:0x5201, A
+     96            
+     97            if (Mode == SPI_MODE_MASTER)
+   \   000129 B6 ..        LD        A, S:?b13
+   \   00012B A1 04        CP        A, #0x4
+   \   00012D 26 06        JRNE      L:??SPI_Init_8
+     98            {
+     99              SPI->CR2 |= (uint8_t)SPI_CR2_SSI;
+   \   00012F 7210 5201    BSET      L:0x5201, #0x0
+   \   000133 20 04        JRA       L:??SPI_Init_9
+    100            }
+    101            else
+    102            {
+    103              SPI->CR2 &= (uint8_t)~(SPI_CR2_SSI);
+   \                     ??SPI_Init_8:
+   \   000135 7211 5201    BRES      L:0x5201, #0x0
+    104            }
+    105            
+    106            /* Master/Slave mode configuration */
+    107            SPI->CR1 |= (uint8_t)(Mode);
+   \                     ??SPI_Init_9:
+   \   000139 C6 5200      LD        A, L:0x5200
+   \   00013C BA ..        OR        A, S:?b13
+   \   00013E C7 5200      LD        L:0x5200, A
+    108            
+    109            /* CRC configuration */
+    110            SPI->CRCPR = (uint8_t)CRCPolynomial;
+   \   000141 B6 ..        LD        A, S:?b11
+   \   000143 C7 5205      LD        L:0x5205, A
+    111          }
+   \   000146 AC ......    JPF       L:?epilogue_l2_l3
+    112          
+    113          /**
+    114            * @brief  Enables or disables the SPI peripheral.
+    115            * @param  NewState New state of the SPI peripheral.
+    116            *         This parameter can be: ENABLE or DISABLE
+    117            * @retval None
+    118            */
+
+   \                                 In section .far_func.text, align 1
+    119          void SPI_Cmd(FunctionalState NewState)
+    120          {
+   \                     SPI_Cmd:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    121            /* Check function parameters */
+    122            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??SPI_Cmd_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??SPI_Cmd_0
+   \   00000F AE 007A      LDW       X, #0x7a
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    123            
+    124            if (NewState != DISABLE)
+   \                     ??SPI_Cmd_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??SPI_Cmd_1
+    125            {
+    126              SPI->CR1 |= SPI_CR1_SPE; /* Enable the SPI peripheral*/
+   \   000022 721C 5200    BSET      L:0x5200, #0x6
+   \   000026 20 04        JRA       L:??SPI_Cmd_2
+    127            }
+    128            else
+    129            {
+    130              SPI->CR1 &= (uint8_t)(~SPI_CR1_SPE); /* Disable the SPI peripheral*/
+   \                     ??SPI_Cmd_1:
+   \   000028 721D 5200    BRES      L:0x5200, #0x6
+    131            }
+    132          }
+   \                     ??SPI_Cmd_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    133          
+    134          /**
+    135            * @brief  Enables or disables the specified interrupts.
+    136            * @param  SPI_IT Specifies the SPI interrupts sources to be enabled or disabled.
+    137            * @param  NewState: The new state of the specified SPI interrupts.
+    138            *         This parameter can be: ENABLE or DISABLE.
+    139            * @retval None
+    140            */
+
+   \                                 In section .far_func.text, align 1
+    141          void SPI_ITConfig(SPI_IT_TypeDef SPI_IT, FunctionalState NewState)
+    142          {
+   \                     SPI_ITConfig:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 3B ....      PUSH      S:?b10
+   \   000007 B7 ..        LD        S:?b9, A
+   \   000009 45 .. ..     MOV       S:?b8, S:?b0
+    143            uint8_t itpos = 0;
+   \   00000C 3F ..        CLR       S:?b10
+    144            /* Check function parameters */
+    145            assert_param(IS_SPI_CONFIG_IT_OK(SPI_IT));
+   \   00000E B6 ..        LD        A, S:?b9
+   \   000010 A1 17        CP        A, #0x17
+   \   000012 27 21        JREQ      L:??SPI_ITConfig_0
+   \   000014 B6 ..        LD        A, S:?b9
+   \   000016 A1 06        CP        A, #0x6
+   \   000018 27 1B        JREQ      L:??SPI_ITConfig_0
+   \   00001A B6 ..        LD        A, S:?b9
+   \   00001C A1 05        CP        A, #0x5
+   \   00001E 27 15        JREQ      L:??SPI_ITConfig_0
+   \   000020 B6 ..        LD        A, S:?b9
+   \   000022 A1 34        CP        A, #0x34
+   \   000024 27 0F        JREQ      L:??SPI_ITConfig_0
+   \   000026 AE 0091      LDW       X, #0x91
+   \   000029 BF ..        LDW       S:?w1, X
+   \   00002B 5F           CLRW      X
+   \   00002C BF ..        LDW       S:?w0, X
+   \   00002E AE ....      LDW       X, #?_0
+   \   000031 8D ......    CALLF     assert_failed
+    146            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \                     ??SPI_ITConfig_0:
+   \   000035 3D ..        TNZ       S:?b8
+   \   000037 27 15        JREQ      L:??SPI_ITConfig_1
+   \   000039 B6 ..        LD        A, S:?b8
+   \   00003B A1 01        CP        A, #0x1
+   \   00003D 27 0F        JREQ      L:??SPI_ITConfig_1
+   \   00003F AE 0092      LDW       X, #0x92
+   \   000042 BF ..        LDW       S:?w1, X
+   \   000044 5F           CLRW      X
+   \   000045 BF ..        LDW       S:?w0, X
+   \   000047 AE ....      LDW       X, #?_0
+   \   00004A 8D ......    CALLF     assert_failed
+    147            
+    148            /* Get the SPI IT index */
+    149            itpos = (uint8_t)((uint8_t)1 << (uint8_t)((uint8_t)SPI_IT & (uint8_t)0x0F));
+   \                     ??SPI_ITConfig_1:
+   \   00004E B6 ..        LD        A, S:?b9
+   \   000050 A4 0F        AND       A, #0xf
+   \   000052 5F           CLRW      X
+   \   000053 5C           INCW      X
+   \   000054 8D ......    CALLF     L:?sll16_x_x_a
+   \   000058 9F           LD        A, XL
+   \   000059 B7 ..        LD        S:?b10, A
+    150            
+    151            if (NewState != DISABLE)
+   \   00005B 3D ..        TNZ       S:?b8
+   \   00005D 27 0A        JREQ      L:??SPI_ITConfig_2
+    152            {
+    153              SPI->ICR |= itpos; /* Enable interrupt*/
+   \   00005F C6 5202      LD        A, L:0x5202
+   \   000062 BA ..        OR        A, S:?b10
+   \   000064 C7 5202      LD        L:0x5202, A
+   \   000067 20 09        JRA       L:??SPI_ITConfig_3
+    154            }
+    155            else
+    156            {
+    157              SPI->ICR &= (uint8_t)(~itpos); /* Disable interrupt*/
+   \                     ??SPI_ITConfig_2:
+   \   000069 B6 ..        LD        A, S:?b10
+   \   00006B 43           CPL       A
+   \   00006C C4 5202      AND       A, L:0x5202
+   \   00006F C7 5202      LD        L:0x5202, A
+    158            }
+    159          }
+   \                     ??SPI_ITConfig_3:
+   \   000072 32 ....      POP       S:?b10
+   \   000075 AC ......    JPF       L:?epilogue_w4
+    160          
+    161          /**
+    162            * @brief  Transmits a Data through the SPI peripheral.
+    163            * @param  Data : Byte to be transmitted.
+    164            * @retval None
+    165            */
+
+   \                                 In section .far_func.text, align 1
+    166          void SPI_SendData(uint8_t Data)
+    167          {
+    168            SPI->DR = Data; /* Write in the DR register the data to be sent*/
+   \                     SPI_SendData:
+   \   000000 C7 5204      LD        L:0x5204, A
+    169          }
+   \   000003 87           RETF
+    170          
+    171          /**
+    172            * @brief  Returns the most recent received data by the SPI peripheral.
+    173            * @param  None
+    174            * @retval The value of the received data.
+    175            */
+
+   \                                 In section .far_func.text, align 1
+    176          uint8_t SPI_ReceiveData(void)
+    177          {
+    178            return ((uint8_t)SPI->DR); /* Return the data in the DR register*/
+   \                     SPI_ReceiveData:
+   \   000000 C6 5204      LD        A, L:0x5204
+   \   000003 87           RETF
+    179          }
+    180          
+    181          /**
+    182            * @brief  Configures internally by software the NSS pin.
+    183            * @param  NewState Indicates the new state of the SPI Software slave management.
+    184            *         This parameter can be: ENABLE or DISABLE.
+    185            * @retval None
+    186            */
+
+   \                                 In section .far_func.text, align 1
+    187          void SPI_NSSInternalSoftwareCmd(FunctionalState NewState)
+    188          {
+   \                     SPI_NSSInternalSoftwareCmd:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    189            /* Check function parameters */
+    190            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??SPI_NSSInternalSoftwareCmd_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??SPI_NSSInternalSoftwareCmd_0
+   \   00000F AE 00BE      LDW       X, #0xbe
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    191            
+    192            if (NewState != DISABLE)
+   \                     ??SPI_NSSInternalSoftwareCmd_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??SPI_NSSInternalSoftwareCmd_1
+    193            {
+    194              SPI->CR2 |= SPI_CR2_SSI; /* Set NSS pin internally by software*/
+   \   000022 7210 5201    BSET      L:0x5201, #0x0
+   \   000026 20 04        JRA       L:??SPI_NSSInternalSoftwareCmd_2
+    195            }
+    196            else
+    197            {
+    198              SPI->CR2 &= (uint8_t)(~SPI_CR2_SSI); /* Reset NSS pin internally by software*/
+   \                     ??SPI_NSSInternalSoftwareCmd_1:
+   \   000028 7211 5201    BRES      L:0x5201, #0x0
+    199            }
+    200          }
+   \                     ??SPI_NSSInternalSoftwareCmd_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    201          
+    202          /**
+    203            * @brief  Enables the transmit of the CRC value.
+    204            * @param  None
+    205            * @retval None
+    206            */
+
+   \                                 In section .far_func.text, align 1
+    207          void SPI_TransmitCRC(void)
+    208          {
+    209            SPI->CR2 |= SPI_CR2_CRCNEXT; /* Enable the CRC transmission*/
+   \                     SPI_TransmitCRC:
+   \   000000 7218 5201    BSET      L:0x5201, #0x4
+    210          }
+   \   000004 87           RETF
+    211          
+    212          /**
+    213            * @brief  Enables or disables the CRC value calculation of the transferred bytes.
+    214            * @param  NewState Indicates the new state of the SPI CRC value calculation.
+    215            *         This parameter can be: ENABLE or DISABLE.
+    216            * @retval None
+    217            */
+
+   \                                 In section .far_func.text, align 1
+    218          void SPI_CalculateCRCCmd(FunctionalState NewState)
+    219          {
+   \                     SPI_CalculateCRCCmd:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    220            /* Check function parameters */
+    221            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??SPI_CalculateCRCCmd_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??SPI_CalculateCRCCmd_0
+   \   00000F AE 00DD      LDW       X, #0xdd
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    222            
+    223            if (NewState != DISABLE)
+   \                     ??SPI_CalculateCRCCmd_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??SPI_CalculateCRCCmd_1
+    224            {
+    225              SPI->CR2 |= SPI_CR2_CRCEN; /* Enable the CRC calculation*/
+   \   000022 721A 5201    BSET      L:0x5201, #0x5
+   \   000026 20 04        JRA       L:??SPI_CalculateCRCCmd_2
+    226            }
+    227            else
+    228            {
+    229              SPI->CR2 &= (uint8_t)(~SPI_CR2_CRCEN); /* Disable the CRC calculation*/
+   \                     ??SPI_CalculateCRCCmd_1:
+   \   000028 721B 5201    BRES      L:0x5201, #0x5
+    230            }
+    231          }
+   \                     ??SPI_CalculateCRCCmd_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    232          
+    233          /**
+    234            * @brief  Returns the transmit or the receive CRC register value.
+    235            * @param  SPI_CRC Specifies the CRC register to be read.
+    236            * @retval The selected CRC register value.
+    237            */
+
+   \                                 In section .far_func.text, align 1
+    238          uint8_t SPI_GetCRC(SPI_CRC_TypeDef SPI_CRC)
+    239          {
+   \                     SPI_GetCRC:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 B7 ..        LD        S:?b8, A
+    240            uint8_t crcreg = 0;
+   \   000006 3F ..        CLR       S:?b9
+    241            
+    242            /* Check function parameters */
+    243            assert_param(IS_SPI_CRC_OK(SPI_CRC));
+   \   000008 B6 ..        LD        A, S:?b8
+   \   00000A A1 01        CP        A, #0x1
+   \   00000C 27 13        JREQ      L:??SPI_GetCRC_0
+   \   00000E 3D ..        TNZ       S:?b8
+   \   000010 27 0F        JREQ      L:??SPI_GetCRC_0
+   \   000012 AE 00F3      LDW       X, #0xf3
+   \   000015 BF ..        LDW       S:?w1, X
+   \   000017 5F           CLRW      X
+   \   000018 BF ..        LDW       S:?w0, X
+   \   00001A AE ....      LDW       X, #?_0
+   \   00001D 8D ......    CALLF     assert_failed
+    244            
+    245            if (SPI_CRC != SPI_CRC_RX)
+   \                     ??SPI_GetCRC_0:
+   \   000021 3D ..        TNZ       S:?b8
+   \   000023 27 07        JREQ      L:??SPI_GetCRC_1
+    246            {
+    247              crcreg = SPI->TXCRCR;  /* Get the Tx CRC register*/
+   \   000025 C6 5207      LD        A, L:0x5207
+   \   000028 B7 ..        LD        S:?b9, A
+   \   00002A 20 05        JRA       L:??SPI_GetCRC_2
+    248            }
+    249            else
+    250            {
+    251              crcreg = SPI->RXCRCR; /* Get the Rx CRC register*/
+   \                     ??SPI_GetCRC_1:
+   \   00002C C6 5206      LD        A, L:0x5206
+   \   00002F B7 ..        LD        S:?b9, A
+    252            }
+    253            
+    254            /* Return the selected CRC register status*/
+    255            return crcreg;
+   \                     ??SPI_GetCRC_2:
+   \   000031 B6 ..        LD        A, S:?b9
+   \   000033 AC ......    JPF       L:?epilogue_w4
+    256          }
+    257          
+    258          /**
+    259            * @brief  Reset the Rx CRCR and Tx CRCR registers.
+    260            * @param  None
+    261            * @retval None
+    262            */
+
+   \                                 In section .far_func.text, align 1
+    263          void SPI_ResetCRC(void)
+    264          {
+    265            /* Rx CRCR & Tx CRCR registers are reset when CRCEN (hardware calculation)
+    266            bit in SPI_CR2 is written to 1 (enable) */
+    267            SPI_CalculateCRCCmd(ENABLE);
+   \                     SPI_ResetCRC:
+   \   000000 A6 01        LD        A, #0x1
+   \   000002 8D ......    CALLF     SPI_CalculateCRCCmd
+    268            
+    269            /* Previous function disable the SPI */
+    270            SPI_Cmd(ENABLE);
+   \   000006 A6 01        LD        A, #0x1
+   \   000008 8D ......    CALLF     SPI_Cmd
+    271          }
+   \   00000C 87           RETF
+    272          
+    273          /**
+    274            * @brief  Returns the CRC Polynomial register value.
+    275            * @param  None
+    276            * @retval The CRC Polynomial register value.
+    277            */
+
+   \                                 In section .far_func.text, align 1
+    278          uint8_t SPI_GetCRCPolynomial(void)
+    279          {
+    280            return SPI->CRCPR; /* Return the CRC polynomial register */
+   \                     SPI_GetCRCPolynomial:
+   \   000000 C6 5205      LD        A, L:0x5205
+   \   000003 87           RETF
+    281          }
+    282          
+    283          /**
+    284            * @brief  Selects the data transfer direction in bi-directional mode.
+    285            * @param  SPI_Direction Specifies the data transfer direction in bi-directional mode.
+    286            * @retval None
+    287            */
+
+   \                                 In section .far_func.text, align 1
+    288          void SPI_BiDirectionalLineConfig(SPI_Direction_TypeDef SPI_Direction)
+    289          {
+   \                     SPI_BiDirectionalLineConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    290            /* Check function parameters */
+    291            assert_param(IS_SPI_DIRECTION_OK(SPI_Direction));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??SPI_BiDirectionalLineConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??SPI_BiDirectionalLineConfig_0
+   \   00000F AE 0123      LDW       X, #0x123
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    292            
+    293            if (SPI_Direction != SPI_DIRECTION_RX)
+   \                     ??SPI_BiDirectionalLineConfig_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??SPI_BiDirectionalLineConfig_1
+    294            {
+    295              SPI->CR2 |= SPI_CR2_BDOE; /* Set the Tx only mode*/
+   \   000022 721C 5201    BSET      L:0x5201, #0x6
+   \   000026 20 04        JRA       L:??SPI_BiDirectionalLineConfig_2
+    296            }
+    297            else
+    298            {
+    299              SPI->CR2 &= (uint8_t)(~SPI_CR2_BDOE); /* Set the Rx only mode*/
+   \                     ??SPI_BiDirectionalLineConfig_1:
+   \   000028 721D 5201    BRES      L:0x5201, #0x6
+    300            }
+    301          }
+   \                     ??SPI_BiDirectionalLineConfig_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    302          
+    303          /**
+    304            * @brief  Checks whether the specified SPI flag is set or not.
+    305            * @param  SPI_FLAG : Specifies the flag to check.
+    306            *         This parameter can be any of the @ref SPI_Flag_TypeDef enumeration.
+    307            * @retval FlagStatus : Indicates the state of SPI_FLAG.
+    308            *         This parameter can be any of the @ref FlagStatus enumeration.
+    309            */
+    310          
+
+   \                                 In section .far_func.text, align 1
+    311          FlagStatus SPI_GetFlagStatus(SPI_Flag_TypeDef SPI_FLAG)
+    312          {
+   \                     SPI_GetFlagStatus:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 B7 ..        LD        S:?b9, A
+    313            FlagStatus status = RESET;
+   \   000006 3F ..        CLR       S:?b8
+    314            /* Check parameters */
+    315            assert_param(IS_SPI_FLAGS_OK(SPI_FLAG));
+   \   000008 B6 ..        LD        A, S:?b9
+   \   00000A A1 40        CP        A, #0x40
+   \   00000C 27 33        JREQ      L:??SPI_GetFlagStatus_0
+   \   00000E B6 ..        LD        A, S:?b9
+   \   000010 A1 20        CP        A, #0x20
+   \   000012 27 2D        JREQ      L:??SPI_GetFlagStatus_0
+   \   000014 B6 ..        LD        A, S:?b9
+   \   000016 A1 10        CP        A, #0x10
+   \   000018 27 27        JREQ      L:??SPI_GetFlagStatus_0
+   \   00001A B6 ..        LD        A, S:?b9
+   \   00001C A1 08        CP        A, #0x8
+   \   00001E 27 21        JREQ      L:??SPI_GetFlagStatus_0
+   \   000020 B6 ..        LD        A, S:?b9
+   \   000022 A1 02        CP        A, #0x2
+   \   000024 27 1B        JREQ      L:??SPI_GetFlagStatus_0
+   \   000026 B6 ..        LD        A, S:?b9
+   \   000028 A1 01        CP        A, #0x1
+   \   00002A 27 15        JREQ      L:??SPI_GetFlagStatus_0
+   \   00002C B6 ..        LD        A, S:?b9
+   \   00002E A1 80        CP        A, #0x80
+   \   000030 27 0F        JREQ      L:??SPI_GetFlagStatus_0
+   \   000032 AE 013B      LDW       X, #0x13b
+   \   000035 BF ..        LDW       S:?w1, X
+   \   000037 5F           CLRW      X
+   \   000038 BF ..        LDW       S:?w0, X
+   \   00003A AE ....      LDW       X, #?_0
+   \   00003D 8D ......    CALLF     assert_failed
+    316            
+    317            /* Check the status of the specified SPI flag */
+    318            if ((SPI->SR & (uint8_t)SPI_FLAG) != (uint8_t)RESET)
+   \                     ??SPI_GetFlagStatus_0:
+   \   000041 C6 5203      LD        A, L:0x5203
+   \   000044 B4 ..        AND       A, S:?b9
+   \   000046 A1 00        CP        A, #0x0
+   \   000048 27 06        JREQ      L:??SPI_GetFlagStatus_1
+    319            {
+    320              status = SET; /* SPI_FLAG is set */
+   \   00004A A6 01        LD        A, #0x1
+   \   00004C B7 ..        LD        S:?b8, A
+   \   00004E 20 02        JRA       L:??SPI_GetFlagStatus_2
+    321            }
+    322            else
+    323            {
+    324              status = RESET; /* SPI_FLAG is reset*/
+   \                     ??SPI_GetFlagStatus_1:
+   \   000050 3F ..        CLR       S:?b8
+    325            }
+    326            
+    327            /* Return the SPI_FLAG status */
+    328            return status;
+   \                     ??SPI_GetFlagStatus_2:
+   \   000052 B6 ..        LD        A, S:?b8
+   \   000054 AC ......    JPF       L:?epilogue_w4
+    329          }
+    330          
+    331          /**
+    332            * @brief  Clears the SPI flags.
+    333            * @param  SPI_FLAG : Specifies the flag to clear.
+    334            *         This parameter can be one of the following values:
+    335            *         - SPI_FLAG_CRCERR
+    336            *         - SPI_FLAG_WKUP
+    337            * @note   - OVR (OverRun Error) interrupt pending bit is cleared by software
+    338            *         sequence:
+    339            *         a read operation to SPI_DR register (SPI_ReceiveData()) followed by
+    340            *         a read operation to SPI_SR register (SPI_GetFlagStatus()).
+    341            *         - MODF (Mode Fault) interrupt pending bit is cleared by software sequence:
+    342            *         a read/write operation to SPI_SR register (SPI_GetFlagStatus()) followed by
+    343            *         a write operation to SPI_CR1 register (SPI_Cmd() to enable the SPI).
+    344            * @retval None
+    345            */
+
+   \                                 In section .far_func.text, align 1
+    346          void SPI_ClearFlag(SPI_Flag_TypeDef SPI_FLAG)
+    347          {
+   \                     SPI_ClearFlag:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    348            assert_param(IS_SPI_CLEAR_FLAGS_OK(SPI_FLAG));
+   \   000005 B6 ..        LD        A, S:?b8
+   \   000007 A1 10        CP        A, #0x10
+   \   000009 27 15        JREQ      L:??SPI_ClearFlag_0
+   \   00000B B6 ..        LD        A, S:?b8
+   \   00000D A1 08        CP        A, #0x8
+   \   00000F 27 0F        JREQ      L:??SPI_ClearFlag_0
+   \   000011 AE 015C      LDW       X, #0x15c
+   \   000014 BF ..        LDW       S:?w1, X
+   \   000016 5F           CLRW      X
+   \   000017 BF ..        LDW       S:?w0, X
+   \   000019 AE ....      LDW       X, #?_0
+   \   00001C 8D ......    CALLF     assert_failed
+    349            /* Clear the flag bit */
+    350            SPI->SR = (uint8_t)(~SPI_FLAG);
+   \                     ??SPI_ClearFlag_0:
+   \   000020 B6 ..        LD        A, S:?b8
+   \   000022 43           CPL       A
+   \   000023 C7 5203      LD        L:0x5203, A
+    351          }
+   \   000026 32 ....      POP       S:?b8
+   \   000029 87           RETF
+    352          
+    353          /**
+    354            * @brief  Checks whether the specified interrupt has occurred or not.
+    355            * @param  SPI_IT: Specifies the SPI interrupt pending bit to check.
+    356            *         This parameter can be one of the following values:
+    357            *         - SPI_IT_CRCERR
+    358            *         - SPI_IT_WKUP
+    359            *         - SPI_IT_OVR
+    360            *         - SPI_IT_MODF
+    361            *         - SPI_IT_RXNE
+    362            *         - SPI_IT_TXE
+    363            * @retval ITStatus : Indicates the state of the SPI_IT.
+    364            *         This parameter can be any of the @ref ITStatus enumeration.
+    365            */
+
+   \                                 In section .far_func.text, align 1
+    366          ITStatus SPI_GetITStatus(SPI_IT_TypeDef SPI_IT)
+    367          {
+   \                     SPI_GetITStatus:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 8D ......    CALLF     L:?push_w6
+   \   000008 B7 ..        LD        S:?b10, A
+    368            ITStatus pendingbitstatus = RESET;
+   \   00000A 3F ..        CLR       S:?b11
+    369            uint8_t itpos = 0;
+   \   00000C 3F ..        CLR       S:?b13
+    370            uint8_t itmask1 = 0;
+   \   00000E 3F ..        CLR       S:?b9
+    371            uint8_t itmask2 = 0;
+   \   000010 3F ..        CLR       S:?b12
+    372            uint8_t enablestatus = 0;
+   \   000012 3F ..        CLR       S:?b8
+    373            assert_param(IS_SPI_GET_IT_OK(SPI_IT));
+   \   000014 B6 ..        LD        A, S:?b10
+   \   000016 A1 65        CP        A, #0x65
+   \   000018 27 2D        JREQ      L:??SPI_GetITStatus_0
+   \   00001A B6 ..        LD        A, S:?b10
+   \   00001C A1 55        CP        A, #0x55
+   \   00001E 27 27        JREQ      L:??SPI_GetITStatus_0
+   \   000020 B6 ..        LD        A, S:?b10
+   \   000022 A1 45        CP        A, #0x45
+   \   000024 27 21        JREQ      L:??SPI_GetITStatus_0
+   \   000026 B6 ..        LD        A, S:?b10
+   \   000028 A1 34        CP        A, #0x34
+   \   00002A 27 1B        JREQ      L:??SPI_GetITStatus_0
+   \   00002C B6 ..        LD        A, S:?b10
+   \   00002E A1 17        CP        A, #0x17
+   \   000030 27 15        JREQ      L:??SPI_GetITStatus_0
+   \   000032 B6 ..        LD        A, S:?b10
+   \   000034 A1 06        CP        A, #0x6
+   \   000036 27 0F        JREQ      L:??SPI_GetITStatus_0
+   \   000038 AE 0175      LDW       X, #0x175
+   \   00003B BF ..        LDW       S:?w1, X
+   \   00003D 5F           CLRW      X
+   \   00003E BF ..        LDW       S:?w0, X
+   \   000040 AE ....      LDW       X, #?_0
+   \   000043 8D ......    CALLF     assert_failed
+    374            /* Get the SPI IT index */
+    375            itpos = (uint8_t)((uint8_t)1 << ((uint8_t)SPI_IT & (uint8_t)0x0F));
+   \                     ??SPI_GetITStatus_0:
+   \   000047 B6 ..        LD        A, S:?b10
+   \   000049 A4 0F        AND       A, #0xf
+   \   00004B 5F           CLRW      X
+   \   00004C 5C           INCW      X
+   \   00004D 8D ......    CALLF     L:?sll16_x_x_a
+   \   000051 9F           LD        A, XL
+   \   000052 B7 ..        LD        S:?b13, A
+    376            
+    377            /* Get the SPI IT mask */
+    378            itmask1 = (uint8_t)((uint8_t)SPI_IT >> (uint8_t)4);
+   \   000054 B6 ..        LD        A, S:?b10
+   \   000056 4E           SWAP      A
+   \   000057 A4 0F        AND       A, #0xf
+   \   000059 B7 ..        LD        S:?b9, A
+    379            /* Set the IT mask */
+    380            itmask2 = (uint8_t)((uint8_t)1 << itmask1);
+   \   00005B 5F           CLRW      X
+   \   00005C 5C           INCW      X
+   \   00005D B6 ..        LD        A, S:?b9
+   \   00005F 8D ......    CALLF     L:?sll16_x_x_a
+   \   000063 9F           LD        A, XL
+   \   000064 B7 ..        LD        S:?b12, A
+    381            /* Get the SPI_ITPENDINGBIT enable bit status */
+    382            enablestatus = (uint8_t)((uint8_t)SPI->SR & itmask2);
+   \   000066 C6 5203      LD        A, L:0x5203
+   \   000069 B4 ..        AND       A, S:?b12
+   \   00006B B7 ..        LD        S:?b8, A
+    383            /* Check the status of the specified SPI interrupt */
+    384            if (((SPI->ICR & itpos) != RESET) && enablestatus)
+   \   00006D C6 5202      LD        A, L:0x5202
+   \   000070 B4 ..        AND       A, S:?b13
+   \   000072 A1 00        CP        A, #0x0
+   \   000074 27 0A        JREQ      L:??SPI_GetITStatus_1
+   \   000076 3D ..        TNZ       S:?b8
+   \   000078 27 06        JREQ      L:??SPI_GetITStatus_1
+    385            {
+    386              /* SPI_ITPENDINGBIT is set */
+    387              pendingbitstatus = SET;
+   \   00007A A6 01        LD        A, #0x1
+   \   00007C B7 ..        LD        S:?b11, A
+   \   00007E 20 02        JRA       L:??SPI_GetITStatus_2
+    388            }
+    389            else
+    390            {
+    391              /* SPI_ITPENDINGBIT is reset */
+    392              pendingbitstatus = RESET;
+   \                     ??SPI_GetITStatus_1:
+   \   000080 3F ..        CLR       S:?b11
+    393            }
+    394            /* Return the SPI_ITPENDINGBIT status */
+    395            return  pendingbitstatus;
+   \                     ??SPI_GetITStatus_2:
+   \   000082 B6 ..        LD        A, S:?b11
+   \   000084 AC ......    JPF       L:?epilogue_l2_w6
+    396          }
+    397          
+    398          /**
+    399            * @brief  Clears the interrupt pending bits.
+    400            * @param  SPI_IT: Specifies the interrupt pending bit to clear.
+    401            *         This parameter can be one of the following values:
+    402            *         - SPI_IT_CRCERR
+    403            *         - SPI_IT_WKUP
+    404            * @note   - OVR (OverRun Error) interrupt pending bit is cleared by software sequence:
+    405            *         a read operation to SPI_DR register (SPI_ReceiveData()) followed by
+    406            *         a read operation to SPI_SR register (SPI_GetITStatus()).
+    407            *         - MODF (Mode Fault) interrupt pending bit is cleared by software sequence:
+    408            *         a read/write operation to SPI_SR register (SPI_GetITStatus()) followed by
+    409            *         a write operation to SPI_CR1 register (SPI_Cmd() to enable the SPI).
+    410            * @retval None
+    411            */
+
+   \                                 In section .far_func.text, align 1
+    412          void SPI_ClearITPendingBit(SPI_IT_TypeDef SPI_IT)
+    413          {
+   \                     SPI_ClearITPendingBit:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 B7 ..        LD        S:?b9, A
+    414            uint8_t itpos = 0;
+   \   000006 3F ..        CLR       S:?b8
+    415            assert_param(IS_SPI_CLEAR_IT_OK(SPI_IT));
+   \   000008 B6 ..        LD        A, S:?b9
+   \   00000A A1 45        CP        A, #0x45
+   \   00000C 27 15        JREQ      L:??SPI_ClearITPendingBit_0
+   \   00000E B6 ..        LD        A, S:?b9
+   \   000010 A1 34        CP        A, #0x34
+   \   000012 27 0F        JREQ      L:??SPI_ClearITPendingBit_0
+   \   000014 AE 019F      LDW       X, #0x19f
+   \   000017 BF ..        LDW       S:?w1, X
+   \   000019 5F           CLRW      X
+   \   00001A BF ..        LDW       S:?w0, X
+   \   00001C AE ....      LDW       X, #?_0
+   \   00001F 8D ......    CALLF     assert_failed
+    416            
+    417            /* Clear  SPI_IT_CRCERR or SPI_IT_WKUP interrupt pending bits */
+    418            
+    419            /* Get the SPI pending bit index */
+    420            itpos = (uint8_t)((uint8_t)1 << (uint8_t)((uint8_t)(SPI_IT & (uint8_t)0xF0) >> 4));
+   \                     ??SPI_ClearITPendingBit_0:
+   \   000023 B6 ..        LD        A, S:?b9
+   \   000025 4E           SWAP      A
+   \   000026 A4 0F        AND       A, #0xf
+   \   000028 5F           CLRW      X
+   \   000029 5C           INCW      X
+   \   00002A 8D ......    CALLF     L:?sll16_x_x_a
+   \   00002E 9F           LD        A, XL
+   \   00002F B7 ..        LD        S:?b8, A
+    421            /* Clear the pending bit */
+    422            SPI->SR = (uint8_t)(~itpos);
+   \   000031 B6 ..        LD        A, S:?b8
+   \   000033 43           CPL       A
+   \   000034 C7 5203      LD        L:0x5203, A
+    423            
+    424          }
+   \   000037 AC ......    JPF       L:?epilogue_w4
+
+   \                                 In section .near.rodata, align 1
+   \                     ?_0:
+   \   000000 2E 5C 4C 69  DC8 ".\\Lib\\C\\stm8s_spi.c"
+   \          62 5C 43 5C 
+    425          
+    426          /**
+    427            * @}
+    428            */
+    429            
+    430          /**
+    431            * @}
+    432            */
+    433            
+    434          
+    435          /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      20  ?_0
+      48  SPI_BiDirectionalLineConfig
+      48  SPI_CalculateCRCCmd
+      42  SPI_ClearFlag
+      59  SPI_ClearITPendingBit
+      48  SPI_Cmd
+      21  SPI_DeInit
+      55  SPI_GetCRC
+       4  SPI_GetCRCPolynomial
+      88  SPI_GetFlagStatus
+     136  SPI_GetITStatus
+     121  SPI_ITConfig
+     330  SPI_Init
+      48  SPI_NSSInternalSoftwareCmd
+       4  SPI_ReceiveData
+      13  SPI_ResetCRC
+       4  SPI_SendData
+       5  SPI_TransmitCRC
+
+ 
+ 1 074 bytes in section .far_func.text
+    20 bytes in section .near.rodata
+ 
+ 1 074 bytes of CODE  memory
+    20 bytes of CONST memory
+
+Errors: none
+Warnings: none

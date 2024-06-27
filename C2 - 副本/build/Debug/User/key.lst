@@ -1,0 +1,1010 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 09/Jan/2024  17:40:25
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\User\key.c
+#    Command line =  
+#        -f
+#        "e:\Nas\��·\������\YZW-S8-EE22(Rev1.0)\C\build\Debug\User\key.args.txt"
+#        (--silent -lCN .\build\Debug\User\key.lst -I d:/IAR/STM8 -I
+#        d:/IAR/STM8/stm8/lib -I Lib/H -I Lib/C -I User -D STM8S003
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\User\key.o .\User\key.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\User\key.lst
+#    Object file  =  .\build\Debug\User\key.o
+#
+###############################################################################
+
+e:\Nas\��·\������\YZW-S8-EE22(Rev1.0)\C\User\key.c
+      1          #include "key.h"
+      2          
+      3          // btn[0] 为启动/停止按钮, btn[1] 设置按钮, btn[2] +按钮， btn[3] -按钮, btn[4] 确定/灯光按钮.
+      4          // u8 btn[] = {0x44, 0x4c, 0x54, 0x5c, 0x64};
+      5          extern bool LED_STATUS;
+      6          extern bool CONFIG_STATUS;
+      7          extern uint8_t LED7CodeL[];
+      8          extern bool TEM_STATUS;
+      9          extern bool HF_STATUS;
+     10          
+     11          extern int TEM_SUM;
+     12          extern u8 FAN_PWM_NUM;
+     13          
+
+   \                                 In section .near.bss, align 1
+     14          bool KEY_DOWN;
+   \                     KEY_DOWN:
+   \   000000              DS8 1
+
+   \                                 In section .near.data, align 1
+     15          u8 KEY_TYPE = 0x11;
+   \                     KEY_TYPE:
+   \   000000 11           DC8 17
+
+   \                                 In section .near.bss, align 1
+     16          bool CONFIG_LED_STATUS = FALSE;
+   \                     CONFIG_LED_STATUS:
+   \   000000              DS8 1
+
+   \                                 In section .near.bss, align 1
+     17          bool syswhile = FALSE;
+   \                     syswhile:
+   \   000000              DS8 1
+     18          
+     19          // TODO:TM1650-LED码	   0	 1		2     3     4     5    6     7     8     9     A     B     C     D     E     F	  P 	-
+     20          // LED7codeH 共阳 , LED7codeL 共阴
+     21          // uint8_t LED7CodeH[] = {~0x3f, ~0x06, ~0x5b, ~0x4f, ~0x66, ~0x6d, ~0x7d, ~0x07, ~0x7f, ~0x6f, ~0x77, ~0x7c, ~0x39, ~0x5e, ~0x79, ~0x71, ~0x73, ~0x40};
+     22          // uint8_t LED7CodeL[] = {0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f, 0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71, 0x73, 0x40};
+     23          
+     24          void config_tem();
+     25          void config_fan();
+     26          void config_hf();
+     27          
+
+   \                                 In section .far_func.text, align 1
+     28          void btn_down(u8 key)
+     29          {
+   \                     btn_down:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+     30              if (!KEY_DOWN)
+   \   000005 C6 ....      LD        A, L:KEY_DOWN
+   \   000008 4D           TNZ       A
+   \   000009 27 03        JREQ      ??lb_6
+   \   00000B CC ....      JP        L:??btn_down_0
+     31              {
+     32                  switch (key)
+   \                     ??lb_6:
+   \   00000E B6 ..        LD        A, S:?b8
+   \   000010 A1 44        CP        A, #0x44
+   \   000012 27 38        JREQ      L:??btn_down_1
+   \   000014 A1 4C        CP        A, #0x4c
+   \   000016 27 61        JREQ      L:??btn_down_2
+   \   000018 A1 64        CP        A, #0x64
+   \   00001A 27 03        JREQ      L:??btn_down_3
+   \   00001C CC ....      JP        L:??btn_down_0
+     33                  {
+     34                  case 0x64:
+     35                      delay_ms(10);
+   \                     ??btn_down_3:
+   \   00001F AE 000A      LDW       X, #0xa
+   \   000022 8D ......    CALLF     delay_ms
+     36                      if (tm1650_displaykeyR() == 0x64)
+   \   000026 8D ......    CALLF     tm1650_displaykeyR
+   \   00002A A1 64        CP        A, #0x64
+   \   00002C 26 1B        JRNE      L:??btn_down_4
+     37                      {
+     38                          if (LED_STATUS)
+   \   00002E C6 ....      LD        A, L:LED_STATUS
+   \   000031 4D           TNZ       A
+   \   000032 27 06        JREQ      L:??btn_down_5
+     39                          {
+     40                              LED_STATUS = FALSE;
+   \   000034 725F ....    CLR       L:LED_STATUS
+   \   000038 20 04        JRA       L:??btn_down_6
+     41                          }
+     42                          else
+     43                          {
+     44                              LED_STATUS = TRUE;
+   \                     ??btn_down_5:
+   \   00003A 35 01 ....   MOV       L:LED_STATUS, #0x1
+     45                          }
+     46                          FLASH_DATA_LED_STATUS_WRITE(LED_STATUS);
+   \                     ??btn_down_6:
+   \   00003E C6 ....      LD        A, L:LED_STATUS
+   \   000041 8D ......    CALLF     FLASH_DATA_LED_STATUS_WRITE
+     47                          KEY_DOWN = TRUE;
+   \   000045 35 01 ....   MOV       L:KEY_DOWN, #0x1
+     48                      }
+     49                      break;
+   \                     ??btn_down_4:
+   \   000049 CC ....      JP        L:??btn_down_0
+     50                  case 0x44:
+     51                      delay_ms(10);
+   \                     ??btn_down_1:
+   \   00004C AE 000A      LDW       X, #0xa
+   \   00004F 8D ......    CALLF     delay_ms
+     52                      if (tm1650_displaykeyR() == 0x44)
+   \   000053 8D ......    CALLF     tm1650_displaykeyR
+   \   000057 A1 44        CP        A, #0x44
+   \   000059 26 1B        JRNE      L:??btn_down_7
+     53                      {
+     54                          if (TEM_STATUS)
+   \   00005B C6 ....      LD        A, L:TEM_STATUS
+   \   00005E 4D           TNZ       A
+   \   00005F 27 06        JREQ      L:??btn_down_8
+     55                          {
+     56                              TEM_STATUS = FALSE;
+   \   000061 725F ....    CLR       L:TEM_STATUS
+   \   000065 20 04        JRA       L:??btn_down_9
+     57                          }
+     58                          else
+     59                          {
+     60                              TEM_STATUS = TRUE;
+   \                     ??btn_down_8:
+   \   000067 35 01 ....   MOV       L:TEM_STATUS, #0x1
+     61                          }
+     62                          FLASH_DATA_TEM_STATUS_WRTIE(TEM_STATUS);
+   \                     ??btn_down_9:
+   \   00006B C6 ....      LD        A, L:TEM_STATUS
+   \   00006E 8D ......    CALLF     FLASH_DATA_TEM_STATUS_WRTIE
+     63                          KEY_DOWN = TRUE;
+   \   000072 35 01 ....   MOV       L:KEY_DOWN, #0x1
+     64                      }
+     65                      break;
+   \                     ??btn_down_7:
+   \   000076 CC ....      JP        L:??btn_down_0
+     66                  case 0x4c:
+     67                      if (!TEM_STATUS)
+   \                     ??btn_down_2:
+   \   000079 C6 ....      LD        A, L:TEM_STATUS
+   \   00007C 4D           TNZ       A
+   \   00007D 27 03        JREQ      ??lb_7
+   \   00007F CC ....      JP        L:??btn_down_10
+     68                      {
+     69                          delay_ms(10);
+   \                     ??lb_7:
+   \   000082 AE 000A      LDW       X, #0xa
+   \   000085 8D ......    CALLF     delay_ms
+     70                          if (tm1650_displaykeyR() == 0x4c)
+   \   000089 8D ......    CALLF     tm1650_displaykeyR
+   \   00008D A1 4C        CP        A, #0x4c
+   \   00008F 27 03        JREQ      ??lb_8
+   \   000091 CC ....      JP        L:??btn_down_10
+     71                          {
+     72                              KEY_DOWN = TRUE;
+   \                     ??lb_8:
+   \   000094 35 01 ....   MOV       L:KEY_DOWN, #0x1
+     73                              syswhile = TRUE;
+   \   000098 35 01 ....   MOV       L:syswhile, #0x1
+     74                              tm1650_displayW(0, 0x00);
+   \   00009C 3F ..        CLR       S:?b0
+   \   00009E 4F           CLR       A
+   \   00009F 8D ......    CALLF     tm1650_displayW
+     75                              tm1650_displayW(1, LED7CodeL[16]);
+   \   0000A3 55 .... .... MOV       S:?b0, L:LED7CodeL + 16
+   \   0000A8 A6 01        LD        A, #0x1
+   \   0000AA 8D ......    CALLF     tm1650_displayW
+     76                              while (syswhile)
+   \                     ??btn_down_11:
+   \   0000AE C6 ....      LD        A, L:syswhile
+   \   0000B1 4D           TNZ       A
+   \   0000B2 26 03        JRNE      ??lb_9
+   \   0000B4 CC ....      JP        L:??btn_down_10
+     77                              {
+     78                                  if (!KEY_DOWN)
+   \                     ??lb_9:
+   \   0000B7 C6 ....      LD        A, L:KEY_DOWN
+   \   0000BA 4D           TNZ       A
+   \   0000BB 27 03        JREQ      ??lb_10
+   \   0000BD CC ....      JP        L:??btn_down_12
+     79                                  {
+     80                                      key = tm1650_displaykeyR();
+   \                     ??lb_10:
+   \   0000C0 8D ......    CALLF     tm1650_displaykeyR
+   \   0000C4 B7 ..        LD        S:?b8, A
+     81                                      switch (key)
+   \   0000C6 B6 ..        LD        A, S:?b8
+   \   0000C8 A1 4C        CP        A, #0x4c
+   \   0000CA 27 06        JREQ      L:??btn_down_13
+   \   0000CC A1 64        CP        A, #0x64
+   \   0000CE 27 42        JREQ      L:??btn_down_14
+   \   0000D0 20 74        JRA       L:??btn_down_12
+     82                                      {
+     83                                      case 0x4c:
+     84                                          delay_ms(10);
+   \                     ??btn_down_13:
+   \   0000D2 AE 000A      LDW       X, #0xa
+   \   0000D5 8D ......    CALLF     delay_ms
+     85                                          if (tm1650_displaykeyR() == 0x4c)
+   \   0000D9 8D ......    CALLF     tm1650_displaykeyR
+   \   0000DD A1 4C        CP        A, #0x4c
+   \   0000DF 26 2F        JRNE      L:??btn_down_15
+     86                                          {
+     87                                              static u8 i;
+     88          #ifdef FAN_HF_START
+     89                                              i++;
+     90                                              i = (i > 3) ? 1 : i;
+     91                                              switch (i)
+     92                                              {
+     93                                              case 1:
+     94                                                  KEY_TYPE = 0x11;
+     95                                                  break;
+     96                                              case 2:
+     97                                                  KEY_TYPE = 0x22;
+     98                                                  break;
+     99                                              case 3:
+    100                                                  KEY_TYPE = 0x33;
+    101                                                  break;
+    102                                              }
+    103          #else
+    104                                              i++;
+   \   0000E1 725C ....    INC       L:`btn_down{1}{2}{3}{4}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}::i`
+    105                                              i = (i > 2) ? 1 : i;
+   \   0000E5 C6 ....      LD        A, L:`btn_down{1}{2}{3}{4}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}::i`
+   \   0000E8 A1 03        CP        A, #0x3
+   \   0000EA 25 06        JRC       L:??btn_down_16
+   \   0000EC 35 01 ....   MOV       L:`btn_down{1}{2}{3}{4}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}::i`, #0x1
+   \   0000F0 20 05        JRA       L:??btn_down_17
+   \                     ??btn_down_16:
+   \   0000F2 55 .... .... MOV       L:`btn_down{1}{2}{3}{4}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}::i`, L:`btn_down{1}{2}{3}{4}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}::i`
+    106                                              switch (i)
+   \                     ??btn_down_17:
+   \   0000F7 C6 ....      LD        A, L:`btn_down{1}{2}{3}{4}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}::i`
+   \   0000FA 4A           DEC       A
+   \   0000FB 27 05        JREQ      L:??btn_down_18
+   \   0000FD 4A           DEC       A
+   \   0000FE 27 08        JREQ      L:??btn_down_19
+   \   000100 20 0A        JRA       L:??btn_down_20
+    107                                              {
+    108                                              case 1:
+    109                                                  KEY_TYPE = 0x11;
+   \                     ??btn_down_18:
+   \   000102 35 11 ....   MOV       L:KEY_TYPE, #0x11
+    110                                                  break;
+   \   000106 20 04        JRA       L:??btn_down_20
+    111                                              case 2:
+    112                                                  KEY_TYPE = 0x22;
+   \                     ??btn_down_19:
+   \   000108 35 22 ....   MOV       L:KEY_TYPE, #0x22
+    113                                                  break;
+    114                                              }
+    115          #endif
+    116                                              KEY_DOWN = TRUE;
+   \                     ??btn_down_20:
+   \   00010C 35 01 ....   MOV       L:KEY_DOWN, #0x1
+    117                                          }
+    118                                          break;
+   \                     ??btn_down_15:
+   \   000110 20 34        JRA       L:??btn_down_12
+    119                                      case 0x64:
+    120                                          delay_ms(10);
+   \                     ??btn_down_14:
+   \   000112 AE 000A      LDW       X, #0xa
+   \   000115 8D ......    CALLF     delay_ms
+    121                                          if (tm1650_displaykeyR() == 0x64)
+   \   000119 8D ......    CALLF     tm1650_displaykeyR
+   \   00011D A1 64        CP        A, #0x64
+   \   00011F 26 25        JRNE      L:??btn_down_21
+    122                                          {
+    123                                              KEY_DOWN = TRUE;
+   \   000121 35 01 ....   MOV       L:KEY_DOWN, #0x1
+    124                                              switch (KEY_TYPE)
+   \   000125 C6 ....      LD        A, L:KEY_TYPE
+   \   000128 A1 11        CP        A, #0x11
+   \   00012A 27 0A        JREQ      L:??btn_down_22
+   \   00012C A1 22        CP        A, #0x22
+   \   00012E 27 0C        JREQ      L:??btn_down_23
+   \   000130 A1 33        CP        A, #0x33
+   \   000132 27 0E        JREQ      L:??btn_down_24
+   \   000134 20 10        JRA       L:??btn_down_21
+    125                                              {
+    126                                                  // 设置温度
+    127                                              case 0x11:
+    128                                                  config_tem();
+   \                     ??btn_down_22:
+   \   000136 8D ......    CALLF     config_tem
+    129                                                  break;
+   \   00013A 20 0A        JRA       L:??btn_down_21
+    130                                                  // 设置风扇转速
+    131                                              case 0x22:
+    132                                                  config_fan();
+   \                     ??btn_down_23:
+   \   00013C 8D ......    CALLF     config_fan
+    133                                                  break;
+   \   000140 20 04        JRA       L:??btn_down_21
+    134                                                  // 换气功能
+    135                                              case 0x33:
+    136                                                  config_hf();
+   \                     ??btn_down_24:
+   \   000142 8D ......    CALLF     config_hf
+    137                                                  break;
+    138                                              }
+    139                                          }
+    140                                          break;
+    141                                      }
+    142                                  }
+    143                                  switch (KEY_TYPE)
+   \                     ??btn_down_21:
+   \                     ??btn_down_12:
+   \   000146 C6 ....      LD        A, L:KEY_TYPE
+   \   000149 A1 11        CP        A, #0x11
+   \   00014B 27 07        JREQ      L:??btn_down_25
+   \   00014D A1 22        CP        A, #0x22
+   \   00014F 27 11        JREQ      L:??btn_down_26
+   \   000151 CC ....      JP        L:??btn_down_11
+    144                                  {
+    145                                  case 0x11:
+    146                                      tm1650_displayW(2, LED7CodeL[1]);
+   \                     ??btn_down_25:
+   \   000154 55 .... .... MOV       S:?b0, L:LED7CodeL + 1
+   \   000159 A6 02        LD        A, #0x2
+   \   00015B 8D ......    CALLF     tm1650_displayW
+    147                                      break;
+   \   00015F CC ....      JP        L:??btn_down_11
+    148                                  case 0x22:
+    149                                      tm1650_displayW(2, LED7CodeL[2]);
+   \                     ??btn_down_26:
+   \   000162 55 .... .... MOV       S:?b0, L:LED7CodeL + 2
+   \   000167 A6 02        LD        A, #0x2
+   \   000169 8D ......    CALLF     tm1650_displayW
+    150                                      break;
+   \   00016D CC ....      JP        L:??btn_down_11
+    151                                  }
+    152                              }
+    153                          }
+    154                      }
+    155                      break;
+    156                  }
+    157              }
+    158          }
+   \                     ??btn_down_10:
+   \                     ??btn_down_0:
+   \   000170 32 ....      POP       S:?b8
+   \   000173 87           RETF
+
+   \                                 In section .near.bss, align 1
+   \                     `btn_down{1}{2}{3}{4}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}::i`:
+   \   000000              DS8 1
+    159          
+    160          // 设置温度
+    161          // btn[0] 为启动/停止按钮, btn[1] 设置按钮, btn[2] +按钮， btn[3] -按钮, btn[4] 确定/灯光按钮.
+    162          // u8 btn[] = {0x44, 0x4c, 0x54, 0x5c, 0x64};
+
+   \                                 In section .far_func.text, align 1
+    163          void config_tem()
+    164          {
+   \                     config_tem:
+   \   000000 8D ......    CALLF     L:?push_l2
+    165              CONFIG_STATUS = TRUE;
+   \   000004 35 01 ....   MOV       L:CONFIG_STATUS, #0x1
+    166              bool whileback = FALSE;
+   \   000008 3F ..        CLR       S:?b10
+    167              int sum = TEM_SUM;
+   \   00000A CE ....      LDW       X, L:TEM_SUM
+   \   00000D BF ..        LDW       S:?w4, X
+    168              while (1)
+    169              {
+    170                  if (CONFIG_LED_STATUS)
+   \                     ??config_tem_0:
+   \   00000F C6 ....      LD        A, L:CONFIG_LED_STATUS
+   \   000012 4D           TNZ       A
+   \   000013 27 06        JREQ      L:??config_tem_1
+    171                  {
+    172                      tm1650_displayOn();
+   \   000015 8D ......    CALLF     tm1650_displayOn
+   \   000019 20 04        JRA       L:??config_tem_2
+    173                  }
+    174                  else
+    175                  {
+    176                      tm1650_displayOff();
+   \                     ??config_tem_1:
+   \   00001B 8D ......    CALLF     tm1650_displayOff
+    177                  }
+    178                  tm1650_displayW(0, LED7CodeL[sum / 100 % 100]);
+   \                     ??config_tem_2:
+   \   00001F 90AE 0064    LDW       Y, #0x64
+   \   000023 BE ..        LDW       X, S:?w4
+   \   000025 8D ......    CALLF     L:?sdiv16_x_x_y
+   \   000029 90AE 0064    LDW       Y, #0x64
+   \   00002D 8D ......    CALLF     L:?smod16_y_x_y
+   \   000031 93           LDW       X, Y
+   \   000032 D6 ....      LD        A, (L:LED7CodeL,X)
+   \   000035 B7 ..        LD        S:?b0, A
+   \   000037 4F           CLR       A
+   \   000038 8D ......    CALLF     tm1650_displayW
+    179                  tm1650_displayW(1, (LED7CodeL[sum / 10 % 10]) | 0x80);
+   \   00003C 90AE 000A    LDW       Y, #0xa
+   \   000040 BE ..        LDW       X, S:?w4
+   \   000042 8D ......    CALLF     L:?sdiv16_x_x_y
+   \   000046 90AE 000A    LDW       Y, #0xa
+   \   00004A 8D ......    CALLF     L:?smod16_y_x_y
+   \   00004E 93           LDW       X, Y
+   \   00004F D6 ....      LD        A, (L:LED7CodeL,X)
+   \   000052 AA 80        OR        A, #0x80
+   \   000054 B7 ..        LD        S:?b0, A
+   \   000056 A6 01        LD        A, #0x1
+   \   000058 8D ......    CALLF     tm1650_displayW
+    180                  tm1650_displayW(2, LED7CodeL[sum % 10]);
+   \   00005C 90AE 000A    LDW       Y, #0xa
+   \   000060 BE ..        LDW       X, S:?w4
+   \   000062 8D ......    CALLF     L:?smod16_y_x_y
+   \   000066 93           LDW       X, Y
+   \   000067 D6 ....      LD        A, (L:LED7CodeL,X)
+   \   00006A B7 ..        LD        S:?b0, A
+   \   00006C A6 02        LD        A, #0x2
+   \   00006E 8D ......    CALLF     tm1650_displayW
+    181                  if (!KEY_DOWN)
+   \   000072 C6 ....      LD        A, L:KEY_DOWN
+   \   000075 4D           TNZ       A
+   \   000076 27 03        JREQ      ??lb_4
+   \   000078 CC ....      JP        L:??config_tem_3
+    182                  {
+    183                      u8 key = tm1650_displaykeyR();
+   \                     ??lb_4:
+   \   00007B 8D ......    CALLF     tm1650_displaykeyR
+   \   00007F B7 ..        LD        S:?b11, A
+    184                      switch (key)
+   \   000081 B6 ..        LD        A, S:?b11
+   \   000083 A1 4C        CP        A, #0x4c
+   \   000085 27 0F        JREQ      L:??config_tem_4
+   \   000087 A1 54        CP        A, #0x54
+   \   000089 27 49        JREQ      L:??config_tem_5
+   \   00008B A1 5C        CP        A, #0x5c
+   \   00008D 27 6D        JREQ      L:??config_tem_6
+   \   00008F A1 64        CP        A, #0x64
+   \   000091 27 1C        JREQ      L:??config_tem_7
+   \   000093 CC ....      JP        L:??config_tem_3
+    185                      {
+    186                      case 0x4c:
+    187                          delay_ms(10);
+   \                     ??config_tem_4:
+   \   000096 AE 000A      LDW       X, #0xa
+   \   000099 8D ......    CALLF     delay_ms
+    188                          if (tm1650_displaykeyR() == 0x4c)
+   \   00009D 8D ......    CALLF     tm1650_displaykeyR
+   \   0000A1 A1 4C        CP        A, #0x4c
+   \   0000A3 26 08        JRNE      L:??config_tem_8
+    189                          {
+    190                              KEY_DOWN = TRUE;
+   \   0000A5 35 01 ....   MOV       L:KEY_DOWN, #0x1
+    191                              whileback = TRUE;
+   \   0000A9 A6 01        LD        A, #0x1
+   \   0000AB B7 ..        LD        S:?b10, A
+    192                          }
+    193                          break;
+   \                     ??config_tem_8:
+   \   0000AD 20 73        JRA       L:??config_tem_3
+    194                      case 0x64:
+    195                          delay_ms(10);
+   \                     ??config_tem_7:
+   \   0000AF AE 000A      LDW       X, #0xa
+   \   0000B2 8D ......    CALLF     delay_ms
+    196                          if (tm1650_displaykeyR() == 0x64)
+   \   0000B6 8D ......    CALLF     tm1650_displaykeyR
+   \   0000BA A1 64        CP        A, #0x64
+   \   0000BC 26 14        JRNE      L:??config_tem_9
+    197                          {
+    198                              KEY_DOWN = TRUE;
+   \   0000BE 35 01 ....   MOV       L:KEY_DOWN, #0x1
+    199                              TEM_SUM = sum;
+   \   0000C2 BE ..        LDW       X, S:?w4
+   \   0000C4 CF ....      LDW       L:TEM_SUM, X
+    200                              FLASH_DATA_TEM_SUM_WRITE(TEM_SUM);
+   \   0000C7 CE ....      LDW       X, L:TEM_SUM
+   \   0000CA 8D ......    CALLF     FLASH_DATA_TEM_SUM_WRITE
+    201                              whileback = TRUE;
+   \   0000CE A6 01        LD        A, #0x1
+   \   0000D0 B7 ..        LD        S:?b10, A
+    202                          }
+    203                          break;
+   \                     ??config_tem_9:
+   \   0000D2 20 4E        JRA       L:??config_tem_3
+    204                      case 0x54:
+    205                          delay_ms(10);
+   \                     ??config_tem_5:
+   \   0000D4 AE 000A      LDW       X, #0xa
+   \   0000D7 8D ......    CALLF     delay_ms
+    206                          if (tm1650_displaykeyR() == 0x54)
+   \   0000DB 8D ......    CALLF     tm1650_displaykeyR
+   \   0000DF A1 54        CP        A, #0x54
+   \   0000E1 26 17        JRNE      L:??config_tem_10
+    207                          {
+    208                              KEY_DOWN = TRUE;
+   \   0000E3 35 01 ....   MOV       L:KEY_DOWN, #0x1
+    209                              sum++;
+   \   0000E7 BE ..        LDW       X, S:?w4
+   \   0000E9 5C           INCW      X
+   \   0000EA BF ..        LDW       S:?w4, X
+    210                              sum = (sum > 500) ? 500 : sum;
+   \   0000EC BE ..        LDW       X, S:?w4
+   \   0000EE A3 01F5      CPW       X, #0x1f5
+   \   0000F1 2F 07        JRSLT     L:??config_tem_11
+   \   0000F3 AE 01F4      LDW       X, #0x1f4
+   \   0000F6 BF ..        LDW       S:?w4, X
+   \   0000F8 20 00        JRA       L:??config_tem_10
+    211                          }
+    212                          break;
+   \                     ??config_tem_11:
+   \                     ??config_tem_10:
+   \   0000FA 20 26        JRA       L:??config_tem_3
+    213                      case 0x5c:
+    214                          delay_ms(10);
+   \                     ??config_tem_6:
+   \   0000FC AE 000A      LDW       X, #0xa
+   \   0000FF 8D ......    CALLF     delay_ms
+    215                          if (tm1650_displaykeyR() == 0x5c)
+   \   000103 8D ......    CALLF     tm1650_displaykeyR
+   \   000107 A1 5C        CP        A, #0x5c
+   \   000109 26 17        JRNE      L:??config_tem_12
+    216                          {
+    217                              KEY_DOWN = TRUE;
+   \   00010B 35 01 ....   MOV       L:KEY_DOWN, #0x1
+    218                              sum--;
+   \   00010F BE ..        LDW       X, S:?w4
+   \   000111 5A           DECW      X
+   \   000112 BF ..        LDW       S:?w4, X
+    219                              sum = (sum < 100) ? 100 : sum;
+   \   000114 BE ..        LDW       X, S:?w4
+   \   000116 A3 0064      CPW       X, #0x64
+   \   000119 2E 07        JRSGE     L:??config_tem_13
+   \   00011B AE 0064      LDW       X, #0x64
+   \   00011E BF ..        LDW       S:?w4, X
+   \   000120 20 00        JRA       L:??config_tem_12
+    220                          }
+    221                          break;
+    222                      }
+    223                  }
+    224                  if (whileback)
+   \                     ??config_tem_13:
+   \                     ??config_tem_12:
+   \                     ??config_tem_3:
+   \   000122 3D ..        TNZ       S:?b10
+   \   000124 26 03        JRNE      ??lb_5
+   \   000126 CC ....      JP        L:??config_tem_0
+    225                  {
+    226                      CONFIG_STATUS = FALSE;
+   \                     ??lb_5:
+   \   000129 725F ....    CLR       L:CONFIG_STATUS
+    227                      syswhile = FALSE;
+   \   00012D 725F ....    CLR       L:syswhile
+    228                      tm1650_displayOn();
+   \   000131 8D ......    CALLF     tm1650_displayOn
+    229                      break;
+    230                  }
+    231              }
+    232          }
+   \   000135 AC ......    JPF       L:?epilogue_l2
+    233          
+    234          // 设置风扇转速
+
+   \                                 In section .far_func.text, align 1
+    235          void config_fan()
+    236          {
+   \                     config_fan:
+   \   000000 8D ......    CALLF     L:?push_l2
+    237              CONFIG_STATUS = TRUE;
+   \   000004 35 01 ....   MOV       L:CONFIG_STATUS, #0x1
+    238              bool whileback = FALSE;
+   \   000008 3F ..        CLR       S:?b10
+    239              int sum = FAN_PWM_NUM;
+   \   00000A C6 ....      LD        A, L:FAN_PWM_NUM
+   \   00000D 3F ..        CLR       S:?b8
+   \   00000F B7 ..        LD        S:?b9, A
+    240              while (1)
+    241              {
+    242                  if (CONFIG_LED_STATUS)
+   \                     ??config_fan_0:
+   \   000011 C6 ....      LD        A, L:CONFIG_LED_STATUS
+   \   000014 4D           TNZ       A
+   \   000015 27 06        JREQ      L:??config_fan_1
+    243                  {
+    244                      tm1650_displayOn();
+   \   000017 8D ......    CALLF     tm1650_displayOn
+   \   00001B 20 04        JRA       L:??config_fan_2
+    245                  }
+    246                  else
+    247                  {
+    248                      tm1650_displayOff();
+   \                     ??config_fan_1:
+   \   00001D 8D ......    CALLF     tm1650_displayOff
+    249                  }
+    250                  if ((sum / 100 % 100) == 0)
+   \                     ??config_fan_2:
+   \   000021 90AE 0064    LDW       Y, #0x64
+   \   000025 BE ..        LDW       X, S:?w4
+   \   000027 8D ......    CALLF     L:?sdiv16_x_x_y
+   \   00002B 90AE 0064    LDW       Y, #0x64
+   \   00002F 8D ......    CALLF     L:?smod16_y_x_y
+   \   000033 905D         TNZW      Y
+   \   000035 26 09        JRNE      L:??config_fan_3
+    251                  {
+    252                      tm1650_displayW(0, 0x00);
+   \   000037 3F ..        CLR       S:?b0
+   \   000039 4F           CLR       A
+   \   00003A 8D ......    CALLF     tm1650_displayW
+   \   00003E 20 1D        JRA       L:??config_fan_4
+    253                  }
+    254                  else
+    255                  {
+    256                      tm1650_displayW(0, LED7CodeL[sum / 100 % 100]);
+   \                     ??config_fan_3:
+   \   000040 90AE 0064    LDW       Y, #0x64
+   \   000044 BE ..        LDW       X, S:?w4
+   \   000046 8D ......    CALLF     L:?sdiv16_x_x_y
+   \   00004A 90AE 0064    LDW       Y, #0x64
+   \   00004E 8D ......    CALLF     L:?smod16_y_x_y
+   \   000052 93           LDW       X, Y
+   \   000053 D6 ....      LD        A, (L:LED7CodeL,X)
+   \   000056 B7 ..        LD        S:?b0, A
+   \   000058 4F           CLR       A
+   \   000059 8D ......    CALLF     tm1650_displayW
+    257                  }
+    258                  tm1650_displayW(1, LED7CodeL[sum / 10 % 10]);
+   \                     ??config_fan_4:
+   \   00005D 90AE 000A    LDW       Y, #0xa
+   \   000061 BE ..        LDW       X, S:?w4
+   \   000063 8D ......    CALLF     L:?sdiv16_x_x_y
+   \   000067 90AE 000A    LDW       Y, #0xa
+   \   00006B 8D ......    CALLF     L:?smod16_y_x_y
+   \   00006F 93           LDW       X, Y
+   \   000070 D6 ....      LD        A, (L:LED7CodeL,X)
+   \   000073 B7 ..        LD        S:?b0, A
+   \   000075 A6 01        LD        A, #0x1
+   \   000077 8D ......    CALLF     tm1650_displayW
+    259                  tm1650_displayW(2, LED7CodeL[sum % 10]);
+   \   00007B 90AE 000A    LDW       Y, #0xa
+   \   00007F BE ..        LDW       X, S:?w4
+   \   000081 8D ......    CALLF     L:?smod16_y_x_y
+   \   000085 93           LDW       X, Y
+   \   000086 D6 ....      LD        A, (L:LED7CodeL,X)
+   \   000089 B7 ..        LD        S:?b0, A
+   \   00008B A6 02        LD        A, #0x2
+   \   00008D 8D ......    CALLF     tm1650_displayW
+    260                  if (!KEY_DOWN)
+   \   000091 C6 ....      LD        A, L:KEY_DOWN
+   \   000094 4D           TNZ       A
+   \   000095 27 03        JREQ      ??lb_1
+   \   000097 CC ....      JP        L:??config_fan_5
+    261                  {
+    262                      u8 key = tm1650_displaykeyR();
+   \                     ??lb_1:
+   \   00009A 8D ......    CALLF     tm1650_displaykeyR
+   \   00009E B7 ..        LD        S:?b11, A
+    263                      switch (key)
+   \   0000A0 B6 ..        LD        A, S:?b11
+   \   0000A2 A1 4C        CP        A, #0x4c
+   \   0000A4 27 12        JREQ      L:??config_fan_6
+   \   0000A6 A1 54        CP        A, #0x54
+   \   0000A8 27 5F        JREQ      L:??config_fan_7
+   \   0000AA A1 5C        CP        A, #0x5c
+   \   0000AC 26 03        JRNE      ??lb_2
+   \   0000AE CC ....      JP        L:??config_fan_8
+   \                     ??lb_2:
+   \   0000B1 A1 64        CP        A, #0x64
+   \   0000B3 27 26        JREQ      L:??config_fan_9
+   \   0000B5 CC ....      JP        L:??config_fan_5
+    264                      {
+    265                      case 0x4c:
+    266                          delay_ms(10);
+   \                     ??config_fan_6:
+   \   0000B8 AE 000A      LDW       X, #0xa
+   \   0000BB 8D ......    CALLF     delay_ms
+    267                          if (tm1650_displaykeyR() == 0x4c)
+   \   0000BF 8D ......    CALLF     tm1650_displaykeyR
+   \   0000C3 A1 4C        CP        A, #0x4c
+   \   0000C5 26 11        JRNE      L:??config_fan_10
+    268                          {
+    269                              KEY_DOWN = TRUE;
+   \   0000C7 35 01 ....   MOV       L:KEY_DOWN, #0x1
+    270                              whileback = TRUE;
+   \   0000CB A6 01        LD        A, #0x1
+   \   0000CD B7 ..        LD        S:?b10, A
+    271                              TIM2_SetCompare3(FAN_PWM_NUM);
+   \   0000CF C6 ....      LD        A, L:FAN_PWM_NUM
+   \   0000D2 5F           CLRW      X
+   \   0000D3 97           LD        XL, A
+   \   0000D4 8D ......    CALLF     TIM2_SetCompare3
+    272                          }
+    273                          break;
+   \                     ??config_fan_10:
+   \   0000D8 CC ....      JP        L:??config_fan_5
+    274                      case 0x64:
+    275                          delay_ms(10);
+   \                     ??config_fan_9:
+   \   0000DB AE 000A      LDW       X, #0xa
+   \   0000DE 8D ......    CALLF     delay_ms
+    276                          if (tm1650_displaykeyR() == 0x64)
+   \   0000E2 8D ......    CALLF     tm1650_displaykeyR
+   \   0000E6 A1 64        CP        A, #0x64
+   \   0000E8 26 1D        JRNE      L:??config_fan_11
+    277                          {
+    278                              KEY_DOWN = TRUE;
+   \   0000EA 35 01 ....   MOV       L:KEY_DOWN, #0x1
+    279                              FAN_PWM_NUM = sum;
+   \   0000EE B6 ..        LD        A, S:?b9
+   \   0000F0 C7 ....      LD        L:FAN_PWM_NUM, A
+    280                              FLASH_DATA_FAN_PWM_WRITE(FAN_PWM_NUM);
+   \   0000F3 C6 ....      LD        A, L:FAN_PWM_NUM
+   \   0000F6 8D ......    CALLF     FLASH_DATA_FAN_PWM_WRITE
+    281                              TIM2_SetCompare3(FAN_PWM_NUM);
+   \   0000FA C6 ....      LD        A, L:FAN_PWM_NUM
+   \   0000FD 5F           CLRW      X
+   \   0000FE 97           LD        XL, A
+   \   0000FF 8D ......    CALLF     TIM2_SetCompare3
+    282                              whileback = TRUE;
+   \   000103 A6 01        LD        A, #0x1
+   \   000105 B7 ..        LD        S:?b10, A
+    283                          }
+    284                          break;
+   \                     ??config_fan_11:
+   \   000107 20 5A        JRA       L:??config_fan_5
+    285                      case 0x54:
+    286                          delay_ms(10);
+   \                     ??config_fan_7:
+   \   000109 AE 000A      LDW       X, #0xa
+   \   00010C 8D ......    CALLF     delay_ms
+    287                          if (tm1650_displaykeyR() == 0x54)
+   \   000110 8D ......    CALLF     tm1650_displaykeyR
+   \   000114 A1 54        CP        A, #0x54
+   \   000116 26 1D        JRNE      L:??config_fan_12
+    288                          {
+    289                              KEY_DOWN = TRUE;
+   \   000118 35 01 ....   MOV       L:KEY_DOWN, #0x1
+    290                              sum++;
+   \   00011C BE ..        LDW       X, S:?w4
+   \   00011E 5C           INCW      X
+   \   00011F BF ..        LDW       S:?w4, X
+    291                              sum = (sum > 100) ? 100 : sum;
+   \   000121 BE ..        LDW       X, S:?w4
+   \   000123 A3 0065      CPW       X, #0x65
+   \   000126 2F 07        JRSLT     L:??config_fan_13
+   \   000128 AE 0064      LDW       X, #0x64
+   \   00012B BF ..        LDW       S:?w4, X
+   \   00012D 20 00        JRA       L:??config_fan_14
+    292                              TIM2_SetCompare3(sum);
+   \                     ??config_fan_13:
+   \                     ??config_fan_14:
+   \   00012F BE ..        LDW       X, S:?w4
+   \   000131 8D ......    CALLF     TIM2_SetCompare3
+    293                          }
+    294                          break;
+   \                     ??config_fan_12:
+   \   000135 20 2C        JRA       L:??config_fan_5
+    295                      case 0x5c:
+    296                          delay_ms(10);
+   \                     ??config_fan_8:
+   \   000137 AE 000A      LDW       X, #0xa
+   \   00013A 8D ......    CALLF     delay_ms
+    297                          if (tm1650_displaykeyR() == 0x5c)
+   \   00013E 8D ......    CALLF     tm1650_displaykeyR
+   \   000142 A1 5C        CP        A, #0x5c
+   \   000144 26 1D        JRNE      L:??config_fan_15
+    298                          {
+    299                              KEY_DOWN = TRUE;
+   \   000146 35 01 ....   MOV       L:KEY_DOWN, #0x1
+    300                              sum--;
+   \   00014A BE ..        LDW       X, S:?w4
+   \   00014C 5A           DECW      X
+   \   00014D BF ..        LDW       S:?w4, X
+    301                              sum = (sum < 50) ? 50 : sum;
+   \   00014F BE ..        LDW       X, S:?w4
+   \   000151 A3 0032      CPW       X, #0x32
+   \   000154 2E 07        JRSGE     L:??config_fan_16
+   \   000156 AE 0032      LDW       X, #0x32
+   \   000159 BF ..        LDW       S:?w4, X
+   \   00015B 20 00        JRA       L:??config_fan_17
+    302                              TIM2_SetCompare3(sum);
+   \                     ??config_fan_16:
+   \                     ??config_fan_17:
+   \   00015D BE ..        LDW       X, S:?w4
+   \   00015F 8D ......    CALLF     TIM2_SetCompare3
+    303                          }
+    304                          break;
+    305                      }
+    306                  }
+    307                  if (whileback)
+   \                     ??config_fan_15:
+   \                     ??config_fan_5:
+   \   000163 3D ..        TNZ       S:?b10
+   \   000165 26 03        JRNE      ??lb_3
+   \   000167 CC ....      JP        L:??config_fan_0
+    308                  {
+    309                      CONFIG_STATUS = FALSE;
+   \                     ??lb_3:
+   \   00016A 725F ....    CLR       L:CONFIG_STATUS
+    310                      syswhile = FALSE;
+   \   00016E 725F ....    CLR       L:syswhile
+    311                      tm1650_displayOn();
+   \   000172 8D ......    CALLF     tm1650_displayOn
+    312                      break;
+    313                  }
+    314              }
+    315          }
+   \   000176 AC ......    JPF       L:?epilogue_l2
+    316          
+    317          // 开关换气功能
+
+   \                                 In section .far_func.text, align 1
+    318          void config_hf()
+    319          {
+   \                     config_hf:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 3B ....      PUSH      S:?b10
+    320              bool whileback = FALSE;
+   \   000007 3F ..        CLR       S:?b8
+    321              bool bol_hf = HF_STATUS;
+   \   000009 55 .... .... MOV       S:?b9, L:HF_STATUS
+    322              tm1650_displayOn();
+   \   00000E 8D ......    CALLF     tm1650_displayOn
+    323              while (1)
+    324              {
+    325                  tm1650_displayW(0, 0x00);
+   \                     ??config_hf_0:
+   \   000012 3F ..        CLR       S:?b0
+   \   000014 4F           CLR       A
+   \   000015 8D ......    CALLF     tm1650_displayW
+    326                  tm1650_displayW(1, LED7CodeL[14]);
+   \   000019 55 .... .... MOV       S:?b0, L:LED7CodeL + 14
+   \   00001E A6 01        LD        A, #0x1
+   \   000020 8D ......    CALLF     tm1650_displayW
+    327                  if (HF_STATUS)
+   \   000024 C6 ....      LD        A, L:HF_STATUS
+   \   000027 4D           TNZ       A
+   \   000028 27 0D        JREQ      L:??config_hf_1
+    328                  {
+    329                      tm1650_displayW(2, LED7CodeL[1]);
+   \   00002A 55 .... .... MOV       S:?b0, L:LED7CodeL + 1
+   \   00002F A6 02        LD        A, #0x2
+   \   000031 8D ......    CALLF     tm1650_displayW
+   \   000035 20 0B        JRA       L:??config_hf_2
+    330                  }
+    331                  else
+    332                  {
+    333                      tm1650_displayW(2, LED7CodeL[0]);
+   \                     ??config_hf_1:
+   \   000037 55 .... .... MOV       S:?b0, L:LED7CodeL
+   \   00003C A6 02        LD        A, #0x2
+   \   00003E 8D ......    CALLF     tm1650_displayW
+    334                  }
+    335          
+    336                  if (!KEY_DOWN)
+   \                     ??config_hf_2:
+   \   000042 C6 ....      LD        A, L:KEY_DOWN
+   \   000045 4D           TNZ       A
+   \   000046 26 76        JRNE      L:??config_hf_3
+    337                  {
+    338                      u8 key = tm1650_displaykeyR();
+   \   000048 8D ......    CALLF     tm1650_displaykeyR
+   \   00004C B7 ..        LD        S:?b10, A
+    339                      switch (key)
+   \   00004E B6 ..        LD        A, S:?b10
+   \   000050 A1 4C        CP        A, #0x4c
+   \   000052 27 06        JREQ      L:??config_hf_4
+   \   000054 A1 64        CP        A, #0x64
+   \   000056 27 39        JREQ      L:??config_hf_5
+   \   000058 20 64        JRA       L:??config_hf_3
+    340                      {
+    341                      case 0x4c:
+    342                          delay_ms(10);
+   \                     ??config_hf_4:
+   \   00005A AE 000A      LDW       X, #0xa
+   \   00005D 8D ......    CALLF     delay_ms
+    343                          if (tm1650_displaykeyR() == 0x4c)
+   \   000061 8D ......    CALLF     tm1650_displaykeyR
+   \   000065 A1 4C        CP        A, #0x4c
+   \   000067 26 26        JRNE      L:??config_hf_6
+    344                          {
+    345                              KEY_DOWN = TRUE;
+   \   000069 35 01 ....   MOV       L:KEY_DOWN, #0x1
+    346                              if (bol_hf)
+   \   00006D 3D ..        TNZ       S:?b9
+   \   00006F 27 0F        JREQ      L:??config_hf_7
+    347                              {
+    348                                  bol_hf = FALSE;
+   \   000071 3F ..        CLR       S:?b9
+    349                                  tm1650_displayW(2, LED7CodeL[0]);
+   \   000073 55 .... .... MOV       S:?b0, L:LED7CodeL
+   \   000078 A6 02        LD        A, #0x2
+   \   00007A 8D ......    CALLF     tm1650_displayW
+   \   00007E 20 0F        JRA       L:??config_hf_6
+    350                              }
+    351                              else
+    352                              {
+    353                                  bol_hf = TRUE;
+   \                     ??config_hf_7:
+   \   000080 A6 01        LD        A, #0x1
+   \   000082 B7 ..        LD        S:?b9, A
+    354                                  tm1650_displayW(2, LED7CodeL[1]);
+   \   000084 55 .... .... MOV       S:?b0, L:LED7CodeL + 1
+   \   000089 A6 02        LD        A, #0x2
+   \   00008B 8D ......    CALLF     tm1650_displayW
+    355                              }
+    356                          }
+    357                          break;
+   \                     ??config_hf_6:
+   \   00008F 20 2D        JRA       L:??config_hf_3
+    358                      case 0x64:
+    359                          delay_ms(10);
+   \                     ??config_hf_5:
+   \   000091 AE 000A      LDW       X, #0xa
+   \   000094 8D ......    CALLF     delay_ms
+    360                          if (tm1650_displaykeyR() == 0x64)
+   \   000098 8D ......    CALLF     tm1650_displaykeyR
+   \   00009C A1 64        CP        A, #0x64
+   \   00009E 26 1E        JRNE      L:??config_hf_8
+    361                          {
+    362                              KEY_DOWN = TRUE;
+   \   0000A0 35 01 ....   MOV       L:KEY_DOWN, #0x1
+    363                              if (bol_hf)
+   \   0000A4 3D ..        TNZ       S:?b9
+   \   0000A6 27 08        JREQ      L:??config_hf_9
+    364                              {
+    365                                  FLASH_DATA_HF_STATUS_WRITE(TRUE);
+   \   0000A8 A6 01        LD        A, #0x1
+   \   0000AA 8D ......    CALLF     FLASH_DATA_HF_STATUS_WRITE
+   \   0000AE 20 05        JRA       L:??config_hf_10
+    366                              }
+    367                              else
+    368                              {
+    369                                  FLASH_DATA_HF_STATUS_WRITE(FALSE);
+   \                     ??config_hf_9:
+   \   0000B0 4F           CLR       A
+   \   0000B1 8D ......    CALLF     FLASH_DATA_HF_STATUS_WRITE
+    370                              }
+    371                              HF_STATUS = bol_hf;
+   \                     ??config_hf_10:
+   \   0000B5 B6 ..        LD        A, S:?b9
+   \   0000B7 C7 ....      LD        L:HF_STATUS, A
+    372                              whileback = TRUE;
+   \   0000BA A6 01        LD        A, #0x1
+   \   0000BC B7 ..        LD        S:?b8, A
+    373                          }
+    374                          break;
+    375                      }
+    376                  }
+    377                  if (whileback)
+   \                     ??config_hf_8:
+   \                     ??config_hf_3:
+   \   0000BE 3D ..        TNZ       S:?b8
+   \   0000C0 26 03        JRNE      ??lb_0
+   \   0000C2 CC ....      JP        L:??config_hf_0
+    378                  {
+    379                      syswhile = FALSE;
+   \                     ??lb_0:
+   \   0000C5 725F ....    CLR       L:syswhile
+    380                      break;
+    381                  }
+    382              }
+    383          }
+   \   0000C9 32 ....      POP       S:?b10
+   \   0000CC AC ......    JPF       L:?epilogue_w4
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       1  CONFIG_LED_STATUS
+       1  KEY_DOWN
+       1  KEY_TYPE
+     372  btn_down
+     378  config_fan
+     208  config_hf
+     313  config_tem
+       1  i
+       1  syswhile
+
+ 
+ 1 271 bytes in section .far_func.text
+     4 bytes in section .near.bss
+     1 byte  in section .near.data
+ 
+ 1 271 bytes of CODE memory
+     5 bytes of DATA memory
+
+Errors: none
+Warnings: 258

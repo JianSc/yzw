@@ -1,0 +1,1952 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 09/Jan/2024  17:40:22
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\Lib\C\stm8s_i2c.c
+#    Command line =  
+#        -f
+#        "e:\Nas\µçÂ·\±£ÎÂÏä\YZW-S8-EE22(Rev1.0)\C\build\Debug\Lib\C\stm8s_i2c.args.txt"
+#        (--silent -lCN .\build\Debug\Lib\C\stm8s_i2c.lst -I d:/IAR/STM8 -I
+#        d:/IAR/STM8/stm8/lib -I Lib/H -I Lib/C -I User -D STM8S003
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\Lib\C\stm8s_i2c.o .\Lib\C\stm8s_i2c.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\Lib\C\stm8s_i2c.lst
+#    Object file  =  .\build\Debug\Lib\C\stm8s_i2c.o
+#
+###############################################################################
+
+e:\Nas\µçÂ·\±£ÎÂÏä\YZW-S8-EE22(Rev1.0)\C\Lib\C\stm8s_i2c.c
+      1          /**
+      2            ******************************************************************************
+      3            * @file    stm8s_i2c.c
+      4            * @author  MCD Application Team
+      5            * @version V2.3.0
+      6            * @date    16-June-2017
+      7            * @brief   This file contains all the functions for the I2C peripheral.
+      8             ******************************************************************************
+      9            * @attention
+     10            *
+     11            * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
+     12            *
+     13            * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+     14            * You may not use this file except in compliance with the License.
+     15            * You may obtain a copy of the License at:
+     16            *
+     17            *        http://www.st.com/software_license_agreement_liberty_v2
+     18            *
+     19            * Unless required by applicable law or agreed to in writing, software 
+     20            * distributed under the License is distributed on an "AS IS" BASIS, 
+     21            * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     22            * See the License for the specific language governing permissions and
+     23            * limitations under the License.
+     24            *
+     25            ******************************************************************************
+     26            */
+     27          
+     28          /* Includes ------------------------------------------------------------------*/
+     29          #include "stm8s_i2c.h"
+     30          
+     31          /** @addtogroup STM8S_StdPeriph_Driver
+     32            * @{
+     33            */
+     34          /* Private typedef -----------------------------------------------------------*/
+     35          
+     36          /** @addtogroup I2C_Private_Defines
+     37            * @{
+     38            */
+     39          /* I2C register mask */
+     40          #define REGISTER_Mask               ((uint16_t)0x3000)
+     41          #define REGISTER_SR1_Index          ((uint16_t)0x0100)
+     42          #define REGISTER_SR2_Index          ((uint16_t)0x0200)
+     43          /* I2C Interrupt Enable mask */
+     44          #define ITEN_Mask                   ((uint16_t)0x0700)
+     45          /* I2C FLAG mask */
+     46          #define FLAG_Mask                   ((uint16_t)0x00FF)
+     47          /**
+     48            * @}
+     49            */
+     50          
+     51          /* Private macro -------------------------------------------------------------*/
+     52          /* Private variables ---------------------------------------------------------*/
+     53          /* Private function prototypes -----------------------------------------------*/
+     54          /* Private functions ---------------------------------------------------------*/
+     55          
+     56          
+     57          /**
+     58            * @addtogroup I2C_Public_Functions
+     59            * @{
+     60            */
+     61          
+     62          /**
+     63            * @brief  Deinitializes the I2C peripheral registers to their default reset values.
+     64            * @param  None
+     65            * @retval None
+     66            */
+
+   \                                 In section .far_func.text, align 1
+     67          void I2C_DeInit(void)
+     68          {
+     69            I2C->CR1 = I2C_CR1_RESET_VALUE;
+   \                     I2C_DeInit:
+   \   000000 725F 5210    CLR       L:0x5210
+     70            I2C->CR2 = I2C_CR2_RESET_VALUE;
+   \   000004 725F 5211    CLR       L:0x5211
+     71            I2C->FREQR = I2C_FREQR_RESET_VALUE;
+   \   000008 725F 5212    CLR       L:0x5212
+     72            I2C->OARL = I2C_OARL_RESET_VALUE;
+   \   00000C 725F 5213    CLR       L:0x5213
+     73            I2C->OARH = I2C_OARH_RESET_VALUE;
+   \   000010 725F 5214    CLR       L:0x5214
+     74            I2C->ITR = I2C_ITR_RESET_VALUE;
+   \   000014 725F 521A    CLR       L:0x521a
+     75            I2C->CCRL = I2C_CCRL_RESET_VALUE;
+   \   000018 725F 521B    CLR       L:0x521b
+     76            I2C->CCRH = I2C_CCRH_RESET_VALUE;
+   \   00001C 725F 521C    CLR       L:0x521c
+     77            I2C->TRISER = I2C_TRISER_RESET_VALUE;
+   \   000020 35 02 521D   MOV       L:0x521d, #0x2
+     78          }
+   \   000024 87           RETF
+     79          
+     80          /**
+     81            * @brief  Initializes the I2C according to the specified parameters in standard
+     82            *         or fast mode.
+     83            * @param  OutputClockFrequencyHz : Specifies the output clock frequency in Hz.
+     84            * @param  OwnAddress : Specifies the own address.
+     85            * @param  I2C_DutyCycle : Specifies the duty cycle to apply in fast mode.
+     86            *         This parameter can be any of the  @ref I2C_DutyCycle_TypeDef enumeration.
+     87            * @note   This parameter don't have impact when the OutputClockFrequency lower
+     88            *         than 100KHz.
+     89            * @param  Ack : Specifies the acknowledge mode to apply.
+     90            *         This parameter can be any of the  @ref I2C_Ack_TypeDef enumeration.
+     91            * @param  AddMode : Specifies the acknowledge address to apply.
+     92            *         This parameter can be any of the  @ref I2C_AddMode_TypeDef enumeration.
+     93            * @param  InputClockFrequencyMHz : Specifies the input clock frequency in MHz.
+     94            * @retval None
+     95            */
+
+   \                                 In section .far_func.text, align 1
+     96          void I2C_Init(uint32_t OutputClockFrequencyHz, uint16_t OwnAddress, 
+     97                        I2C_DutyCycle_TypeDef I2C_DutyCycle, I2C_Ack_TypeDef Ack, 
+     98                        I2C_AddMode_TypeDef AddMode, uint8_t InputClockFrequencyMHz )
+     99          {
+   \                     I2C_Init:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 8D ......    CALLF     L:?push_l3
+   \   000008 89           PUSHW     X
+   \   000009 52 05        SUB       SP, #0x5
+   \   00000B 8D ......    CALLF     L:?mov_l2_l0
+   \   00000F B7 ..        LD        S:?b14, A
+   \   000011 45 .. ..     MOV       S:?b12, S:?b4
+   \   000014 45 .. ..     MOV       S:?b15, S:?b5
+   \   000017 45 .. ..     MOV       S:?b13, S:?b6
+    100            uint16_t result = 0x0004;
+   \   00001A AE 0004      LDW       X, #0x4
+   \   00001D 1F 02        LDW       (0x2,SP), X
+    101            uint16_t tmpval = 0;
+   \   00001F 5F           CLRW      X
+   \   000020 1F 04        LDW       (0x4,SP), X
+    102            uint8_t tmpccrh = 0;
+   \   000022 0F 01        CLR       (0x1,SP)
+    103          
+    104            /* Check the parameters */
+    105            assert_param(IS_I2C_ACK_OK(Ack));
+   \   000024 3D ..        TNZ       S:?b12
+   \   000026 27 1B        JREQ      L:??I2C_Init_0
+   \   000028 B6 ..        LD        A, S:?b12
+   \   00002A A1 01        CP        A, #0x1
+   \   00002C 27 15        JREQ      L:??I2C_Init_0
+   \   00002E B6 ..        LD        A, S:?b12
+   \   000030 A1 02        CP        A, #0x2
+   \   000032 27 0F        JREQ      L:??I2C_Init_0
+   \   000034 AE 0069      LDW       X, #0x69
+   \   000037 BF ..        LDW       S:?w1, X
+   \   000039 5F           CLRW      X
+   \   00003A BF ..        LDW       S:?w0, X
+   \   00003C AE ....      LDW       X, #?_0
+   \   00003F 8D ......    CALLF     assert_failed
+    106            assert_param(IS_I2C_ADDMODE_OK(AddMode));
+   \                     ??I2C_Init_0:
+   \   000043 3D ..        TNZ       S:?b15
+   \   000045 27 15        JREQ      L:??I2C_Init_1
+   \   000047 B6 ..        LD        A, S:?b15
+   \   000049 A1 80        CP        A, #0x80
+   \   00004B 27 0F        JREQ      L:??I2C_Init_1
+   \   00004D AE 006A      LDW       X, #0x6a
+   \   000050 BF ..        LDW       S:?w1, X
+   \   000052 5F           CLRW      X
+   \   000053 BF ..        LDW       S:?w0, X
+   \   000055 AE ....      LDW       X, #?_0
+   \   000058 8D ......    CALLF     assert_failed
+    107            assert_param(IS_I2C_OWN_ADDRESS_OK(OwnAddress));
+   \                     ??I2C_Init_1:
+   \   00005C 1E 06        LDW       X, (0x6,SP)
+   \   00005E A3 0400      CPW       X, #0x400
+   \   000061 25 0F        JRC       L:??I2C_Init_2
+   \   000063 AE 006B      LDW       X, #0x6b
+   \   000066 BF ..        LDW       S:?w1, X
+   \   000068 5F           CLRW      X
+   \   000069 BF ..        LDW       S:?w0, X
+   \   00006B AE ....      LDW       X, #?_0
+   \   00006E 8D ......    CALLF     assert_failed
+    108            assert_param(IS_I2C_DUTYCYCLE_OK(I2C_DutyCycle));  
+   \                     ??I2C_Init_2:
+   \   000072 3D ..        TNZ       S:?b14
+   \   000074 27 15        JREQ      L:??I2C_Init_3
+   \   000076 B6 ..        LD        A, S:?b14
+   \   000078 A1 40        CP        A, #0x40
+   \   00007A 27 0F        JREQ      L:??I2C_Init_3
+   \   00007C AE 006C      LDW       X, #0x6c
+   \   00007F BF ..        LDW       S:?w1, X
+   \   000081 5F           CLRW      X
+   \   000082 BF ..        LDW       S:?w0, X
+   \   000084 AE ....      LDW       X, #?_0
+   \   000087 8D ......    CALLF     assert_failed
+    109            assert_param(IS_I2C_INPUT_CLOCK_FREQ_OK(InputClockFrequencyMHz));
+   \                     ??I2C_Init_3:
+   \   00008B 3D ..        TNZ       S:?b13
+   \   00008D 27 06        JREQ      L:??I2C_Init_4
+   \   00008F B6 ..        LD        A, S:?b13
+   \   000091 A1 11        CP        A, #0x11
+   \   000093 25 0F        JRC       L:??I2C_Init_5
+   \                     ??I2C_Init_4:
+   \   000095 AE 006D      LDW       X, #0x6d
+   \   000098 BF ..        LDW       S:?w1, X
+   \   00009A 5F           CLRW      X
+   \   00009B BF ..        LDW       S:?w0, X
+   \   00009D AE ....      LDW       X, #?_0
+   \   0000A0 8D ......    CALLF     assert_failed
+    110            assert_param(IS_I2C_OUTPUT_CLOCK_FREQ_OK(OutputClockFrequencyHz));
+   \                     ??I2C_Init_5:
+   \   0000A4 BE ..        LDW       X, S:?w4
+   \   0000A6 A3 0000      CPW       X, #0x0
+   \   0000A9 26 05        JRNE      L:??I2C_Init_6
+   \   0000AB BE ..        LDW       X, S:?w5
+   \   0000AD A3 0000      CPW       X, #0x0
+   \                     ??I2C_Init_6:
+   \   0000B0 27 0E        JREQ      L:??I2C_Init_7
+   \   0000B2 BE ..        LDW       X, S:?w4
+   \   0000B4 A3 0006      CPW       X, #0x6
+   \   0000B7 26 05        JRNE      L:??I2C_Init_8
+   \   0000B9 BE ..        LDW       X, S:?w5
+   \   0000BB A3 1A81      CPW       X, #0x1a81
+   \                     ??I2C_Init_8:
+   \   0000BE 25 0F        JRC       L:??I2C_Init_9
+   \                     ??I2C_Init_7:
+   \   0000C0 AE 006E      LDW       X, #0x6e
+   \   0000C3 BF ..        LDW       S:?w1, X
+   \   0000C5 5F           CLRW      X
+   \   0000C6 BF ..        LDW       S:?w0, X
+   \   0000C8 AE ....      LDW       X, #?_0
+   \   0000CB 8D ......    CALLF     assert_failed
+    111          
+    112          
+    113            /*------------------------- I2C FREQ Configuration ------------------------*/
+    114            /* Clear frequency bits */
+    115            I2C->FREQR &= (uint8_t)(~I2C_FREQR_FREQ);
+   \                     ??I2C_Init_9:
+   \   0000CF C6 5212      LD        A, L:0x5212
+   \   0000D2 A4 C0        AND       A, #0xc0
+   \   0000D4 C7 5212      LD        L:0x5212, A
+    116            /* Write new value */
+    117            I2C->FREQR |= InputClockFrequencyMHz;
+   \   0000D7 C6 5212      LD        A, L:0x5212
+   \   0000DA BA ..        OR        A, S:?b13
+   \   0000DC C7 5212      LD        L:0x5212, A
+    118          
+    119            /*--------------------------- I2C CCR Configuration ------------------------*/
+    120            /* Disable I2C to configure TRISER */
+    121            I2C->CR1 &= (uint8_t)(~I2C_CR1_PE);
+   \   0000DF 7211 5210    BRES      L:0x5210, #0x0
+    122          
+    123            /* Clear CCRH & CCRL */
+    124            I2C->CCRH &= (uint8_t)(~(I2C_CCRH_FS | I2C_CCRH_DUTY | I2C_CCRH_CCR));
+   \   0000E3 C6 521C      LD        A, L:0x521c
+   \   0000E6 A4 30        AND       A, #0x30
+   \   0000E8 C7 521C      LD        L:0x521c, A
+    125            I2C->CCRL &= (uint8_t)(~I2C_CCRL_CCR);
+   \   0000EB C6 521B      LD        A, L:0x521b
+   \   0000EE 725F 521B    CLR       L:0x521b
+    126          
+    127            /* Detect Fast or Standard mode depending on the Output clock frequency selected */
+    128            if (OutputClockFrequencyHz > I2C_MAX_STANDARD_FREQ) /* FAST MODE */
+   \   0000F2 BE ..        LDW       X, S:?w4
+   \   0000F4 A3 0001      CPW       X, #0x1
+   \   0000F7 26 05        JRNE      L:??I2C_Init_10
+   \   0000F9 BE ..        LDW       X, S:?w5
+   \   0000FB A3 86A1      CPW       X, #0x86a1
+   \                     ??I2C_Init_10:
+   \   0000FE 24 03        JRNC      ??lb_0
+   \   000100 CC ....      JP        L:??I2C_Init_11
+    129            {
+    130              /* Set F/S bit for fast mode */
+    131              tmpccrh = I2C_CCRH_FS;
+   \                     ??lb_0:
+   \   000103 A6 80        LD        A, #0x80
+   \   000105 6B 01        LD        (0x1,SP), A
+    132          
+    133              if (I2C_DutyCycle == I2C_DUTYCYCLE_2)
+   \   000107 3D ..        TNZ       S:?b14
+   \   000109 26 39        JRNE      L:??I2C_Init_12
+    134              {
+    135                /* Fast mode speed calculate: Tlow/Thigh = 2 */
+    136                result = (uint16_t) ((InputClockFrequencyMHz * 1000000) / (OutputClockFrequencyHz * 3));
+   \   00010B AE 0003      LDW       X, #0x3
+   \   00010E BF ..        LDW       S:?w1, X
+   \   000110 5F           CLRW      X
+   \   000111 BF ..        LDW       S:?w0, X
+   \   000113 8D ......    CALLF     L:?mov_l1_l2
+   \   000117 8D ......    CALLF     L:?mul32_l0_l0_l1
+   \   00011B 8D ......    CALLF     L:?push_l0
+   \   00011F 5F           CLRW      X
+   \   000120 B6 ..        LD        A, S:?b13
+   \   000122 97           LD        XL, A
+   \   000123 BF ..        LDW       S:?w1, X
+   \   000125 5F           CLRW      X
+   \   000126 BF ..        LDW       S:?w0, X
+   \   000128 AE 4240      LDW       X, #0x4240
+   \   00012B BF ..        LDW       S:?w3, X
+   \   00012D AE 000F      LDW       X, #0xf
+   \   000130 BF ..        LDW       S:?w2, X
+   \   000132 8D ......    CALLF     L:?mul32_l0_l0_l1
+   \   000136 8D ......    CALLF     L:?pop_l1
+   \   00013A 8D ......    CALLF     L:?udiv32_l0_l0_l1
+   \   00013E BE ..        LDW       X, S:?w1
+   \   000140 1F 02        LDW       (0x2,SP), X
+   \   000142 20 3D        JRA       L:??I2C_Init_13
+    137              }
+    138              else /* I2C_DUTYCYCLE_16_9 */
+    139              {
+    140                /* Fast mode speed calculate: Tlow/Thigh = 16/9 */
+    141                result = (uint16_t) ((InputClockFrequencyMHz * 1000000) / (OutputClockFrequencyHz * 25));
+   \                     ??I2C_Init_12:
+   \   000144 AE 0019      LDW       X, #0x19
+   \   000147 BF ..        LDW       S:?w1, X
+   \   000149 5F           CLRW      X
+   \   00014A BF ..        LDW       S:?w0, X
+   \   00014C 8D ......    CALLF     L:?mov_l1_l2
+   \   000150 8D ......    CALLF     L:?mul32_l0_l0_l1
+   \   000154 8D ......    CALLF     L:?push_l0
+   \   000158 5F           CLRW      X
+   \   000159 B6 ..        LD        A, S:?b13
+   \   00015B 97           LD        XL, A
+   \   00015C BF ..        LDW       S:?w1, X
+   \   00015E 5F           CLRW      X
+   \   00015F BF ..        LDW       S:?w0, X
+   \   000161 AE 4240      LDW       X, #0x4240
+   \   000164 BF ..        LDW       S:?w3, X
+   \   000166 AE 000F      LDW       X, #0xf
+   \   000169 BF ..        LDW       S:?w2, X
+   \   00016B 8D ......    CALLF     L:?mul32_l0_l0_l1
+   \   00016F 8D ......    CALLF     L:?pop_l1
+   \   000173 8D ......    CALLF     L:?udiv32_l0_l0_l1
+   \   000177 BE ..        LDW       X, S:?w1
+   \   000179 1F 02        LDW       (0x2,SP), X
+    142                /* Set DUTY bit */
+    143                tmpccrh |= I2C_CCRH_DUTY;
+   \   00017B 7B 01        LD        A, (0x1,SP)
+   \   00017D AA 40        OR        A, #0x40
+   \   00017F 6B 01        LD        (0x1,SP), A
+    144              }
+    145          
+    146              /* Verify and correct CCR value if below minimum value */
+    147              if (result < (uint16_t)0x01)
+   \                     ??I2C_Init_13:
+   \   000181 1E 02        LDW       X, (0x2,SP)
+   \   000183 5D           TNZW      X
+   \   000184 26 04        JRNE      L:??I2C_Init_14
+    148              {
+    149                /* Set the minimum allowed value */
+    150                result = (uint16_t)0x0001;
+   \   000186 5F           CLRW      X
+   \   000187 5C           INCW      X
+   \   000188 1F 02        LDW       (0x2,SP), X
+    151              }
+    152          
+    153              /* Set Maximum Rise Time: 300ns max in Fast Mode
+    154              = [300ns/(1/InputClockFrequencyMHz.10e6)]+1
+    155              = [(InputClockFrequencyMHz * 3)/10]+1 */
+    156              tmpval = ((InputClockFrequencyMHz * 3) / 10) + 1;
+   \                     ??I2C_Init_14:
+   \   00018A 905F         CLRW      Y
+   \   00018C B6 ..        LD        A, S:?b13
+   \   00018E 9097         LD        YL, A
+   \   000190 AE 0003      LDW       X, #0x3
+   \   000193 BF ..        LDW       S:?w0, X
+   \   000195 93           LDW       X, Y
+   \   000196 8D ......    CALLF     L:?mul16_x_x_w0
+   \   00019A 90AE 000A    LDW       Y, #0xa
+   \   00019E 8D ......    CALLF     L:?sdiv16_x_x_y
+   \   0001A2 5C           INCW      X
+   \   0001A3 1F 04        LDW       (0x4,SP), X
+    157              I2C->TRISER = (uint8_t)tmpval;
+   \   0001A5 7B 05        LD        A, (0x5,SP)
+   \   0001A7 C7 521D      LD        L:0x521d, A
+   \   0001AA 20 43        JRA       L:??I2C_Init_15
+    158          
+    159            }
+    160            else /* STANDARD MODE */
+    161            {
+    162          
+    163              /* Calculate standard mode speed */
+    164              result = (uint16_t)((InputClockFrequencyMHz * 1000000) / (OutputClockFrequencyHz << (uint8_t)1));
+   \                     ??I2C_Init_11:
+   \   0001AC 8D ......    CALLF     L:?mov_l0_l2
+   \   0001B0 A6 01        LD        A, #0x1
+   \   0001B2 8D ......    CALLF     L:?sll32_l0_l0_a
+   \   0001B6 8D ......    CALLF     L:?push_l0
+   \   0001BA 5F           CLRW      X
+   \   0001BB B6 ..        LD        A, S:?b13
+   \   0001BD 97           LD        XL, A
+   \   0001BE BF ..        LDW       S:?w1, X
+   \   0001C0 5F           CLRW      X
+   \   0001C1 BF ..        LDW       S:?w0, X
+   \   0001C3 AE 4240      LDW       X, #0x4240
+   \   0001C6 BF ..        LDW       S:?w3, X
+   \   0001C8 AE 000F      LDW       X, #0xf
+   \   0001CB BF ..        LDW       S:?w2, X
+   \   0001CD 8D ......    CALLF     L:?mul32_l0_l0_l1
+   \   0001D1 8D ......    CALLF     L:?pop_l1
+   \   0001D5 8D ......    CALLF     L:?udiv32_l0_l0_l1
+   \   0001D9 BE ..        LDW       X, S:?w1
+   \   0001DB 1F 02        LDW       (0x2,SP), X
+    165          
+    166              /* Verify and correct CCR value if below minimum value */
+    167              if (result < (uint16_t)0x0004)
+   \   0001DD 1E 02        LDW       X, (0x2,SP)
+   \   0001DF A3 0004      CPW       X, #0x4
+   \   0001E2 24 05        JRNC      L:??I2C_Init_16
+    168              {
+    169                /* Set the minimum allowed value */
+    170                result = (uint16_t)0x0004;
+   \   0001E4 AE 0004      LDW       X, #0x4
+   \   0001E7 1F 02        LDW       (0x2,SP), X
+    171              }
+    172          
+    173              /* Set Maximum Rise Time: 1000ns max in Standard Mode
+    174              = [1000ns/(1/InputClockFrequencyMHz.10e6)]+1
+    175              = InputClockFrequencyMHz+1 */
+    176              I2C->TRISER = (uint8_t)(InputClockFrequencyMHz + (uint8_t)1);
+   \                     ??I2C_Init_16:
+   \   0001E9 B6 ..        LD        A, S:?b13
+   \   0001EB 4C           INC       A
+   \   0001EC C7 521D      LD        L:0x521d, A
+    177          
+    178            }
+    179          
+    180            /* Write CCR with new calculated value */
+    181            I2C->CCRL = (uint8_t)result;
+   \                     ??I2C_Init_15:
+   \   0001EF 7B 03        LD        A, (0x3,SP)
+   \   0001F1 C7 521B      LD        L:0x521b, A
+    182            I2C->CCRH = (uint8_t)((uint8_t)((uint8_t)(result >> 8) & I2C_CCRH_CCR) | tmpccrh);
+   \   0001F4 1E 02        LDW       X, (0x2,SP)
+   \   0001F6 9E           LD        A, XH
+   \   0001F7 A4 0F        AND       A, #0xf
+   \   0001F9 1A 01        OR        A, (0x1,SP)
+   \   0001FB C7 521C      LD        L:0x521c, A
+    183          
+    184            /* Enable I2C */
+    185            I2C->CR1 |= I2C_CR1_PE;
+   \   0001FE 7210 5210    BSET      L:0x5210, #0x0
+    186          
+    187            /* Configure I2C acknowledgement */
+    188            I2C_AcknowledgeConfig(Ack);
+   \   000202 B6 ..        LD        A, S:?b12
+   \   000204 8D ......    CALLF     I2C_AcknowledgeConfig
+    189          
+    190            /*--------------------------- I2C OAR Configuration ------------------------*/
+    191            I2C->OARL = (uint8_t)(OwnAddress);
+   \   000208 7B 07        LD        A, (0x7,SP)
+   \   00020A C7 5213      LD        L:0x5213, A
+    192            I2C->OARH = (uint8_t)((uint8_t)(AddMode | I2C_OARH_ADDCONF) |
+    193                             (uint8_t)((OwnAddress & (uint16_t)0x0300) >> (uint8_t)7));
+   \   00020D 1E 06        LDW       X, (0x6,SP)
+   \   00020F 4F           CLR       A
+   \   000210 58           SLLW      X
+   \   000211 49           RLC       A
+   \   000212 01           RRWA      X, A
+   \   000213 9F           LD        A, XL
+   \   000214 A4 06        AND       A, #0x6
+   \   000216 88           PUSH      A
+   \   000217 B6 ..        LD        A, S:?b15
+   \   000219 AA 40        OR        A, #0x40
+   \   00021B B7 ..        LD        S:?b1, A
+   \   00021D 84           POP       A
+   \   00021E BA ..        OR        A, S:?b1
+   \   000220 C7 5214      LD        L:0x5214, A
+    194          }
+   \   000223 5B 07        ADD       SP, #0x7
+   \   000225 AC ......    JPF       L:?epilogue_l2_l3
+    195          
+    196          /**
+    197            * @brief  Enables or disables the I2C peripheral.
+    198            * @param  NewState : Indicate the new I2C peripheral state.
+    199            *         This parameter can be any of the @ref FunctionalState enumeration.
+    200            * @retval None
+    201            */
+
+   \                                 In section .far_func.text, align 1
+    202          void I2C_Cmd(FunctionalState NewState)
+    203          {
+   \                     I2C_Cmd:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    204            /* Check function parameters */
+    205            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??I2C_Cmd_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??I2C_Cmd_0
+   \   00000F AE 00CD      LDW       X, #0xcd
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    206          
+    207            if (NewState != DISABLE)
+   \                     ??I2C_Cmd_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??I2C_Cmd_1
+    208            {
+    209              /* Enable I2C peripheral */
+    210              I2C->CR1 |= I2C_CR1_PE;
+   \   000022 7210 5210    BSET      L:0x5210, #0x0
+   \   000026 20 04        JRA       L:??I2C_Cmd_2
+    211            }
+    212            else /* NewState == DISABLE */
+    213            {
+    214              /* Disable I2C peripheral */
+    215              I2C->CR1 &= (uint8_t)(~I2C_CR1_PE);
+   \                     ??I2C_Cmd_1:
+   \   000028 7211 5210    BRES      L:0x5210, #0x0
+    216            }
+    217          }
+   \                     ??I2C_Cmd_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    218          
+    219          /**
+    220            * @brief  Enables or disables the I2C General Call feature.
+    221            * @param  NewState : State of the General Call feature.
+    222            *         This parameter can be any of the @ref FunctionalState enumeration.
+    223            * @retval None
+    224            */
+
+   \                                 In section .far_func.text, align 1
+    225          void I2C_GeneralCallCmd(FunctionalState NewState)
+    226          {
+   \                     I2C_GeneralCallCmd:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    227            /* Check function parameters */
+    228            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??I2C_GeneralCallCmd_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??I2C_GeneralCallCmd_0
+   \   00000F AE 00E4      LDW       X, #0xe4
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    229          
+    230            if (NewState != DISABLE)
+   \                     ??I2C_GeneralCallCmd_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??I2C_GeneralCallCmd_1
+    231            {
+    232              /* Enable General Call */
+    233              I2C->CR1 |= I2C_CR1_ENGC;
+   \   000022 721C 5210    BSET      L:0x5210, #0x6
+   \   000026 20 04        JRA       L:??I2C_GeneralCallCmd_2
+    234            }
+    235            else /* NewState == DISABLE */
+    236            {
+    237              /* Disable General Call */
+    238              I2C->CR1 &= (uint8_t)(~I2C_CR1_ENGC);
+   \                     ??I2C_GeneralCallCmd_1:
+   \   000028 721D 5210    BRES      L:0x5210, #0x6
+    239            }
+    240          }
+   \                     ??I2C_GeneralCallCmd_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    241          
+    242          /**
+    243            * @brief  Generates I2C communication START condition.
+    244            * @note   CCR must be programmed, i.e. I2C_Init function must have been called
+    245            *         with a valid I2C_ClockSpeed
+    246            * @param  NewState : Enable or disable the start condition.
+    247            *         This parameter can be any of the @ref FunctionalState enumeration.
+    248            * @retval None
+    249            */
+
+   \                                 In section .far_func.text, align 1
+    250          void I2C_GenerateSTART(FunctionalState NewState)
+    251          {
+   \                     I2C_GenerateSTART:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    252            /* Check function parameters */
+    253            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??I2C_GenerateSTART_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??I2C_GenerateSTART_0
+   \   00000F AE 00FD      LDW       X, #0xfd
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    254          
+    255            if (NewState != DISABLE)
+   \                     ??I2C_GenerateSTART_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??I2C_GenerateSTART_1
+    256            {
+    257              /* Generate a START condition */
+    258              I2C->CR2 |= I2C_CR2_START;
+   \   000022 7210 5211    BSET      L:0x5211, #0x0
+   \   000026 20 04        JRA       L:??I2C_GenerateSTART_2
+    259            }
+    260            else /* NewState == DISABLE */
+    261            {
+    262              /* Disable the START condition generation */
+    263              I2C->CR2 &= (uint8_t)(~I2C_CR2_START);
+   \                     ??I2C_GenerateSTART_1:
+   \   000028 7211 5211    BRES      L:0x5211, #0x0
+    264            }
+    265          }
+   \                     ??I2C_GenerateSTART_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    266          
+    267          /**
+    268            * @brief  Generates I2C communication STOP condition.
+    269            * @param   NewState : Enable or disable the stop condition.
+    270            *          This parameter can be any of the @ref FunctionalState enumeration.
+    271            * @retval None
+    272            */
+
+   \                                 In section .far_func.text, align 1
+    273          void I2C_GenerateSTOP(FunctionalState NewState)
+    274          {
+   \                     I2C_GenerateSTOP:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    275            /* Check function parameters */
+    276            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??I2C_GenerateSTOP_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??I2C_GenerateSTOP_0
+   \   00000F AE 0114      LDW       X, #0x114
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    277          
+    278            if (NewState != DISABLE)
+   \                     ??I2C_GenerateSTOP_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??I2C_GenerateSTOP_1
+    279            {
+    280              /* Generate a STOP condition */
+    281              I2C->CR2 |= I2C_CR2_STOP;
+   \   000022 7212 5211    BSET      L:0x5211, #0x1
+   \   000026 20 04        JRA       L:??I2C_GenerateSTOP_2
+    282            }
+    283            else /* NewState == DISABLE */
+    284            {
+    285              /* Disable the STOP condition generation */
+    286              I2C->CR2 &= (uint8_t)(~I2C_CR2_STOP);
+   \                     ??I2C_GenerateSTOP_1:
+   \   000028 7213 5211    BRES      L:0x5211, #0x1
+    287            }
+    288          }
+   \                     ??I2C_GenerateSTOP_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    289          
+    290          /**
+    291            * @brief  Enables or disables I2C software reset.
+    292            * @param  NewState : Specifies the new state of the I2C software reset.
+    293            *         This parameter can be any of the @ref FunctionalState enumeration.
+    294            * @retval None
+    295            */
+
+   \                                 In section .far_func.text, align 1
+    296          void I2C_SoftwareResetCmd(FunctionalState NewState)
+    297          {
+   \                     I2C_SoftwareResetCmd:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    298            /* Check function parameters */
+    299            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??I2C_SoftwareResetCmd_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??I2C_SoftwareResetCmd_0
+   \   00000F AE 012B      LDW       X, #0x12b
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    300          
+    301            if (NewState != DISABLE)
+   \                     ??I2C_SoftwareResetCmd_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??I2C_SoftwareResetCmd_1
+    302            {
+    303              /* Peripheral under reset */
+    304              I2C->CR2 |= I2C_CR2_SWRST;
+   \   000022 721E 5211    BSET      L:0x5211, #0x7
+   \   000026 20 04        JRA       L:??I2C_SoftwareResetCmd_2
+    305            }
+    306            else /* NewState == DISABLE */
+    307            {
+    308              /* Peripheral not under reset */
+    309              I2C->CR2 &= (uint8_t)(~I2C_CR2_SWRST);
+   \                     ??I2C_SoftwareResetCmd_1:
+   \   000028 721F 5211    BRES      L:0x5211, #0x7
+    310            }
+    311          }
+   \                     ??I2C_SoftwareResetCmd_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    312          
+    313          /**
+    314            * @brief  Enables or disables the I2C clock stretching.
+    315            * @param  NewState : Specifies the new state of the I2C Clock stretching.
+    316            *         This parameter can be any of the @ref FunctionalState enumeration.
+    317            * @retval None
+    318            */
+    319          
+
+   \                                 In section .far_func.text, align 1
+    320          void I2C_StretchClockCmd(FunctionalState NewState)
+    321          {
+   \                     I2C_StretchClockCmd:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    322            /* Check function parameters */
+    323            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??I2C_StretchClockCmd_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 0F        JREQ      L:??I2C_StretchClockCmd_0
+   \   00000F AE 0143      LDW       X, #0x143
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    324          
+    325            if (NewState != DISABLE)
+   \                     ??I2C_StretchClockCmd_0:
+   \   00001E 3D ..        TNZ       S:?b8
+   \   000020 27 06        JREQ      L:??I2C_StretchClockCmd_1
+    326            {
+    327              /* Clock Stretching Enable */
+    328              I2C->CR1 &= (uint8_t)(~I2C_CR1_NOSTRETCH);
+   \   000022 721F 5210    BRES      L:0x5210, #0x7
+   \   000026 20 04        JRA       L:??I2C_StretchClockCmd_2
+    329          
+    330            }
+    331            else /* NewState == DISABLE */
+    332            {
+    333              /* Clock Stretching Disable (Slave mode) */
+    334              I2C->CR1 |= I2C_CR1_NOSTRETCH;
+   \                     ??I2C_StretchClockCmd_1:
+   \   000028 721E 5210    BSET      L:0x5210, #0x7
+    335            }
+    336          }
+   \                     ??I2C_StretchClockCmd_2:
+   \   00002C 32 ....      POP       S:?b8
+   \   00002F 87           RETF
+    337          
+    338          /**
+    339            * @brief  Enable or Disable the I2C acknowledge and position acknowledge feature.
+    340            * @note   This function must be called before data reception start
+    341            * @param  Ack : Specifies the acknowledge mode to apply.
+    342            *         This parameter can be any of the  @ref I2C_Ack_TypeDef enumeration.
+    343            * @retval None
+    344            */
+
+   \                                 In section .far_func.text, align 1
+    345          void I2C_AcknowledgeConfig(I2C_Ack_TypeDef Ack)
+    346          {
+   \                     I2C_AcknowledgeConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    347            /* Check function parameters */
+    348            assert_param(IS_I2C_ACK_OK(Ack));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 1B        JREQ      L:??I2C_AcknowledgeConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 15        JREQ      L:??I2C_AcknowledgeConfig_0
+   \   00000F B6 ..        LD        A, S:?b8
+   \   000011 A1 02        CP        A, #0x2
+   \   000013 27 0F        JREQ      L:??I2C_AcknowledgeConfig_0
+   \   000015 AE 015C      LDW       X, #0x15c
+   \   000018 BF ..        LDW       S:?w1, X
+   \   00001A 5F           CLRW      X
+   \   00001B BF ..        LDW       S:?w0, X
+   \   00001D AE ....      LDW       X, #?_0
+   \   000020 8D ......    CALLF     assert_failed
+    349          
+    350            if (Ack == I2C_ACK_NONE)
+   \                     ??I2C_AcknowledgeConfig_0:
+   \   000024 3D ..        TNZ       S:?b8
+   \   000026 26 06        JRNE      L:??I2C_AcknowledgeConfig_1
+    351            {
+    352              /* Disable the acknowledgement */
+    353              I2C->CR2 &= (uint8_t)(~I2C_CR2_ACK);
+   \   000028 7215 5211    BRES      L:0x5211, #0x2
+   \   00002C 20 14        JRA       L:??I2C_AcknowledgeConfig_2
+    354            }
+    355            else
+    356            {
+    357              /* Enable the acknowledgement */
+    358              I2C->CR2 |= I2C_CR2_ACK;
+   \                     ??I2C_AcknowledgeConfig_1:
+   \   00002E 7214 5211    BSET      L:0x5211, #0x2
+    359          
+    360              if (Ack == I2C_ACK_CURR)
+   \   000032 B6 ..        LD        A, S:?b8
+   \   000034 A1 01        CP        A, #0x1
+   \   000036 26 06        JRNE      L:??I2C_AcknowledgeConfig_3
+    361              {
+    362                /* Configure (N)ACK on current byte */
+    363                I2C->CR2 &= (uint8_t)(~I2C_CR2_POS);
+   \   000038 7217 5211    BRES      L:0x5211, #0x3
+   \   00003C 20 04        JRA       L:??I2C_AcknowledgeConfig_2
+    364              }
+    365              else
+    366              {
+    367                /* Configure (N)ACK on next byte */
+    368                I2C->CR2 |= I2C_CR2_POS;
+   \                     ??I2C_AcknowledgeConfig_3:
+   \   00003E 7216 5211    BSET      L:0x5211, #0x3
+    369              }
+    370            }
+    371          }
+   \                     ??I2C_AcknowledgeConfig_2:
+   \   000042 32 ....      POP       S:?b8
+   \   000045 87           RETF
+    372          
+    373          /**
+    374            * @brief  Enables or disables the specified I2C interrupt.
+    375            * @param  I2C_IT : Name of the interrupt to enable or disable.
+    376            *         This parameter can be any of the  @ref I2C_IT_TypeDef enumeration.
+    377            * @param  NewState : State of the interrupt to apply.
+    378            *         This parameter can be any of the @ref FunctionalState enumeration.
+    379            * @retval None
+    380            */
+
+   \                                 In section .far_func.text, align 1
+    381          void I2C_ITConfig(I2C_IT_TypeDef I2C_IT, FunctionalState NewState)
+    382          {
+   \                     I2C_ITConfig:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 B7 ..        LD        S:?b9, A
+   \   000006 45 .. ..     MOV       S:?b8, S:?b0
+    383            /* Check functions parameters */
+    384            assert_param(IS_I2C_INTERRUPT_OK(I2C_IT));
+   \   000009 B6 ..        LD        A, S:?b9
+   \   00000B A1 01        CP        A, #0x1
+   \   00000D 27 33        JREQ      L:??I2C_ITConfig_0
+   \   00000F B6 ..        LD        A, S:?b9
+   \   000011 A1 02        CP        A, #0x2
+   \   000013 27 2D        JREQ      L:??I2C_ITConfig_0
+   \   000015 B6 ..        LD        A, S:?b9
+   \   000017 A1 04        CP        A, #0x4
+   \   000019 27 27        JREQ      L:??I2C_ITConfig_0
+   \   00001B B6 ..        LD        A, S:?b9
+   \   00001D A1 03        CP        A, #0x3
+   \   00001F 27 21        JREQ      L:??I2C_ITConfig_0
+   \   000021 B6 ..        LD        A, S:?b9
+   \   000023 A1 05        CP        A, #0x5
+   \   000025 27 1B        JREQ      L:??I2C_ITConfig_0
+   \   000027 B6 ..        LD        A, S:?b9
+   \   000029 A1 06        CP        A, #0x6
+   \   00002B 27 15        JREQ      L:??I2C_ITConfig_0
+   \   00002D B6 ..        LD        A, S:?b9
+   \   00002F A1 07        CP        A, #0x7
+   \   000031 27 0F        JREQ      L:??I2C_ITConfig_0
+   \   000033 AE 0180      LDW       X, #0x180
+   \   000036 BF ..        LDW       S:?w1, X
+   \   000038 5F           CLRW      X
+   \   000039 BF ..        LDW       S:?w0, X
+   \   00003B AE ....      LDW       X, #?_0
+   \   00003E 8D ......    CALLF     assert_failed
+    385            assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+   \                     ??I2C_ITConfig_0:
+   \   000042 3D ..        TNZ       S:?b8
+   \   000044 27 15        JREQ      L:??I2C_ITConfig_1
+   \   000046 B6 ..        LD        A, S:?b8
+   \   000048 A1 01        CP        A, #0x1
+   \   00004A 27 0F        JREQ      L:??I2C_ITConfig_1
+   \   00004C AE 0181      LDW       X, #0x181
+   \   00004F BF ..        LDW       S:?w1, X
+   \   000051 5F           CLRW      X
+   \   000052 BF ..        LDW       S:?w0, X
+   \   000054 AE ....      LDW       X, #?_0
+   \   000057 8D ......    CALLF     assert_failed
+    386          
+    387            if (NewState != DISABLE)
+   \                     ??I2C_ITConfig_1:
+   \   00005B 3D ..        TNZ       S:?b8
+   \   00005D 27 0A        JREQ      L:??I2C_ITConfig_2
+    388            {
+    389              /* Enable the selected I2C interrupts */
+    390              I2C->ITR |= (uint8_t)I2C_IT;
+   \   00005F C6 521A      LD        A, L:0x521a
+   \   000062 BA ..        OR        A, S:?b9
+   \   000064 C7 521A      LD        L:0x521a, A
+   \   000067 20 09        JRA       L:??I2C_ITConfig_3
+    391            }
+    392            else /* NewState == DISABLE */
+    393            {
+    394              /* Disable the selected I2C interrupts */
+    395              I2C->ITR &= (uint8_t)(~(uint8_t)I2C_IT);
+   \                     ??I2C_ITConfig_2:
+   \   000069 B6 ..        LD        A, S:?b9
+   \   00006B 43           CPL       A
+   \   00006C C4 521A      AND       A, L:0x521a
+   \   00006F C7 521A      LD        L:0x521a, A
+    396            }
+    397          }
+   \                     ??I2C_ITConfig_3:
+   \   000072 AC ......    JPF       L:?epilogue_w4
+    398          
+    399          /**
+    400            * @brief  Selects the specified I2C fast mode duty cycle.
+    401            * @param  I2C_DutyCycle : Specifies the duty cycle to apply.
+    402            *         This parameter can be any of the @ref I2C_DutyCycle_TypeDef enumeration.
+    403            * @retval None
+    404            */
+
+   \                                 In section .far_func.text, align 1
+    405          void I2C_FastModeDutyCycleConfig(I2C_DutyCycle_TypeDef I2C_DutyCycle)
+    406          {
+   \                     I2C_FastModeDutyCycleConfig:
+   \   000000 3B ....      PUSH      S:?b8
+   \   000003 B7 ..        LD        S:?b8, A
+    407            /* Check function parameters */
+    408            assert_param(IS_I2C_DUTYCYCLE_OK(I2C_DutyCycle));
+   \   000005 3D ..        TNZ       S:?b8
+   \   000007 27 15        JREQ      L:??I2C_FastModeDutyCycleConfig_0
+   \   000009 B6 ..        LD        A, S:?b8
+   \   00000B A1 40        CP        A, #0x40
+   \   00000D 27 0F        JREQ      L:??I2C_FastModeDutyCycleConfig_0
+   \   00000F AE 0198      LDW       X, #0x198
+   \   000012 BF ..        LDW       S:?w1, X
+   \   000014 5F           CLRW      X
+   \   000015 BF ..        LDW       S:?w0, X
+   \   000017 AE ....      LDW       X, #?_0
+   \   00001A 8D ......    CALLF     assert_failed
+    409          
+    410            if (I2C_DutyCycle == I2C_DUTYCYCLE_16_9)
+   \                     ??I2C_FastModeDutyCycleConfig_0:
+   \   00001E B6 ..        LD        A, S:?b8
+   \   000020 A1 40        CP        A, #0x40
+   \   000022 26 06        JRNE      L:??I2C_FastModeDutyCycleConfig_1
+    411            {
+    412              /* I2C fast mode Tlow/Thigh = 16/9 */
+    413              I2C->CCRH |= I2C_CCRH_DUTY;
+   \   000024 721C 521C    BSET      L:0x521c, #0x6
+   \   000028 20 04        JRA       L:??I2C_FastModeDutyCycleConfig_2
+    414            }
+    415            else /* I2C_DUTYCYCLE_2 */
+    416            {
+    417              /* I2C fast mode Tlow/Thigh = 2 */
+    418              I2C->CCRH &= (uint8_t)(~I2C_CCRH_DUTY);
+   \                     ??I2C_FastModeDutyCycleConfig_1:
+   \   00002A 721D 521C    BRES      L:0x521c, #0x6
+    419            }
+    420          }
+   \                     ??I2C_FastModeDutyCycleConfig_2:
+   \   00002E 32 ....      POP       S:?b8
+   \   000031 87           RETF
+    421          
+    422          /**
+    423            * @brief  Returns the most recent received data.
+    424            * @param  None
+    425            * @retval uint8_t : The value of the received byte data.
+    426            */
+
+   \                                 In section .far_func.text, align 1
+    427          uint8_t I2C_ReceiveData(void)
+    428          {
+    429            /* Return the data present in the DR register */
+    430            return ((uint8_t)I2C->DR);
+   \                     I2C_ReceiveData:
+   \   000000 C6 5216      LD        A, L:0x5216
+   \   000003 87           RETF
+    431          }
+    432          
+    433          /**
+    434            * @brief  Transmits the 7-bit address (to select the) slave device.
+    435            * @param   Address : Specifies the slave address which will be transmitted.
+    436            * @param   Direction : Specifies whether the I2C device will be a Transmitter or a Receiver.
+    437            * This parameter can be any of the @ref I2C_Direction_TypeDef enumeration.
+    438            * @retval None
+    439            */
+
+   \                                 In section .far_func.text, align 1
+    440          void I2C_Send7bitAddress(uint8_t Address, I2C_Direction_TypeDef Direction)
+    441          {
+   \                     I2C_Send7bitAddress:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 B7 ..        LD        S:?b9, A
+   \   000006 45 .. ..     MOV       S:?b8, S:?b0
+    442            /* Check function parameters */
+    443            assert_param(IS_I2C_ADDRESS_OK(Address));
+   \   000009 B6 ..        LD        A, S:?b9
+   \   00000B A4 01        AND       A, #0x1
+   \   00000D A1 00        CP        A, #0x0
+   \   00000F 27 0F        JREQ      L:??I2C_Send7bitAddress_0
+   \   000011 AE 01BB      LDW       X, #0x1bb
+   \   000014 BF ..        LDW       S:?w1, X
+   \   000016 5F           CLRW      X
+   \   000017 BF ..        LDW       S:?w0, X
+   \   000019 AE ....      LDW       X, #?_0
+   \   00001C 8D ......    CALLF     assert_failed
+    444            assert_param(IS_I2C_DIRECTION_OK(Direction));
+   \                     ??I2C_Send7bitAddress_0:
+   \   000020 3D ..        TNZ       S:?b8
+   \   000022 27 15        JREQ      L:??I2C_Send7bitAddress_1
+   \   000024 B6 ..        LD        A, S:?b8
+   \   000026 A1 01        CP        A, #0x1
+   \   000028 27 0F        JREQ      L:??I2C_Send7bitAddress_1
+   \   00002A AE 01BC      LDW       X, #0x1bc
+   \   00002D BF ..        LDW       S:?w1, X
+   \   00002F 5F           CLRW      X
+   \   000030 BF ..        LDW       S:?w0, X
+   \   000032 AE ....      LDW       X, #?_0
+   \   000035 8D ......    CALLF     assert_failed
+    445          
+    446            /* Clear bit0 (direction) just in case */
+    447            Address &= (uint8_t)0xFE;
+   \                     ??I2C_Send7bitAddress_1:
+   \   000039 B6 ..        LD        A, S:?b9
+   \   00003B A4 FE        AND       A, #0xfe
+   \   00003D B7 ..        LD        S:?b9, A
+    448          
+    449            /* Send the Address + Direction */
+    450            I2C->DR = (uint8_t)(Address | (uint8_t)Direction);
+   \   00003F B6 ..        LD        A, S:?b8
+   \   000041 BA ..        OR        A, S:?b9
+   \   000043 C7 5216      LD        L:0x5216, A
+    451          }
+   \   000046 AC ......    JPF       L:?epilogue_w4
+    452          
+    453          /**
+    454            * @brief  Send a byte by writing in the DR register.
+    455            * @param   Data : Byte to be sent.
+    456            * @retval None
+    457            */
+
+   \                                 In section .far_func.text, align 1
+    458          void I2C_SendData(uint8_t Data)
+    459          {
+    460            /* Write in the DR register the data to be sent */
+    461            I2C->DR = Data;
+   \                     I2C_SendData:
+   \   000000 C7 5216      LD        L:0x5216, A
+    462          }
+   \   000003 87           RETF
+    463          
+    464          /**
+    465           * @brief
+    466           ****************************************************************************************
+    467           *
+    468           *                         I2C State Monitoring Functions
+    469           *
+    470           ****************************************************************************************
+    471           * This I2C driver provides three different ways for I2C state monitoring
+    472           *  depending on the application requirements and constraints:
+    473           *
+    474           *
+    475           * 1) Basic state monitoring:
+    476           *    Using I2C_CheckEvent() function:
+    477           *    It compares the status registers (SR1, SR2 and SR3) content to a given event
+    478           *    (can be the combination of one or more flags).
+    479           *    It returns SUCCESS if the current status includes the given flags
+    480           *    and returns ERROR if one or more flags are missing in the current status.
+    481           *    - When to use:
+    482           *      - This function is suitable for most applications as well as for startup
+    483           *      activity since the events are fully described in the product reference manual
+    484           *      (RM0016).
+    485           *      - It is also suitable for users who need to define their own events.
+    486           *    - Limitations:
+    487           *      - If an error occurs (ie. error flags are set besides to the monitored flags),
+    488           *        the I2C_CheckEvent() function may return SUCCESS despite the communication
+    489           *        hold or corrupted real state.
+    490           *        In this case, it is advised to use error interrupts to monitor the error
+    491           *        events and handle them in the interrupt IRQ handler.
+    492           *
+    493           *        @note
+    494           *        For error management, it is advised to use the following functions:
+    495           *          - I2C_ITConfig() to configure and enable the error interrupts (I2C_IT_ERR).
+    496           *          - I2C_IRQHandler() which is called when the I2C interrupts occur.
+    497           *          - I2C_GetFlagStatus() or I2C_GetITStatus() to be called into the
+    498           *           I2C_IRQHandler() function in order to determine which error occurred.
+    499           *          - I2C_ClearFlag() or I2C_ClearITPendingBit() and/or I2C_SoftwareResetCmd()
+    500           *            and/or I2C_GenerateStop() in order to clear the error flag and
+    501           *            source and return to correct communication status.
+    502           *
+    503           *
+    504           *  2) Advanced state monitoring:
+    505           *     Using the function I2C_GetLastEvent() which returns the image of both SR1
+    506           *     & SR3 status registers in a single word (uint16_t) (Status Register 3 value
+    507           *     is shifted left by 8 bits and concatenated to Status Register 1).
+    508           *     - When to use:
+    509           *       - This function is suitable for the same applications above but it allows to
+    510           *         overcome the limitations of I2C_GetFlagStatus() function (see below).
+    511           *         The returned value could be compared to events already defined in the
+    512           *         library (stm8s_i2c.h) or to custom values defined by user.
+    513           *       - This function is suitable when multiple flags are monitored at the same time.
+    514           *       - At the opposite of I2C_CheckEvent() function, this function allows user to
+    515           *         choose when an event is accepted (when all events flags are set and no
+    516           *         other flags are set or just when the needed flags are set like
+    517           *         I2C_CheckEvent() function).
+    518           *     - Limitations:
+    519           *       - User may need to define his own events.
+    520           *       - Same remark concerning the error management is applicable for this
+    521           *         function if user decides to check only regular communication flags (and
+    522           *         ignores error flags).
+    523           *
+    524           *
+    525           *  3) Flag-based state monitoring:
+    526           *     Using the function I2C_GetFlagStatus() which simply returns the status of
+    527           *     one single flag (ie. I2C_FLAG_RXNE ...).
+    528           *     - When to use:
+    529           *        - This function could be used for specific applications or in debug phase.
+    530           *        - It is suitable when only one flag checking is needed (most I2C events
+    531           *          are monitored through multiple flags).
+    532           *     - Limitations:
+    533           *        - When calling this function, the Status register is accessed. Some flags are
+    534           *          cleared when the status register is accessed. So checking the status
+    535           *          of one Flag, may clear other ones.
+    536           *        - Function may need to be called twice or more in order to monitor one
+    537           *          single event.
+    538           *
+    539           *  For detailed description of Events, please refer to section I2C_Events in
+    540           *  stm8s_i2c.h file.
+    541           *
+    542           */
+    543          /**
+    544           *
+    545           *  1) Basic state monitoring
+    546           *******************************************************************************
+    547           */
+    548          
+    549          /**
+    550            * @brief  Checks whether the last I2C Event is equal to the one passed
+    551            *   as parameter.
+    552            * @param  I2C_Event: specifies the event to be checked.
+    553            *   This parameter can be one of the following values:
+    554            *     @arg I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED           : EV1
+    555            *     @arg I2C_EVENT_SLAVE_RECEIVER_ADDRESS_MATCHED              : EV1
+    556            *     @arg I2C_EVENT_SLAVE_GENERALCALLADDRESS_MATCHED            : EV1
+    557            *     @arg I2C_EVENT_SLAVE_BYTE_RECEIVED                         : EV2
+    558            *     @arg (I2C_EVENT_SLAVE_BYTE_RECEIVED | I2C_FLAG_GENCALL)    : EV2
+    559            *     @arg I2C_EVENT_SLAVE_BYTE_TRANSMITTED                      : EV3
+    560            *     @arg (I2C_EVENT_SLAVE_BYTE_TRANSMITTED | I2C_FLAG_GENCALL) : EV3
+    561            *     @arg I2C_EVENT_SLAVE_ACK_FAILURE                           : EV3_2
+    562            *     @arg I2C_EVENT_SLAVE_STOP_DETECTED                         : EV4
+    563            *     @arg I2C_EVENT_MASTER_MODE_SELECT                          : EV5
+    564            *     @arg I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED            : EV6
+    565            *     @arg I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED               : EV6
+    566            *     @arg I2C_EVENT_MASTER_BYTE_RECEIVED                        : EV7
+    567            *     @arg I2C_EVENT_MASTER_BYTE_TRANSMITTING                    : EV8
+    568            *     @arg I2C_EVENT_MASTER_BYTE_TRANSMITTED                     : EV8_2
+    569            *     @arg I2C_EVENT_MASTER_MODE_ADDRESS10                       : EV9
+    570            *
+    571            * @note: For detailed description of Events, please refer to section
+    572            *    I2C_Events in stm8s_i2c.h file.
+    573            *
+    574            * @retval An ErrorStatus enumeration value:
+    575            * - SUCCESS: Last event is equal to the I2C_EVENT
+    576            * - ERROR: Last event is different from the I2C_EVENT
+    577            */
+
+   \                                 In section .far_func.text, align 1
+    578          ErrorStatus I2C_CheckEvent(I2C_Event_TypeDef I2C_Event)
+    579          {
+   \                     I2C_CheckEvent:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 3B ....      PUSH      S:?b12
+   \   000007 52 02        SUB       SP, #0x2
+   \   000009 BF ..        LDW       S:?w4, X
+    580            __IO uint16_t lastevent = 0x00;
+   \   00000B 5F           CLRW      X
+   \   00000C 1F 01        LDW       (0x1,SP), X
+    581            uint8_t flag1 = 0x00 ;
+   \   00000E 3F ..        CLR       S:?b11
+    582            uint8_t flag2 = 0x00;
+   \   000010 3F ..        CLR       S:?b10
+    583            ErrorStatus status = ERROR;
+   \   000012 3F ..        CLR       S:?b12
+    584          
+    585            /* Check the parameters */
+    586            assert_param(IS_I2C_EVENT_OK(I2C_Event));
+   \   000014 BE ..        LDW       X, S:?w4
+   \   000016 A3 0682      CPW       X, #0x682
+   \   000019 27 78        JREQ      L:??I2C_CheckEvent_0
+   \   00001B BE ..        LDW       X, S:?w4
+   \   00001D A3 0202      CPW       X, #0x202
+   \   000020 27 71        JREQ      L:??I2C_CheckEvent_0
+   \   000022 BE ..        LDW       X, S:?w4
+   \   000024 A3 1200      CPW       X, #0x1200
+   \   000027 27 6A        JREQ      L:??I2C_CheckEvent_0
+   \   000029 BE ..        LDW       X, S:?w4
+   \   00002B A3 0240      CPW       X, #0x240
+   \   00002E 27 63        JREQ      L:??I2C_CheckEvent_0
+   \   000030 BE ..        LDW       X, S:?w4
+   \   000032 A3 0350      CPW       X, #0x350
+   \   000035 27 5C        JREQ      L:??I2C_CheckEvent_0
+   \   000037 BE ..        LDW       X, S:?w4
+   \   000039 A3 0684      CPW       X, #0x684
+   \   00003C 27 55        JREQ      L:??I2C_CheckEvent_0
+   \   00003E BE ..        LDW       X, S:?w4
+   \   000040 A3 0794      CPW       X, #0x794
+   \   000043 27 4E        JREQ      L:??I2C_CheckEvent_0
+   \   000045 BE ..        LDW       X, S:?w4
+   \   000047 A3 0004      CPW       X, #0x4
+   \   00004A 27 47        JREQ      L:??I2C_CheckEvent_0
+   \   00004C BE ..        LDW       X, S:?w4
+   \   00004E A3 0010      CPW       X, #0x10
+   \   000051 27 40        JREQ      L:??I2C_CheckEvent_0
+   \   000053 BE ..        LDW       X, S:?w4
+   \   000055 A3 0301      CPW       X, #0x301
+   \   000058 27 39        JREQ      L:??I2C_CheckEvent_0
+   \   00005A BE ..        LDW       X, S:?w4
+   \   00005C A3 0782      CPW       X, #0x782
+   \   00005F 27 32        JREQ      L:??I2C_CheckEvent_0
+   \   000061 BE ..        LDW       X, S:?w4
+   \   000063 A3 0302      CPW       X, #0x302
+   \   000066 27 2B        JREQ      L:??I2C_CheckEvent_0
+   \   000068 BE ..        LDW       X, S:?w4
+   \   00006A A3 0340      CPW       X, #0x340
+   \   00006D 27 24        JREQ      L:??I2C_CheckEvent_0
+   \   00006F BE ..        LDW       X, S:?w4
+   \   000071 A3 0784      CPW       X, #0x784
+   \   000074 27 1D        JREQ      L:??I2C_CheckEvent_0
+   \   000076 BE ..        LDW       X, S:?w4
+   \   000078 A3 0780      CPW       X, #0x780
+   \   00007B 27 16        JREQ      L:??I2C_CheckEvent_0
+   \   00007D BE ..        LDW       X, S:?w4
+   \   00007F A3 0308      CPW       X, #0x308
+   \   000082 27 0F        JREQ      L:??I2C_CheckEvent_0
+   \   000084 AE 024A      LDW       X, #0x24a
+   \   000087 BF ..        LDW       S:?w1, X
+   \   000089 5F           CLRW      X
+   \   00008A BF ..        LDW       S:?w0, X
+   \   00008C AE ....      LDW       X, #?_0
+   \   00008F 8D ......    CALLF     assert_failed
+    587          
+    588            if (I2C_Event == I2C_EVENT_SLAVE_ACK_FAILURE)
+   \                     ??I2C_CheckEvent_0:
+   \   000093 BE ..        LDW       X, S:?w4
+   \   000095 A3 0004      CPW       X, #0x4
+   \   000098 26 0B        JRNE      L:??I2C_CheckEvent_1
+    589            {
+    590              lastevent = I2C->SR2 & I2C_SR2_AF;
+   \   00009A C6 5218      LD        A, L:0x5218
+   \   00009D A4 04        AND       A, #0x4
+   \   00009F 5F           CLRW      X
+   \   0000A0 97           LD        XL, A
+   \   0000A1 1F 01        LDW       (0x1,SP), X
+   \   0000A3 20 1E        JRA       L:??I2C_CheckEvent_2
+    591            }
+    592            else
+    593            {
+    594              flag1 = I2C->SR1;
+   \                     ??I2C_CheckEvent_1:
+   \   0000A5 C6 5217      LD        A, L:0x5217
+   \   0000A8 B7 ..        LD        S:?b11, A
+    595              flag2 = I2C->SR3;
+   \   0000AA C6 5219      LD        A, L:0x5219
+   \   0000AD B7 ..        LD        S:?b10, A
+    596              lastevent = ((uint16_t)((uint16_t)flag2 << (uint16_t)8) | (uint16_t)flag1);
+   \   0000AF 5F           CLRW      X
+   \   0000B0 B6 ..        LD        A, S:?b10
+   \   0000B2 97           LD        XL, A
+   \   0000B3 4F           CLR       A
+   \   0000B4 02           RLWA      X, A
+   \   0000B5 3F ..        CLR       S:?b0
+   \   0000B7 45 .. ..     MOV       S:?b1, S:?b11
+   \   0000BA 01           RRWA      X, A
+   \   0000BB BA ..        OR        A, S:?b1
+   \   0000BD 01           RRWA      X, A
+   \   0000BE BA ..        OR        A, S:?b0
+   \   0000C0 01           RRWA      X, A
+   \   0000C1 1F 01        LDW       (0x1,SP), X
+    597            }
+    598            /* Check whether the last event is equal to I2C_EVENT */
+    599            if (((uint16_t)lastevent & (uint16_t)I2C_Event) == (uint16_t)I2C_Event)
+   \                     ??I2C_CheckEvent_2:
+   \   0000C3 1E 01        LDW       X, (0x1,SP)
+   \   0000C5 01           RRWA      X, A
+   \   0000C6 B4 ..        AND       A, S:?b9
+   \   0000C8 01           RRWA      X, A
+   \   0000C9 B4 ..        AND       A, S:?b8
+   \   0000CB 01           RRWA      X, A
+   \   0000CC B3 ..        CPW       X, S:?w4
+   \   0000CE 26 06        JRNE      L:??I2C_CheckEvent_3
+    600            {
+    601              /* SUCCESS: last event is equal to I2C_EVENT */
+    602              status = SUCCESS;
+   \   0000D0 A6 01        LD        A, #0x1
+   \   0000D2 B7 ..        LD        S:?b12, A
+   \   0000D4 20 02        JRA       L:??I2C_CheckEvent_4
+    603            }
+    604            else
+    605            {
+    606              /* ERROR: last event is different from I2C_EVENT */
+    607              status = ERROR;
+   \                     ??I2C_CheckEvent_3:
+   \   0000D6 3F ..        CLR       S:?b12
+    608            }
+    609          
+    610            /* Return status */
+    611            return status;
+   \                     ??I2C_CheckEvent_4:
+   \   0000D8 B6 ..        LD        A, S:?b12
+   \   0000DA 5B 02        ADD       SP, #0x2
+   \   0000DC 32 ....      POP       S:?b12
+   \   0000DF AC ......    JPF       L:?epilogue_l2
+    612          }
+    613          
+    614          /**
+    615           *
+    616           *  2) Advanced state monitoring
+    617           *******************************************************************************
+    618           */
+    619          /**
+    620            * @brief  Returns the last I2C Event.
+    621            *
+    622            * @note: For detailed description of Events, please refer to section
+    623            *    I2C_Events in stm8s_i2c.h file.
+    624            *
+    625            * @retval The last event
+    626            *   This parameter can be any of the  @ref I2C_Event_TypeDef enumeration.
+    627            */
+
+   \                                 In section .far_func.text, align 1
+    628          I2C_Event_TypeDef I2C_GetLastEvent(void)
+    629          {
+   \                     I2C_GetLastEvent:
+   \   000000 52 02        SUB       SP, #0x2
+    630            __IO uint16_t lastevent = 0;
+   \   000002 5F           CLRW      X
+   \   000003 1F 01        LDW       (0x1,SP), X
+    631            uint16_t flag1 = 0;
+   \   000005 3F ..        CLR       S:?b1
+   \   000007 3F ..        CLR       S:?b0
+    632            uint16_t flag2 = 0;
+   \   000009 905F         CLRW      Y
+    633          
+    634            if ((I2C->SR2 & I2C_SR2_AF) != 0x00)
+   \   00000B 7205 5218 07 BTJF      L:0x5218, #0x2, L:??I2C_GetLastEvent_0
+    635            {
+    636              lastevent = I2C_EVENT_SLAVE_ACK_FAILURE;
+   \   000010 AE 0004      LDW       X, #0x4
+   \   000013 1F 01        LDW       (0x1,SP), X
+   \   000015 20 1A        JRA       L:??I2C_GetLastEvent_1
+    637            }
+    638            else
+    639            {
+    640              /* Read the I2C status register */
+    641              flag1 = I2C->SR1;
+   \                     ??I2C_GetLastEvent_0:
+   \   000017 C6 5217      LD        A, L:0x5217
+   \   00001A 5F           CLRW      X
+   \   00001B 97           LD        XL, A
+   \   00001C BF ..        LDW       S:?w0, X
+    642              flag2 = I2C->SR3;
+   \   00001E C6 5219      LD        A, L:0x5219
+   \   000021 5F           CLRW      X
+   \   000022 97           LD        XL, A
+   \   000023 9093         LDW       Y, X
+    643          
+    644              /* Get the last event value from I2C status register */
+    645              lastevent = ((uint16_t)((uint16_t)flag2 << 8) | (uint16_t)flag1);
+   \   000025 93           LDW       X, Y
+   \   000026 4F           CLR       A
+   \   000027 02           RLWA      X, A
+   \   000028 01           RRWA      X, A
+   \   000029 BA ..        OR        A, S:?b1
+   \   00002B 01           RRWA      X, A
+   \   00002C BA ..        OR        A, S:?b0
+   \   00002E 01           RRWA      X, A
+   \   00002F 1F 01        LDW       (0x1,SP), X
+    646            }
+    647            /* Return status */
+    648            return (I2C_Event_TypeDef)lastevent;
+   \                     ??I2C_GetLastEvent_1:
+   \   000031 1E 01        LDW       X, (0x1,SP)
+   \   000033 5B 02        ADD       SP, #0x2
+   \   000035 87           RETF
+    649          }
+    650          
+    651          /**
+    652           *
+    653           *  3) Flag-based state monitoring
+    654           *******************************************************************************
+    655           */
+    656          /**
+    657            * @brief  Checks whether the specified I2C flag is set or not.
+    658            * @param  I2C_Flag: specifies the flag to check.
+    659            *   This parameter can be one of the following values:
+    660            *     @arg I2C_FLAG_GENERALCALL: General call header flag (Slave mode)
+    661            *     @arg I2C_FLAG_TRANSMITTERRECEIVER: Transmitter/Receiver flag
+    662            *     @arg I2C_FLAG_BUSBUSY: Bus busy flag
+    663            *     @arg I2C_FLAG_MASTERSLAVE: Master/Slave flag
+    664            *     @arg I2C_FLAG_WAKEUPFROMHALT: Wake up from HALT flag  
+    665            *     @arg I2C_FLAG_OVERRUNUNDERRUN: Overrun/Underrun flag (Slave mode)
+    666            *     @arg I2C_FLAG_ACKNOWLEDGEFAILURE: Acknowledge failure flag
+    667            *     @arg I2C_FLAG_ARBITRATIONLOSS: Arbitration lost flag (Master mode)
+    668            *     @arg I2C_FLAG_BUSERROR: Bus error flag
+    669            *     @arg I2C_FLAG_TXEMPTY: Data register empty flag (Transmitter)
+    670            *     @arg I2C_FLAG_RXNOTEMPTY: Data register not empty (Receiver) flag
+    671            *     @arg I2C_FLAG_STOPDETECTION: Stop detection flag (Slave mode)
+    672            *     @arg I2C_FLAG_HEADERSENT: 10-bit header sent flag (Master mode)
+    673            *     @arg I2C_FLAG_TRANSFERFINISHED: Byte transfer finished flag
+    674            *     @arg I2C_FLAG_ADDRESSSENTMATCHED: Address sent flag (Master mode) “ADSL”
+    675            *   Address matched flag (Slave mode)”ENDAD”
+    676            *     @arg I2C_FLAG_STARTDETECTION: Start bit flag (Master mode)
+    677            * @retval The new state of I2C_FLAG (SET or RESET).
+    678            */
+
+   \                                 In section .far_func.text, align 1
+    679          FlagStatus I2C_GetFlagStatus(I2C_Flag_TypeDef I2C_Flag)
+    680          {
+   \                     I2C_GetFlagStatus:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 3B ....      PUSH      S:?b12
+   \   000007 BF ..        LDW       S:?w4, X
+    681            uint8_t tempreg = 0;
+   \   000009 3F ..        CLR       S:?b12
+    682            uint8_t regindex = 0;
+   \   00000B 3F ..        CLR       S:?b11
+    683            FlagStatus bitstatus = RESET;
+   \   00000D 3F ..        CLR       S:?b10
+    684          
+    685            /* Check the parameters */
+    686            assert_param(IS_I2C_FLAG_OK(I2C_Flag));
+   \   00000F BE ..        LDW       X, S:?w4
+   \   000011 A3 0180      CPW       X, #0x180
+   \   000014 27 78        JREQ      L:??I2C_GetFlagStatus_0
+   \   000016 BE ..        LDW       X, S:?w4
+   \   000018 A3 0140      CPW       X, #0x140
+   \   00001B 27 71        JREQ      L:??I2C_GetFlagStatus_0
+   \   00001D BE ..        LDW       X, S:?w4
+   \   00001F A3 0110      CPW       X, #0x110
+   \   000022 27 6A        JREQ      L:??I2C_GetFlagStatus_0
+   \   000024 BE ..        LDW       X, S:?w4
+   \   000026 A3 0108      CPW       X, #0x108
+   \   000029 27 63        JREQ      L:??I2C_GetFlagStatus_0
+   \   00002B BE ..        LDW       X, S:?w4
+   \   00002D A3 0104      CPW       X, #0x104
+   \   000030 27 5C        JREQ      L:??I2C_GetFlagStatus_0
+   \   000032 BE ..        LDW       X, S:?w4
+   \   000034 A3 0102      CPW       X, #0x102
+   \   000037 27 55        JREQ      L:??I2C_GetFlagStatus_0
+   \   000039 BE ..        LDW       X, S:?w4
+   \   00003B A3 0101      CPW       X, #0x101
+   \   00003E 27 4E        JREQ      L:??I2C_GetFlagStatus_0
+   \   000040 BE ..        LDW       X, S:?w4
+   \   000042 A3 0220      CPW       X, #0x220
+   \   000045 27 47        JREQ      L:??I2C_GetFlagStatus_0
+   \   000047 BE ..        LDW       X, S:?w4
+   \   000049 A3 0208      CPW       X, #0x208
+   \   00004C 27 40        JREQ      L:??I2C_GetFlagStatus_0
+   \   00004E BE ..        LDW       X, S:?w4
+   \   000050 A3 0204      CPW       X, #0x204
+   \   000053 27 39        JREQ      L:??I2C_GetFlagStatus_0
+   \   000055 BE ..        LDW       X, S:?w4
+   \   000057 A3 0202      CPW       X, #0x202
+   \   00005A 27 32        JREQ      L:??I2C_GetFlagStatus_0
+   \   00005C BE ..        LDW       X, S:?w4
+   \   00005E A3 0201      CPW       X, #0x201
+   \   000061 27 2B        JREQ      L:??I2C_GetFlagStatus_0
+   \   000063 BE ..        LDW       X, S:?w4
+   \   000065 A3 0310      CPW       X, #0x310
+   \   000068 27 24        JREQ      L:??I2C_GetFlagStatus_0
+   \   00006A BE ..        LDW       X, S:?w4
+   \   00006C A3 0304      CPW       X, #0x304
+   \   00006F 27 1D        JREQ      L:??I2C_GetFlagStatus_0
+   \   000071 BE ..        LDW       X, S:?w4
+   \   000073 A3 0302      CPW       X, #0x302
+   \   000076 27 16        JREQ      L:??I2C_GetFlagStatus_0
+   \   000078 BE ..        LDW       X, S:?w4
+   \   00007A A3 0301      CPW       X, #0x301
+   \   00007D 27 0F        JREQ      L:??I2C_GetFlagStatus_0
+   \   00007F AE 02AE      LDW       X, #0x2ae
+   \   000082 BF ..        LDW       S:?w1, X
+   \   000084 5F           CLRW      X
+   \   000085 BF ..        LDW       S:?w0, X
+   \   000087 AE ....      LDW       X, #?_0
+   \   00008A 8D ......    CALLF     assert_failed
+    687          
+    688            /* Read flag register index */
+    689            regindex = (uint8_t)((uint16_t)I2C_Flag >> 8);
+   \                     ??I2C_GetFlagStatus_0:
+   \   00008E 45 .. ..     MOV       S:?b11, S:?b8
+    690            /* Check SRx index */
+    691            switch (regindex)
+   \   000091 B6 ..        LD        A, S:?b11
+   \   000093 4A           DEC       A
+   \   000094 27 08        JREQ      L:??I2C_GetFlagStatus_1
+   \   000096 4A           DEC       A
+   \   000097 27 0C        JREQ      L:??I2C_GetFlagStatus_2
+   \   000099 4A           DEC       A
+   \   00009A 27 10        JREQ      L:??I2C_GetFlagStatus_3
+   \   00009C 20 15        JRA       L:??I2C_GetFlagStatus_4
+    692            {
+    693                /* Returns whether the status register to check is SR1 */
+    694              case 0x01:
+    695                tempreg = (uint8_t)I2C->SR1;
+   \                     ??I2C_GetFlagStatus_1:
+   \   00009E C6 5217      LD        A, L:0x5217
+   \   0000A1 B7 ..        LD        S:?b12, A
+    696                break;
+   \   0000A3 20 0E        JRA       L:??I2C_GetFlagStatus_5
+    697          
+    698                /* Returns whether the status register to check is SR2 */
+    699              case 0x02:
+    700                tempreg = (uint8_t)I2C->SR2;
+   \                     ??I2C_GetFlagStatus_2:
+   \   0000A5 C6 5218      LD        A, L:0x5218
+   \   0000A8 B7 ..        LD        S:?b12, A
+    701                break;
+   \   0000AA 20 07        JRA       L:??I2C_GetFlagStatus_5
+    702          
+    703                /* Returns whether the status register to check is SR3 */
+    704              case 0x03:
+    705                tempreg = (uint8_t)I2C->SR3;
+   \                     ??I2C_GetFlagStatus_3:
+   \   0000AC C6 5219      LD        A, L:0x5219
+   \   0000AF B7 ..        LD        S:?b12, A
+    706                break;
+   \   0000B1 20 00        JRA       L:??I2C_GetFlagStatus_5
+    707          
+    708              default:
+    709                break;
+    710            }
+    711          
+    712            /* Check the status of the specified I2C flag */
+    713            if ((tempreg & (uint8_t)I2C_Flag ) != 0)
+   \                     ??I2C_GetFlagStatus_4:
+   \                     ??I2C_GetFlagStatus_5:
+   \   0000B3 B6 ..        LD        A, S:?b9
+   \   0000B5 B4 ..        AND       A, S:?b12
+   \   0000B7 A1 00        CP        A, #0x0
+   \   0000B9 27 06        JREQ      L:??I2C_GetFlagStatus_6
+    714            {
+    715              /* Flag is set */
+    716              bitstatus = SET;
+   \   0000BB A6 01        LD        A, #0x1
+   \   0000BD B7 ..        LD        S:?b10, A
+   \   0000BF 20 02        JRA       L:??I2C_GetFlagStatus_7
+    717            }
+    718            else
+    719            {
+    720              /* Flag is reset */
+    721              bitstatus = RESET;
+   \                     ??I2C_GetFlagStatus_6:
+   \   0000C1 3F ..        CLR       S:?b10
+    722            }
+    723            /* Return the flag status */
+    724            return bitstatus;
+   \                     ??I2C_GetFlagStatus_7:
+   \   0000C3 B6 ..        LD        A, S:?b10
+   \   0000C5 32 ....      POP       S:?b12
+   \   0000C8 AC ......    JPF       L:?epilogue_l2
+    725          }
+    726          
+    727          /**
+    728            * @brief  Clear flags
+    729            * @param  I2C_FLAG : Specifies the flag to clear
+    730            *   This parameter can be any combination of the following values:
+    731            *                       - I2C_FLAG_WAKEUPFROMHALT: Wakeup from Halt
+    732            *                       - I2C_FLAG_OVERRUNUNDERRUN: Overrun/Underrun flag (Slave mode)
+    733            *                       - I2C_FLAG_ACKNOWLEDGEFAILURE: Acknowledge failure flag
+    734            *                       - I2C_FLAG_ARBITRATIONLOSS: Arbitration lost flag (Master mode)
+    735            *                       - I2C_FLAG_BUSERROR: Bus error flag.
+    736            * @note Notes:
+    737            *                       - STOPF (STOP detection) is cleared by software
+    738            *                         sequence: a read operation to I2C_SR1 register
+    739            *                         (I2C_GetFlagStatus()) followed by a write operation
+    740            *                         to I2C_CR2 register.
+    741            *                       - ADD10 (10-bit header sent) is cleared by software
+    742            *                         sequence: a read operation to I2C_SR1
+    743            *                         (I2C_GetFlagStatus()) followed by writing the
+    744            *                         second byte of the address in DR register.
+    745            *                       - BTF (Byte Transfer Finished) is cleared by software
+    746            *                         sequence: a read operation to I2C_SR1 register
+    747            *                         (I2C_GetFlagStatus()) followed by a read/write to
+    748            *                         I2C_DR register (I2C_SendData()).
+    749            *                       - ADDR (Address sent) is cleared by software sequence:
+    750            *                         a read operation to I2C_SR1 register
+    751            *                         (I2C_GetFlagStatus()) followed by a read operation to
+    752            *                         I2C_SR3 register ((void)(I2C->SR3)).
+    753            *                       - SB (Start Bit) is cleared software sequence: a read
+    754            *                         operation to I2C_SR1 register (I2C_GetFlagStatus())
+    755            *                         followed by a write operation to I2C_DR register
+    756            *                         (I2C_SendData()).
+    757            * @retval None
+    758            */
+
+   \                                 In section .far_func.text, align 1
+    759          void I2C_ClearFlag(I2C_Flag_TypeDef I2C_FLAG)
+    760          {
+   \                     I2C_ClearFlag:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 BF ..        LDW       S:?w4, X
+    761            uint16_t flagpos = 0;
+   \   000006 3F ..        CLR       S:?b11
+   \   000008 3F ..        CLR       S:?b10
+    762            /* Check the parameters */
+    763            assert_param(IS_I2C_CLEAR_FLAG_OK(I2C_FLAG));
+   \   00000A BE ..        LDW       X, S:?w4
+   \   00000C 02           RLWA      X, A
+   \   00000D A4 FD        AND       A, #0xfd
+   \   00000F 02           RLWA      X, A
+   \   000010 A4 00        AND       A, #0x0
+   \   000012 02           RLWA      X, A
+   \   000013 5D           TNZW      X
+   \   000014 26 05        JRNE      L:??I2C_ClearFlag_0
+   \   000016 BE ..        LDW       X, S:?w4
+   \   000018 5D           TNZW      X
+   \   000019 26 0F        JRNE      L:??I2C_ClearFlag_1
+   \                     ??I2C_ClearFlag_0:
+   \   00001B AE 02FB      LDW       X, #0x2fb
+   \   00001E BF ..        LDW       S:?w1, X
+   \   000020 5F           CLRW      X
+   \   000021 BF ..        LDW       S:?w0, X
+   \   000023 AE ....      LDW       X, #?_0
+   \   000026 8D ......    CALLF     assert_failed
+    764          
+    765            /* Get the I2C flag position */
+    766            flagpos = (uint16_t)I2C_FLAG & FLAG_Mask;
+   \                     ??I2C_ClearFlag_1:
+   \   00002A BE ..        LDW       X, S:?w4
+   \   00002C 02           RLWA      X, A
+   \   00002D A4 00        AND       A, #0x0
+   \   00002F 02           RLWA      X, A
+   \   000030 A4 FF        AND       A, #0xff
+   \   000032 02           RLWA      X, A
+   \   000033 BF ..        LDW       S:?w5, X
+    767            /* Clear the selected I2C flag */
+    768            I2C->SR2 = (uint8_t)((uint16_t)(~flagpos));
+   \   000035 B6 ..        LD        A, S:?b11
+   \   000037 43           CPL       A
+   \   000038 C7 5218      LD        L:0x5218, A
+    769          }
+   \   00003B AC ......    JPF       L:?epilogue_l2
+    770          
+    771          /**
+    772            * @brief  Checks whether the specified I2C interrupt has occurred or not.
+    773            * @param  I2C_ITPendingBit: specifies the interrupt source to check.
+    774            *            This parameter can be one of the following values:
+    775            *               - I2C_ITPENDINGBIT_WAKEUPFROMHALT: Wakeup from Halt
+    776            *               - I2C_ITPENDINGBIT_OVERRUNUNDERRUN: Overrun/Underrun flag (Slave mode)
+    777            *               - I2C_ITPENDINGBIT_ACKNOWLEDGEFAILURE: Acknowledge failure flag
+    778            *               - I2C_ITPENDINGBIT_ARBITRATIONLOSS: Arbitration lost flag (Master mode)
+    779            *               - I2C_ITPENDINGBIT_BUSERROR: Bus error flag
+    780            *               - I2C_ITPENDINGBIT_TXEMPTY: Data register empty flag (Transmitter)
+    781            *               - I2C_ITPENDINGBIT_RXNOTEMPTY: Data register not empty (Receiver) flag
+    782            *               - I2C_ITPENDINGBIT_STOPDETECTION: Stop detection flag (Slave mode)
+    783            *               - I2C_ITPENDINGBIT_HEADERSENT: 10-bit header sent flag (Master mode)
+    784            *               - I2C_ITPENDINGBIT_TRANSFERFINISHED: Byte transfer finished flag
+    785            *               - I2C_ITPENDINGBIT_ADDRESSSENTMATCHED: Address sent flag (Master mode) “ADSL”
+    786            *                              Address matched flag (Slave mode)“ENDAD”
+    787            *               - I2C_ITPENDINGBIT_STARTDETECTION: Start bit flag (Master mode)
+    788            * @retval The new state of I2C_ITPendingBit
+    789            *   This parameter can be any of the @ref ITStatus enumeration.
+    790            */
+
+   \                                 In section .far_func.text, align 1
+    791          ITStatus I2C_GetITStatus(I2C_ITPendingBit_TypeDef I2C_ITPendingBit)
+    792          {
+   \                     I2C_GetITStatus:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 3B ....      PUSH      S:?b12
+   \   000007 52 01        SUB       SP, #0x1
+   \   000009 BF ..        LDW       S:?w4, X
+    793            ITStatus bitstatus = RESET;
+   \   00000B 3F ..        CLR       S:?b12
+    794            __IO uint8_t enablestatus = 0;
+   \   00000D 0F 01        CLR       (0x1,SP)
+    795            uint16_t tempregister = 0;
+   \   00000F 3F ..        CLR       S:?b11
+   \   000011 3F ..        CLR       S:?b10
+    796          
+    797              /* Check the parameters */
+    798              assert_param(IS_I2C_ITPENDINGBIT_OK(I2C_ITPendingBit));
+   \   000013 BE ..        LDW       X, S:?w4
+   \   000015 A3 1680      CPW       X, #0x1680
+   \   000018 27 5C        JREQ      L:??I2C_GetITStatus_0
+   \   00001A BE ..        LDW       X, S:?w4
+   \   00001C A3 1640      CPW       X, #0x1640
+   \   00001F 27 55        JREQ      L:??I2C_GetITStatus_0
+   \   000021 BE ..        LDW       X, S:?w4
+   \   000023 A3 1210      CPW       X, #0x1210
+   \   000026 27 4E        JREQ      L:??I2C_GetITStatus_0
+   \   000028 BE ..        LDW       X, S:?w4
+   \   00002A A3 1208      CPW       X, #0x1208
+   \   00002D 27 47        JREQ      L:??I2C_GetITStatus_0
+   \   00002F BE ..        LDW       X, S:?w4
+   \   000031 A3 1204      CPW       X, #0x1204
+   \   000034 27 40        JREQ      L:??I2C_GetITStatus_0
+   \   000036 BE ..        LDW       X, S:?w4
+   \   000038 A3 1202      CPW       X, #0x1202
+   \   00003B 27 39        JREQ      L:??I2C_GetITStatus_0
+   \   00003D BE ..        LDW       X, S:?w4
+   \   00003F A3 1201      CPW       X, #0x1201
+   \   000042 27 32        JREQ      L:??I2C_GetITStatus_0
+   \   000044 BE ..        LDW       X, S:?w4
+   \   000046 A3 2220      CPW       X, #0x2220
+   \   000049 27 2B        JREQ      L:??I2C_GetITStatus_0
+   \   00004B BE ..        LDW       X, S:?w4
+   \   00004D A3 2108      CPW       X, #0x2108
+   \   000050 27 24        JREQ      L:??I2C_GetITStatus_0
+   \   000052 BE ..        LDW       X, S:?w4
+   \   000054 A3 2104      CPW       X, #0x2104
+   \   000057 27 1D        JREQ      L:??I2C_GetITStatus_0
+   \   000059 BE ..        LDW       X, S:?w4
+   \   00005B A3 2102      CPW       X, #0x2102
+   \   00005E 27 16        JREQ      L:??I2C_GetITStatus_0
+   \   000060 BE ..        LDW       X, S:?w4
+   \   000062 A3 2101      CPW       X, #0x2101
+   \   000065 27 0F        JREQ      L:??I2C_GetITStatus_0
+   \   000067 AE 031E      LDW       X, #0x31e
+   \   00006A BF ..        LDW       S:?w1, X
+   \   00006C 5F           CLRW      X
+   \   00006D BF ..        LDW       S:?w0, X
+   \   00006F AE ....      LDW       X, #?_0
+   \   000072 8D ......    CALLF     assert_failed
+    799          
+    800            tempregister = (uint8_t)( ((uint16_t)((uint16_t)I2C_ITPendingBit & ITEN_Mask)) >> 8);
+   \                     ??I2C_GetITStatus_0:
+   \   000076 B6 ..        LD        A, S:?b8
+   \   000078 A4 07        AND       A, #0x7
+   \   00007A 5F           CLRW      X
+   \   00007B 97           LD        XL, A
+   \   00007C BF ..        LDW       S:?w5, X
+    801          
+    802            /* Check if the interrupt source is enabled or not */
+    803            enablestatus = (uint8_t)(I2C->ITR & ( uint8_t)tempregister);
+   \   00007E B6 ..        LD        A, S:?b11
+   \   000080 C4 521A      AND       A, L:0x521a
+   \   000083 6B 01        LD        (0x1,SP), A
+    804          
+    805            if ((uint16_t)((uint16_t)I2C_ITPendingBit & REGISTER_Mask) == REGISTER_SR1_Index)
+    806            {
+    807              /* Check the status of the specified I2C flag */
+    808              if (((I2C->SR1 & (uint8_t)I2C_ITPendingBit) != RESET) && enablestatus)
+    809              {
+    810                /* I2C_IT is set */
+    811                bitstatus = SET;
+    812              }
+    813              else
+    814              {
+    815                /* I2C_IT is reset */
+    816                bitstatus = RESET;
+    817              }
+    818            }
+    819            else
+    820            {
+    821              /* Check the status of the specified I2C flag */
+    822              if (((I2C->SR2 & (uint8_t)I2C_ITPendingBit) != RESET) && enablestatus)
+   \   000085 B6 ..        LD        A, S:?b9
+   \   000087 C4 5218      AND       A, L:0x5218
+   \   00008A A1 00        CP        A, #0x0
+   \   00008C 27 0A        JREQ      L:??I2C_GetITStatus_1
+   \   00008E 0D 01        TNZ       (0x1,SP)
+   \   000090 27 06        JREQ      L:??I2C_GetITStatus_1
+    823              {
+    824                /* I2C_IT is set */
+    825                bitstatus = SET;
+   \   000092 A6 01        LD        A, #0x1
+   \   000094 B7 ..        LD        S:?b12, A
+   \   000096 20 02        JRA       L:??I2C_GetITStatus_2
+    826              }
+    827              else
+    828              {
+    829                /* I2C_IT is reset */
+    830                bitstatus = RESET;
+   \                     ??I2C_GetITStatus_1:
+   \   000098 3F ..        CLR       S:?b12
+    831              }
+    832            }
+    833            /* Return the I2C_IT status */
+    834            return  bitstatus;
+   \                     ??I2C_GetITStatus_2:
+   \   00009A B6 ..        LD        A, S:?b12
+   \   00009C 5B 01        ADD       SP, #0x1
+   \   00009E 32 ....      POP       S:?b12
+   \   0000A1 AC ......    JPF       L:?epilogue_l2
+    835          }
+    836          
+    837          /**
+    838            * @brief  Clear IT pending bit
+    839            * @param  I2C_ITPendingBit : specifies the interrupt pending bit to clear.
+    840            *            This parameter can be any combination of the following values:
+    841            *                 - I2C_ITPENDINGBIT_WAKEUPFROMHALT: Wakeup from Halt
+    842            *                 - I2C_ITPENDINGBIT_OVERRUNUNDERRUN: Overrun/Underrun interrupt (Slave mode)
+    843            *                 - I2C_ITPENDINGBIT_ACKNOWLEDGEFAILURE: Acknowledge failure interrupt
+    844            *                 - I2C_ITPENDINGBIT_ARBITRATIONLOSS: Arbitration lost interrupt (Master mode)
+    845            *                 - I2C_ITPENDINGBIT_BUSERROR: Bus error interrupt
+    846            *
+    847            *             Notes:
+    848            *                  - STOPF (STOP detection) is cleared by software
+    849            *                    sequence: a read operation to I2C_SR1 register
+    850            *                    (I2C_GetITStatus()) followed by a write operation to
+    851            *                    I2C_CR2 register (I2C_AcknowledgeConfig() to configure
+    852            *                    the I2C peripheral Acknowledge).
+    853            *                  - ADD10 (10-bit header sent) is cleared by software
+    854            *                    sequence: a read operation to I2C_SR1
+    855            *                    (I2C_GetITStatus()) followed by writing the second
+    856            *                    byte of the address in I2C_DR register.
+    857            *                  - BTF (Byte Transfer Finished) is cleared by software
+    858            *                    sequence: a read operation to I2C_SR1 register
+    859            *                    (I2C_GetITStatus()) followed by a read/write to
+    860            *                    I2C_DR register (I2C_SendData()).
+    861            *                  - ADDR (Address sent) is cleared by software sequence:
+    862            *                    a read operation to I2C_SR1 register (I2C_GetITStatus())
+    863            *                    followed by a read operation to I2C_SR3 register
+    864            *                    ((void)(I2C->SR3)).
+    865            *                  - SB (Start Bit) is cleared by software sequence: a
+    866            *                    read operation to I2C_SR1 register (I2C_GetITStatus())
+    867            *                    followed by a write operation to I2C_DR register
+    868            *                    (I2C_SendData()).
+    869            * @retval None
+    870            */
+
+   \                                 In section .far_func.text, align 1
+    871          void I2C_ClearITPendingBit(I2C_ITPendingBit_TypeDef I2C_ITPendingBit)
+    872          {
+   \                     I2C_ClearITPendingBit:
+   \   000000 8D ......    CALLF     L:?push_l2
+   \   000004 BF ..        LDW       S:?w4, X
+    873            uint16_t flagpos = 0;
+   \   000006 3F ..        CLR       S:?b11
+   \   000008 3F ..        CLR       S:?b10
+    874          
+    875            /* Check the parameters */
+    876            assert_param(IS_I2C_CLEAR_ITPENDINGBIT_OK(I2C_ITPendingBit));
+   \   00000A BE ..        LDW       X, S:?w4
+   \   00000C A3 2220      CPW       X, #0x2220
+   \   00000F 27 2B        JREQ      L:??I2C_ClearITPendingBit_0
+   \   000011 BE ..        LDW       X, S:?w4
+   \   000013 A3 2108      CPW       X, #0x2108
+   \   000016 27 24        JREQ      L:??I2C_ClearITPendingBit_0
+   \   000018 BE ..        LDW       X, S:?w4
+   \   00001A A3 2104      CPW       X, #0x2104
+   \   00001D 27 1D        JREQ      L:??I2C_ClearITPendingBit_0
+   \   00001F BE ..        LDW       X, S:?w4
+   \   000021 A3 2102      CPW       X, #0x2102
+   \   000024 27 16        JREQ      L:??I2C_ClearITPendingBit_0
+   \   000026 BE ..        LDW       X, S:?w4
+   \   000028 A3 2101      CPW       X, #0x2101
+   \   00002B 27 0F        JREQ      L:??I2C_ClearITPendingBit_0
+   \   00002D AE 036C      LDW       X, #0x36c
+   \   000030 BF ..        LDW       S:?w1, X
+   \   000032 5F           CLRW      X
+   \   000033 BF ..        LDW       S:?w0, X
+   \   000035 AE ....      LDW       X, #?_0
+   \   000038 8D ......    CALLF     assert_failed
+    877          
+    878            /* Get the I2C flag position */
+    879            flagpos = (uint16_t)I2C_ITPendingBit & FLAG_Mask;
+   \                     ??I2C_ClearITPendingBit_0:
+   \   00003C BE ..        LDW       X, S:?w4
+   \   00003E 02           RLWA      X, A
+   \   00003F A4 00        AND       A, #0x0
+   \   000041 02           RLWA      X, A
+   \   000042 A4 FF        AND       A, #0xff
+   \   000044 02           RLWA      X, A
+   \   000045 BF ..        LDW       S:?w5, X
+    880          
+    881            /* Clear the selected I2C flag */
+    882            I2C->SR2 = (uint8_t)((uint16_t)~flagpos);
+   \   000047 B6 ..        LD        A, S:?b11
+   \   000049 43           CPL       A
+   \   00004A C7 5218      LD        L:0x5218, A
+    883          }
+   \   00004D AC ......    JPF       L:?epilogue_l2
+
+   \                                 In section .near.rodata, align 1
+   \                     ?_0:
+   \   000000 2E 5C 4C 69  DC8 ".\\Lib\\C\\stm8s_i2c.c"
+   \          62 5C 43 5C 
+    884          
+    885          /**
+    886            * @}
+    887            */
+    888          
+    889          /**
+    890            * @}
+    891            */
+    892          
+    893          /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      20  ?_0
+      70  I2C_AcknowledgeConfig
+     227  I2C_CheckEvent
+      63  I2C_ClearFlag
+      81  I2C_ClearITPendingBit
+      48  I2C_Cmd
+      37  I2C_DeInit
+      50  I2C_FastModeDutyCycleConfig
+      48  I2C_GeneralCallCmd
+      48  I2C_GenerateSTART
+      48  I2C_GenerateSTOP
+     204  I2C_GetFlagStatus
+     165  I2C_GetITStatus
+      54  I2C_GetLastEvent
+     118  I2C_ITConfig
+     553  I2C_Init
+       4  I2C_ReceiveData
+      74  I2C_Send7bitAddress
+       4  I2C_SendData
+      48  I2C_SoftwareResetCmd
+      48  I2C_StretchClockCmd
+
+ 
+ 1 992 bytes in section .far_func.text
+    20 bytes in section .near.rodata
+ 
+ 1 992 bytes of CODE  memory
+    20 bytes of CONST memory
+
+Errors: none
+Warnings: none

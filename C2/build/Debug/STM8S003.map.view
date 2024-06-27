@@ -1,0 +1,3 @@
+tool: IAR_STM8
+fileName: STM8S003.map
+elfName: STM8S003.out

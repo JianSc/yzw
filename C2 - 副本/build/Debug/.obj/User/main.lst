@@ -1,0 +1,651 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 28/Jan/2024  21:49:11
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\User\main.c
+#    Command line =  
+#        -f
+#        c:\Users\Administrator\Desktop\�½��ļ���\C\build\Debug\.obj\User\main.args.txt
+#        (--silent -lCN .\build\Debug\.obj\User\main.lst -I "d:/Program Files
+#        (x86)/IAR Systems/STM8" -I "d:/Program Files (x86)/IAR
+#        Systems/STM8/stm8/lib" -I Lib/H -I Lib/C -I User -D STM8S003
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\.obj\User\main.o .\User\main.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\.obj\User\main.lst
+#    Object file  =  .\build\Debug\.obj\User\main.o
+#
+###############################################################################
+
+c:\Users\Administrator\Desktop\�½��ļ���\C\User\main.c
+      1          /**
+      2           ******************************************************************************
+      3           * @file    Project/main.c
+      4           * @author  MCD Application Team
+      5           * @version V2.3.0
+      6           * @date    16-June-2017
+      7           * @brief   Main program body
+      8           ******************************************************************************
+      9           * @attention
+     10           *
+     11           * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
+     12           *
+     13           * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+     14           * You may not use this file except in compliance with the License.
+     15           * You may obtain a copy of the License at:
+     16           *
+     17           *        http://www.st.com/software_license_agreement_liberty_v2
+     18           *
+     19           * Unless required by applicable law or agreed to in writing, software
+     20           * distributed under the License is distributed on an "AS IS" BASIS,
+     21           * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     22           * See the License for the specific language governing permissions and
+     23           * limitations under the License.
+     24           *
+     25           ******************************************************************************
+     26           */
+     27          
+     28          /* Includes ------------------------------------------------------------------*/
+     29          #include "init.h"
+
+   \                                 In section .near.noinit, at 0x5000
+   \   union <unnamed> volatile _A_PA_ODR
+   \                     _A_PA_ODR:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x500a
+   \   union <unnamed> volatile _A_PC_ODR
+   \                     _A_PC_ODR:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x500f
+   \   union <unnamed> volatile _A_PD_ODR
+   \                     _A_PD_ODR:
+   \   000000              DS8 1
+     30          
+     31          /* Private defines -----------------------------------------------------------*/
+     32          
+     33          // TODO:TM1650-LED码	   0	 1		2     3     4     5    6     7     8     9     A     B     C     D     E     F	  P 	-
+     34          // LED7codeH 共阳 , LED7codeL 共阴
+
+   \                                 In section .near.data, align 1
+     35          uint8_t LED7CodeH[] = {~0x3f, ~0x06, ~0x5b, ~0x4f, ~0x66, ~0x6d, ~0x7d, ~0x07, ~0x7f, ~0x6f, ~0x77, ~0x7c, ~0x39, ~0x5e, ~0x79, ~0x71, ~0x73, ~0x40};
+   \                     LED7CodeH:
+   \   000000 C0 F9 A4 B0  DC8 192, 249, 164, 176, 153, 146, 130, 248, 128, 144, 136, 131, 198
+   \          99 92 82 F8 
+   \   00000D A1 86 8E 8C  DC8 161, 134, 142, 140, 191
+   \          BF          
+
+   \                                 In section .near.data, align 1
+     36          uint8_t LED7CodeL[] = {0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f, 0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71, 0x73, 0x40};
+   \                     LED7CodeL:
+   \   000000 3F 06 5B 4F  DC8 63, 6, 91, 79, 102, 109, 125, 7, 127, 111, 119, 124, 57, 94, 121
+   \          66 6D 7D 07 
+   \   00000F 71 73 40     DC8 113, 115, 64
+     37          
+     38          /* Private function prototypes -----------------------------------------------*/
+
+   \                                 In section .near.bss, align 1
+     39          int TEM_SUM;
+   \                     TEM_SUM:
+   \   000000              DS8 2
+
+   \                                 In section .near.bss, align 1
+     40          u8 FAN_PWM_NUM;
+   \                     FAN_PWM_NUM:
+   \   000000              DS8 1
+
+   \                                 In section .near.bss, align 1
+     41          bool LED_STATUS, TEM_STATUS, CONFIG_STATUS;
+   \                     LED_STATUS:
+   \   000000              DS8 1
+
+   \                                 In section .near.bss, align 1
+   \                     TEM_STATUS:
+   \   000000              DS8 1
+
+   \                                 In section .near.bss, align 1
+   \                     CONFIG_STATUS:
+   \   000000              DS8 1
+
+   \                                 In section .near.bss, align 1
+     42          bool SYSTEM_RUN, DS18B20_CONVERT_STATUS, HF_STATUS, MSD_STATUS, MSD_TIME_STATUS;
+   \                     SYSTEM_RUN:
+   \   000000              DS8 1
+
+   \                                 In section .near.bss, align 1
+   \                     DS18B20_CONVERT_STATUS:
+   \   000000              DS8 1
+
+   \                                 In section .near.bss, align 1
+   \                     HF_STATUS:
+   \   000000              DS8 1
+
+   \                                 In section .near.bss, align 1
+   \                     MSD_STATUS:
+   \   000000              DS8 1
+
+   \                                 In section .near.bss, align 1
+   \                     MSD_TIME_STATUS:
+   \   000000              DS8 1
+
+   \                                 In section .near.bss, align 1
+     43          bool IT_HF_STATUS, IT_TEM_SUB_STATUS, IT_TEM_SUB_STATUS_M;
+   \                     IT_HF_STATUS:
+   \   000000              DS8 1
+
+   \                                 In section .near.bss, align 1
+   \                     IT_TEM_SUB_STATUS:
+   \   000000              DS8 1
+
+   \                                 In section .near.bss, align 1
+   \                     IT_TEM_SUB_STATUS_M:
+   \   000000              DS8 1
+     44          // btn[0] 为启动/停止按钮, btn[1] 设置按钮, btn[2] +按钮， btn[3] -按钮, btn[4] 确定/灯光按钮.
+
+   \                                 In section .near.data, align 1
+     45          u8 btn[] = {0x44, 0x4c, 0x54, 0x5c, 0x64};
+   \                     btn:
+   \   000000 44 4C 54 5C  DC8 68, 76, 84, 92, 100
+   \          64          
+     46          
+
+   \                                 In section .far_func.text, align 1
+     47          void main(void)
+     48          {
+   \                     main:
+   \   000000 8D ......    CALLF     L:?push_w4
+   \   000004 3B ....      PUSH      S:?b10
+     49            /* Infinite loop */
+     50            init();
+   \   000007 8D ......    CALLF     init
+     51            TIM2_Cmd(ENABLE);
+   \   00000B A6 01        LD        A, #0x1
+   \   00000D 8D ......    CALLF     TIM2_Cmd
+     52            TIM1_Cmd(ENABLE);
+   \   000011 A6 01        LD        A, #0x1
+   \   000013 8D ......    CALLF     TIM1_Cmd
+     53            tm1650_displayInit();
+   \   000017 8D ......    CALLF     tm1650_displayInit
+     54            delay_ms(100);
+   \   00001B AE 0064      LDW       X, #0x64
+   \   00001E 8D ......    CALLF     delay_ms
+     55            MSD_STATUS = FALSE;
+   \   000022 725F ....    CLR       L:MSD_STATUS
+     56            MSD_TIME_STATUS = FALSE;
+   \   000026 725F ....    CLR       L:MSD_TIME_STATUS
+     57            IT_TEM_SUB_STATUS = FALSE;
+   \   00002A 725F ....    CLR       L:IT_TEM_SUB_STATUS
+     58            IT_TEM_SUB_STATUS_M = FALSE;
+   \   00002E 725F ....    CLR       L:IT_TEM_SUB_STATUS_M
+     59          
+     60            // 读取数据
+     61            TEM_SUM = FLASH_DATA_TEM_SUM_READ();
+   \   000032 8D ......    CALLF     FLASH_DATA_TEM_SUM_READ
+   \   000036 CF ....      LDW       L:TEM_SUM, X
+     62            FAN_PWM_NUM = FLASH_DATA_FAN_PWM_READ();
+   \   000039 8D ......    CALLF     FLASH_DATA_FAN_PWM_READ
+   \   00003D C7 ....      LD        L:FAN_PWM_NUM, A
+     63            TEM_STATUS = FLASH_DATA_TEM_STATUS_READ();
+   \   000040 8D ......    CALLF     FLASH_DATA_TEM_STATUS_READ
+   \   000044 C7 ....      LD        L:TEM_STATUS, A
+     64            LED_STATUS = FLASH_DATA_LED_STATUS_READ();
+   \   000047 8D ......    CALLF     FLASH_DATA_LED_STATUS_READ
+   \   00004B C7 ....      LD        L:LED_STATUS, A
+     65            HF_STATUS = FLASH_DATA_HF_STATUS_READ();
+   \   00004E 8D ......    CALLF     FLASH_DATA_HF_STATUS_READ
+   \   000052 C7 ....      LD        L:HF_STATUS, A
+     66          
+     67            SYSTEM_RUN = TRUE;
+   \   000055 35 01 ....   MOV       L:SYSTEM_RUN, #0x1
+     68            DS18B20_CONVERT_STATUS = FALSE;
+   \   000059 725F ....    CLR       L:DS18B20_CONVERT_STATUS
+     69          
+     70            TEM_LED_CL;
+   \   00005D 721A 500A    BSET      L:0x500a, #0x5
+   \   000061 721D 500A    BRES      L:0x500a, #0x6
+     71          
+     72            while (1)
+     73            {
+     74              // 过温检测，如果温度高于设定的5度，并且持续30秒，就关闭加温继电器
+     75              // if(MSD_TIME_STATUS)
+     76              // {
+     77              //   MSD_CL;
+     78              //   SW_CL;
+     79              //   LED_STATUS = TRUE;
+     80              //   FAN_CL;
+     81              //   TEM_LED_CL;
+     82          
+     83              //   while(1);
+     84              // }
+     85              // 启动 DS18B20 进行温度转换
+     86              int SUM;
+     87              if (!DS18B20_CONVERT_STATUS)
+   \                     ??main_0:
+   \   000065 C6 ....      LD        A, L:DS18B20_CONVERT_STATUS
+   \   000068 4D           TNZ       A
+   \   000069 27 03        JREQ      ??lb_0
+   \   00006B CC ....      JP        L:??main_1
+     88              {
+     89                disableInterrupts();
+   \                     ??lb_0:
+   \   00006E 9B           SIM
+     90          
+     91                // 转换温度
+     92                while (!DS18B20_Init())
+   \                     ??main_2:
+   \   00006F 8D ......    CALLF     DS18B20_Init
+   \   000073 A1 00        CP        A, #0x0
+   \   000075 26 09        JRNE      L:??main_3
+     93                {
+     94                  delay_ms(10);
+   \   000077 AE 000A      LDW       X, #0xa
+   \   00007A 8D ......    CALLF     delay_ms
+   \   00007E 20 EF        JRA       L:??main_2
+     95                }
+     96                ds18b20_Conver();
+   \                     ??main_3:
+   \   000080 8D ......    CALLF     ds18b20_Conver
+     97                DS18B20_CONVERT_STATUS = TRUE;
+   \   000084 35 01 ....   MOV       L:DS18B20_CONVERT_STATUS, #0x1
+     98          
+     99                // 读取温度
+    100                while (!DS18B20_Init())
+   \                     ??main_4:
+   \   000088 8D ......    CALLF     DS18B20_Init
+   \   00008C A1 00        CP        A, #0x0
+   \   00008E 26 09        JRNE      L:??main_5
+    101                {
+    102                  delay_ms(10);
+   \   000090 AE 000A      LDW       X, #0xa
+   \   000093 8D ......    CALLF     delay_ms
+   \   000097 20 EF        JRA       L:??main_4
+    103                };
+    104                SUM = DS18B20_Convert_Get_Tem(DS18B20_Read());
+   \                     ??main_5:
+   \   000099 8D ......    CALLF     DS18B20_Read
+   \   00009D 8D ......    CALLF     DS18B20_Convert_Get_Tem
+   \   0000A1 BF ..        LDW       S:?w4, X
+    105                delay_ms(5);
+   \   0000A3 AE 0005      LDW       X, #0x5
+   \   0000A6 8D ......    CALLF     delay_ms
+    106          
+    107                enableInterrupts();
+   \   0000AA 9A           RIM
+    108          
+    109                u8 x;
+    110                if (!SYSTEM_RUN && x > 2)
+   \   0000AB C6 ....      LD        A, L:SYSTEM_RUN
+   \   0000AE 4D           TNZ       A
+   \   0000AF 27 03        JREQ      ??lb_1
+   \   0000B1 CC ....      JP        L:??main_6
+   \                     ??lb_1:
+   \   0000B4 B6 ..        LD        A, S:?b10
+   \   0000B6 A1 03        CP        A, #0x3
+   \   0000B8 24 03        JRNC      ??lb_2
+   \   0000BA CC ....      JP        L:??main_6
+    111                {
+    112                  // 显示温度
+    113                  SUM = (SUM < -99) ? -99 : SUM;
+   \                     ??lb_2:
+   \   0000BD BE ..        LDW       X, S:?w4
+   \   0000BF A3 FF9D      CPW       X, #0xffffffffffffff9d
+   \   0000C2 2E 07        JRSGE     L:??main_7
+   \   0000C4 AE FF9D      LDW       X, #0xff9d
+   \   0000C7 BF ..        LDW       S:?w4, X
+   \   0000C9 20 00        JRA       L:??main_8
+    114                  if (SUM < 0)
+   \                     ??main_7:
+   \                     ??main_8:
+   \   0000CB BE ..        LDW       X, S:?w4
+   \   0000CD A3 0000      CPW       X, #0x0
+   \   0000D0 2E 4C        JRSGE     L:??main_9
+    115                  {
+    116                    tm1650_displayW(0, 0x40);
+   \   0000D2 35 40 ....   MOV       S:?b0, #0x40
+   \   0000D6 4F           CLR       A
+   \   0000D7 8D ......    CALLF     tm1650_displayW
+    117                    SUM = ~SUM + 1;
+   \   0000DB BE ..        LDW       X, S:?w4
+   \   0000DD 53           CPLW      X
+   \   0000DE BF ..        LDW       S:?w4, X
+   \   0000E0 BE ..        LDW       X, S:?w4
+   \   0000E2 5C           INCW      X
+   \   0000E3 BF ..        LDW       S:?w4, X
+    118                    tm1650_displayW(1, (LED7CodeL[SUM / 10 % 10]) | 0x80);
+   \   0000E5 90AE 000A    LDW       Y, #0xa
+   \   0000E9 BE ..        LDW       X, S:?w4
+   \   0000EB 8D ......    CALLF     L:?sdiv16_x_x_y
+   \   0000EF 90AE 000A    LDW       Y, #0xa
+   \   0000F3 8D ......    CALLF     L:?smod16_y_x_y
+   \   0000F7 93           LDW       X, Y
+   \   0000F8 D6 ....      LD        A, (L:LED7CodeL,X)
+   \   0000FB AA 80        OR        A, #0x80
+   \   0000FD B7 ..        LD        S:?b0, A
+   \   0000FF A6 01        LD        A, #0x1
+   \   000101 8D ......    CALLF     tm1650_displayW
+    119                    tm1650_displayW(2, LED7CodeL[SUM % 10]);
+   \   000105 90AE 000A    LDW       Y, #0xa
+   \   000109 BE ..        LDW       X, S:?w4
+   \   00010B 8D ......    CALLF     L:?smod16_y_x_y
+   \   00010F 93           LDW       X, Y
+   \   000110 D6 ....      LD        A, (L:LED7CodeL,X)
+   \   000113 B7 ..        LD        S:?b0, A
+   \   000115 A6 02        LD        A, #0x2
+   \   000117 8D ......    CALLF     tm1650_displayW
+   \   00011B CC ....      JP        L:??main_6
+    120                  }
+    121                  else
+    122                  {
+    123                    SUM = (SUM > 999) ? 999 : SUM;
+   \                     ??main_9:
+   \   00011E BE ..        LDW       X, S:?w4
+   \   000120 A3 03E8      CPW       X, #0x3e8
+   \   000123 2F 07        JRSLT     L:??main_10
+   \   000125 AE 03E7      LDW       X, #0x3e7
+   \   000128 BF ..        LDW       S:?w4, X
+   \   00012A 20 00        JRA       L:??main_11
+    124                    if ((SUM / 100 % 100) == 0)
+   \                     ??main_10:
+   \                     ??main_11:
+   \   00012C 90AE 0064    LDW       Y, #0x64
+   \   000130 BE ..        LDW       X, S:?w4
+   \   000132 8D ......    CALLF     L:?sdiv16_x_x_y
+   \   000136 90AE 0064    LDW       Y, #0x64
+   \   00013A 8D ......    CALLF     L:?smod16_y_x_y
+   \   00013E 905D         TNZW      Y
+   \   000140 26 09        JRNE      L:??main_12
+    125                    {
+    126                      tm1650_displayW(0, 0x00);
+   \   000142 3F ..        CLR       S:?b0
+   \   000144 4F           CLR       A
+   \   000145 8D ......    CALLF     tm1650_displayW
+   \   000149 20 1D        JRA       L:??main_13
+    127                    }
+    128                    else
+    129                    {
+    130                      tm1650_displayW(0, LED7CodeL[SUM / 100 % 100]);
+   \                     ??main_12:
+   \   00014B 90AE 0064    LDW       Y, #0x64
+   \   00014F BE ..        LDW       X, S:?w4
+   \   000151 8D ......    CALLF     L:?sdiv16_x_x_y
+   \   000155 90AE 0064    LDW       Y, #0x64
+   \   000159 8D ......    CALLF     L:?smod16_y_x_y
+   \   00015D 93           LDW       X, Y
+   \   00015E D6 ....      LD        A, (L:LED7CodeL,X)
+   \   000161 B7 ..        LD        S:?b0, A
+   \   000163 4F           CLR       A
+   \   000164 8D ......    CALLF     tm1650_displayW
+    131                    }
+    132                    tm1650_displayW(1, (LED7CodeL[SUM / 10 % 10]) | 0x80);
+   \                     ??main_13:
+   \   000168 90AE 000A    LDW       Y, #0xa
+   \   00016C BE ..        LDW       X, S:?w4
+   \   00016E 8D ......    CALLF     L:?sdiv16_x_x_y
+   \   000172 90AE 000A    LDW       Y, #0xa
+   \   000176 8D ......    CALLF     L:?smod16_y_x_y
+   \   00017A 93           LDW       X, Y
+   \   00017B D6 ....      LD        A, (L:LED7CodeL,X)
+   \   00017E AA 80        OR        A, #0x80
+   \   000180 B7 ..        LD        S:?b0, A
+   \   000182 A6 01        LD        A, #0x1
+   \   000184 8D ......    CALLF     tm1650_displayW
+    133                    tm1650_displayW(2, LED7CodeL[SUM % 10]);
+   \   000188 90AE 000A    LDW       Y, #0xa
+   \   00018C BE ..        LDW       X, S:?w4
+   \   00018E 8D ......    CALLF     L:?smod16_y_x_y
+   \   000192 93           LDW       X, Y
+   \   000193 D6 ....      LD        A, (L:LED7CodeL,X)
+   \   000196 B7 ..        LD        S:?b0, A
+   \   000198 A6 02        LD        A, #0x2
+   \   00019A 8D ......    CALLF     tm1650_displayW
+    134                  }
+    135                }
+    136                x++;
+   \                     ??main_6:
+   \   00019E 3C ..        INC       S:?b10
+    137                x = (x > 10) ? 0 : x;
+   \   0001A0 B6 ..        LD        A, S:?b10
+   \   0001A2 A1 0B        CP        A, #0xb
+   \   0001A4 25 04        JRC       L:??main_14
+   \   0001A6 3F ..        CLR       S:?b10
+   \   0001A8 20 00        JRA       L:??main_1
+    138              }
+    139          
+    140              // LED 开启状态
+    141              if (LED_STATUS)
+   \                     ??main_14:
+   \                     ??main_1:
+   \   0001AA C6 ....      LD        A, L:LED_STATUS
+   \   0001AD 4D           TNZ       A
+   \   0001AE 27 06        JREQ      L:??main_15
+    142              {
+    143                LED_LED_EN;
+   \   0001B0 7213 5000    BRES      L:0x5000, #0x1
+   \   0001B4 20 04        JRA       L:??main_16
+    144              }
+    145              else
+    146              {
+    147                LED_LED_CL;
+   \                     ??main_15:
+   \   0001B6 7212 5000    BSET      L:0x5000, #0x1
+    148              }
+    149          
+    150              // 开启加温
+    151              if (TEM_STATUS)
+   \                     ??main_16:
+   \   0001BA C6 ....      LD        A, L:TEM_STATUS
+   \   0001BD 4D           TNZ       A
+   \   0001BE 27 6B        JREQ      L:??main_17
+    152              {
+    153                if (SYSTEM_RUN)
+   \   0001C0 C6 ....      LD        A, L:SYSTEM_RUN
+   \   0001C3 4D           TNZ       A
+   \   0001C4 27 09        JREQ      L:??main_18
+    154                {
+    155                  delay_ms(500);
+   \   0001C6 AE 01F4      LDW       X, #0x1f4
+   \   0001C9 8D ......    CALLF     delay_ms
+   \   0001CD 20 4D        JRA       L:??main_19
+    156                }
+    157                else
+    158                {
+    159                  if (SUM < TEM_SUM)
+   \                     ??main_18:
+   \   0001CF BE ..        LDW       X, S:?w4
+   \   0001D1 C3 ....      CPW       X, L:TEM_SUM
+   \   0001D4 2E 3A        JRSGE     L:??main_20
+    160                  {
+    161                    if (SUM < (TEM_SUM - 50))
+   \   0001D6 CE ....      LDW       X, L:TEM_SUM
+   \   0001D9 1C FFCE      ADDW      X, #0xffffffffffffffce
+   \   0001DC BF ..        LDW       S:?w0, X
+   \   0001DE BE ..        LDW       X, S:?w4
+   \   0001E0 B3 ..        CPW       X, S:?w0
+   \   0001E2 2E 0E        JRSGE     L:??main_21
+    162                    {
+    163                      SW_EN;
+   \   0001E4 7216 500A    BSET      L:0x500a, #0x3
+    164                      TEM_LED_EN;
+   \   0001E8 721B 500A    BRES      L:0x500a, #0x5
+   \   0001EC 721C 500A    BSET      L:0x500a, #0x6
+   \   0001F0 20 2A        JRA       L:??main_19
+    165                    }
+    166                    else
+    167                    {
+    168                      IT_TEM_SUB_STATUS = TRUE;
+   \                     ??main_21:
+   \   0001F2 35 01 ....   MOV       L:IT_TEM_SUB_STATUS, #0x1
+    169                      TEM_LED_EN;
+   \   0001F6 721B 500A    BRES      L:0x500a, #0x5
+   \   0001FA 721C 500A    BSET      L:0x500a, #0x6
+    170                      if (IT_TEM_SUB_STATUS_M)
+   \   0001FE C6 ....      LD        A, L:IT_TEM_SUB_STATUS_M
+   \   000201 4D           TNZ       A
+   \   000202 27 06        JREQ      L:??main_22
+    171                      {
+    172                        SW_EN;
+   \   000204 7216 500A    BSET      L:0x500a, #0x3
+   \   000208 20 12        JRA       L:??main_19
+    173                      }
+    174                      else
+    175                      {
+    176                        SW_CL;
+   \                     ??main_22:
+   \   00020A 7217 500A    BRES      L:0x500a, #0x3
+   \   00020E 20 0C        JRA       L:??main_19
+    177                      }
+    178                    }
+    179                  }
+    180                  else
+    181                  {
+    182                    SW_CL;
+   \                     ??main_20:
+   \   000210 7217 500A    BRES      L:0x500a, #0x3
+    183                    TEM_LED_CL;
+   \   000214 721A 500A    BSET      L:0x500a, #0x5
+   \   000218 721D 500A    BRES      L:0x500a, #0x6
+    184                  }
+    185                }
+    186                FAN_LED_EN;
+   \                     ??main_19:
+   \   00021C 721D 500F    BRES      L:0x500f, #0x6
+    187                TIM2_SetCompare3(FAN_PWM_NUM);
+   \   000220 C6 ....      LD        A, L:FAN_PWM_NUM
+   \   000223 5F           CLRW      X
+   \   000224 97           LD        XL, A
+   \   000225 8D ......    CALLF     TIM2_SetCompare3
+   \   000229 20 1D        JRA       L:??main_23
+    188              }
+    189              else
+    190              {
+    191                SW_CL;
+   \                     ??main_17:
+   \   00022B 7217 500A    BRES      L:0x500a, #0x3
+    192                TEM_LED_CL;
+   \   00022F 721A 500A    BSET      L:0x500a, #0x5
+   \   000233 721D 500A    BRES      L:0x500a, #0x6
+    193                FAN_LED_CL;
+   \   000237 721C 500F    BSET      L:0x500f, #0x6
+    194                IT_TEM_SUB_STATUS = FALSE;
+   \   00023B 725F ....    CLR       L:IT_TEM_SUB_STATUS
+    195                IT_TEM_SUB_STATUS_M = FALSE;
+   \   00023F 725F ....    CLR       L:IT_TEM_SUB_STATUS_M
+    196                TIM2_SetCompare3(0);
+   \   000243 5F           CLRW      X
+   \   000244 8D ......    CALLF     TIM2_SetCompare3
+    197              }
+    198          
+    199              SYSTEM_RUN = FALSE;
+   \                     ??main_23:
+   \   000248 725F ....    CLR       L:SYSTEM_RUN
+    200          
+    201              // 换风
+    202              if (HF_STATUS)
+   \   00024C C6 ....      LD        A, L:HF_STATUS
+   \   00024F 4D           TNZ       A
+   \   000250 27 25        JREQ      L:??main_24
+    203              {
+    204                if ((SUM - TEM_SUM) > 10 && !IT_HF_STATUS)
+   \   000252 BE ..        LDW       X, S:?w4
+   \   000254 72B0 ....    SUBW      X, L:TEM_SUM
+   \   000258 A3 000B      CPW       X, #0xb
+   \   00025B 2F 0A        JRSLT     L:??main_25
+   \   00025D C6 ....      LD        A, L:IT_HF_STATUS
+   \   000260 4D           TNZ       A
+   \   000261 26 04        JRNE      L:??main_25
+    205                {
+    206                  IT_HF_STATUS = TRUE;
+   \   000263 35 01 ....   MOV       L:IT_HF_STATUS, #0x1
+    207                }
+    208                if (IT_HF_STATUS)
+   \                     ??main_25:
+   \   000267 C6 ....      LD        A, L:IT_HF_STATUS
+   \   00026A 4D           TNZ       A
+   \   00026B 27 06        JREQ      L:??main_26
+    209                {
+    210                  HF_EN;
+   \   00026D 7214 5000    BSET      L:0x5000, #0x2
+   \   000271 20 04        JRA       L:??main_24
+    211                }
+    212                else
+    213                {
+    214                  HF_CL;
+   \                     ??main_26:
+   \   000273 7215 5000    BRES      L:0x5000, #0x2
+    215                }
+    216              }
+    217          
+    218              // 匹配按键
+    219              u8 KEY = tm1650_displaykeyR();
+   \                     ??main_24:
+   \   000277 8D ......    CALLF     tm1650_displaykeyR
+   \   00027B B7 ..        LD        S:?b10, A
+    220              btn_down(KEY);
+   \   00027D B6 ..        LD        A, S:?b10
+   \   00027F 8D ......    CALLF     btn_down
+   \   000283 CC ....      JP        L:??main_0
+   \   000286              REQUIRE _A_PC_ODR
+   \   000286              REQUIRE _A_PA_ODR
+   \   000286              REQUIRE _A_PD_ODR
+    221            }
+    222          }
+    223          
+
+   \                                 In section .far_func.text, align 1
+    224          void assert_failed(u8 *file, u32 line)
+    225          {
+    226            /* User can add his own implementation to report the file name and line number,
+    227               ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+    228          
+    229            /* Infinite loop */
+    230            // while (1)
+    231            // {
+    232            // }
+    233          }
+   \                     assert_failed:
+   \   000000 87           RETF
+    234          
+    235          /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       1  CONFIG_STATUS
+       1  DS18B20_CONVERT_STATUS
+       1  FAN_PWM_NUM
+       1  HF_STATUS
+       1  IT_HF_STATUS
+       1  IT_TEM_SUB_STATUS
+       1  IT_TEM_SUB_STATUS_M
+      18  LED7CodeH
+      18  LED7CodeL
+       1  LED_STATUS
+       1  MSD_STATUS
+       1  MSD_TIME_STATUS
+       1  SYSTEM_RUN
+       1  TEM_STATUS
+       2  TEM_SUM
+       1  _A_PA_ODR
+       1  _A_PC_ODR
+       1  _A_PD_ODR
+       1  assert_failed
+       5  btn
+     646  main
+
+ 
+ 647 bytes in section .far_func.text
+  14 bytes in section .near.bss
+  41 bytes in section .near.data
+   3 bytes in section .near.noinit   (abs)
+ 
+ 647 bytes of CODE memory
+  55 bytes of DATA memory (+ 3 bytes shared)
+
+Errors: none
+Warnings: 259

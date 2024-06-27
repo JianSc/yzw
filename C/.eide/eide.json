@@ -1,0 +1,63 @@
+{
+  "name": "YFW",
+  "type": "C51",
+  "dependenceList": [],
+  "srcDirs": [
+    "User",
+    "inc",
+    "Readme"
+  ],
+  "virtualFolder": {
+    "name": "<virtual_root>",
+    "files": [],
+    "folders": []
+  },
+  "outDir": "build",
+  "deviceName": null,
+  "packDir": null,
+  "miscInfo": {
+    "uid": "d79094454a8088ec53a8c1ad4188232b"
+  },
+  "targets": {
+    "Debug": {
+      "excludeList": [
+        "<virtual_root>/Device",
+        "Readme/ADC.c",
+        "Readme/NTC.c",
+        "Readme/TM150.c",
+        "Readme/DS18B20.c"
+      ],
+      "toolchain": "IAR_STM8",
+      "compileConfig": {
+        "options": "null"
+      },
+      "uploader": "STVP",
+      "uploadConfig": {
+        "deviceName": "STM8S003F3",
+        "bin": "",
+        "eepromFile": "null",
+        "optionByteFile": "null"
+      },
+      "uploadConfigMap": {
+        "Custom": {
+          "bin": "",
+          "commandLine": "",
+          "eraseChipCommand": ""
+        }
+      },
+      "custom_dep": {
+        "name": "default",
+        "incList": [
+          "inc",
+          "User"
+        ],
+        "libList": [],
+        "sourceDirList": [],
+        "defineList": [
+          "STM8S003"
+        ]
+      }
+    }
+  },
+  "version": "3.3"
+}

@@ -1,0 +1,365 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V3.11.1.207 for STM8                 28/Jan/2024  21:49:10
+# Copyright 2010-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for STMicroelectronics STM8
+#
+#    Source file  =  .\User\init.c
+#    Command line =  
+#        -f
+#        c:\Users\Administrator\Desktop\�½��ļ���\C\build\Debug\.obj\User\init.args.txt
+#        (--silent -lCN .\build\Debug\.obj\User\init.lst -I "d:/Program Files
+#        (x86)/IAR Systems/STM8" -I "d:/Program Files (x86)/IAR
+#        Systems/STM8/stm8/lib" -I Lib/H -I Lib/C -I User -D STM8S003
+#        --data_model medium --code_model medium --dlib_config dlstm8smn.h -e
+#        --vregs 16 -On --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --no_cross_call --debug --dependencies=m + -o
+#        .\build\Debug\.obj\User\init.o .\User\init.c)
+#    Locale       =  Chinese (Simplified)_CHN.936
+#    List file    =  .\build\Debug\.obj\User\init.lst
+#    Object file  =  .\build\Debug\.obj\User\init.o
+#
+###############################################################################
+
+c:\Users\Administrator\Desktop\�½��ļ���\C\User\init.c
+      1          #include "init.h"
+
+   \                                 In section .near.noinit, at 0x5000
+   \   union <unnamed> volatile _A_PA_ODR
+   \                     _A_PA_ODR:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x5002
+   \   union <unnamed> volatile _A_PA_DDR
+   \                     _A_PA_DDR:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x5003
+   \   union <unnamed> volatile _A_PA_CR1
+   \                     _A_PA_CR1:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x5004
+   \   union <unnamed> volatile _A_PA_CR2
+   \                     _A_PA_CR2:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x5005
+   \   union <unnamed> volatile _A_PB_ODR
+   \                     _A_PB_ODR:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x5007
+   \   union <unnamed> volatile _A_PB_DDR
+   \                     _A_PB_DDR:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x5008
+   \   union <unnamed> volatile _A_PB_CR1
+   \                     _A_PB_CR1:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x5009
+   \   union <unnamed> volatile _A_PB_CR2
+   \                     _A_PB_CR2:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x500a
+   \   union <unnamed> volatile _A_PC_ODR
+   \                     _A_PC_ODR:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x500c
+   \   union <unnamed> volatile _A_PC_DDR
+   \                     _A_PC_DDR:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x500d
+   \   union <unnamed> volatile _A_PC_CR1
+   \                     _A_PC_CR1:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x500e
+   \   union <unnamed> volatile _A_PC_CR2
+   \                     _A_PC_CR2:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x500f
+   \   union <unnamed> volatile _A_PD_ODR
+   \                     _A_PD_ODR:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x5011
+   \   union <unnamed> volatile _A_PD_DDR
+   \                     _A_PD_DDR:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x5012
+   \   union <unnamed> volatile _A_PD_CR1
+   \                     _A_PD_CR1:
+   \   000000              DS8 1
+
+   \                                 In section .near.noinit, at 0x5013
+   \   union <unnamed> volatile _A_PD_CR2
+   \                     _A_PD_CR2:
+   \   000000              DS8 1
+      2          
+
+   \                                 In section .far_func.text, align 1
+      3          void init()
+      4          {
+      5            // 时钏初始化
+      6            CLK_ICKR_HSIEN;
+      7            CLK->CKDIVR &= (u8)(~CLK_CKDIVR_HSIDIV);
+   \                     init:
+   \   000000 C6 50C6      LD        A, L:0x50c6
+   \   000003 A4 E7        AND       A, #0xe7
+   \   000005 C7 50C6      LD        L:0x50c6, A
+      8            CLK->CKDIVR &= (u8)(~CLK_CKDIVR_CPUDIV);
+   \   000008 C6 50C6      LD        A, L:0x50c6
+   \   00000B A4 F8        AND       A, #0xf8
+   \   00000D C7 50C6      LD        L:0x50c6, A
+      9          
+     10            //DS18B20
+     11            PC_DDR_DDR7=1;
+   \   000010 721E 500C    BSET      L:0x500c, #0x7
+     12            PC_CR1_C17=0;
+   \   000014 721F 500D    BRES      L:0x500d, #0x7
+     13            PC_CR2_C27=1;
+   \   000018 721E 500E    BSET      L:0x500e, #0x7
+     14            PC_ODR_ODR7=1;
+   \   00001C 721E 500A    BSET      L:0x500a, #0x7
+     15          
+     16            // LED_D
+     17            PA_DDR_DDR1 = 1;
+   \   000020 7212 5002    BSET      L:0x5002, #0x1
+     18            PA_CR1_C11 = 0;
+   \   000024 7213 5003    BRES      L:0x5003, #0x1
+     19            PA_CR2_C21 = 0;
+   \   000028 7213 5004    BRES      L:0x5004, #0x1
+     20            PA_ODR_ODR1 = 0;
+   \   00002C 7213 5000    BRES      L:0x5000, #0x1
+     21          
+     22            // TM1650_SCL
+     23            PB_DDR_DDR4 = 1;
+   \   000030 7218 5007    BSET      L:0x5007, #0x4
+     24            PB_CR1_C14 = 0;
+   \   000034 7219 5008    BRES      L:0x5008, #0x4
+     25            PB_CR2_C24 = 1;
+   \   000038 7218 5009    BSET      L:0x5009, #0x4
+     26            PB_ODR_ODR4 = 1;
+   \   00003C 7218 5005    BSET      L:0x5005, #0x4
+     27          
+     28            // TM1650_SDA
+     29            PB_DDR_DDR5 = 1;
+   \   000040 721A 5007    BSET      L:0x5007, #0x5
+     30            PB_CR1_C15 = 0;
+   \   000044 721B 5008    BRES      L:0x5008, #0x5
+     31            PB_CR2_C25 = 1;
+   \   000048 721A 5009    BSET      L:0x5009, #0x5
+     32            PB_ODR_ODR5 = 1;
+   \   00004C 721A 5005    BSET      L:0x5005, #0x5
+     33          
+     34            // SW
+     35            PC_DDR_DDR3 = 1;
+   \   000050 7216 500C    BSET      L:0x500c, #0x3
+     36            PC_CR1_C13 = 0;
+   \   000054 7217 500D    BRES      L:0x500d, #0x3
+     37            PC_CR2_C23 = 0;
+   \   000058 7217 500E    BRES      L:0x500e, #0x3
+     38            PC_ODR_ODR3 = 0;
+   \   00005C 7217 500A    BRES      L:0x500a, #0x3
+     39          
+     40            // FAN
+     41            PA_DDR_DDR3 = 1;
+   \   000060 7216 5002    BSET      L:0x5002, #0x3
+     42            PA_CR1_C13 = 0;
+   \   000064 7217 5003    BRES      L:0x5003, #0x3
+     43            PA_CR2_C23 = 1;
+   \   000068 7216 5004    BSET      L:0x5004, #0x3
+     44            PA_ODR_ODR3 = 0;
+   \   00006C 7217 5000    BRES      L:0x5000, #0x3
+     45          
+     46            // LED
+     47            PD_DDR_DDR4 = 1;
+   \   000070 7218 5011    BSET      L:0x5011, #0x4
+     48            PD_CR1_C14 = 0;
+   \   000074 7219 5012    BRES      L:0x5012, #0x4
+     49            PD_CR2_C24 = 1;
+   \   000078 7218 5013    BSET      L:0x5013, #0x4
+     50            PD_ODR_ODR4 = 0;
+   \   00007C 7219 500F    BRES      L:0x500f, #0x4
+     51          
+     52            // TEMP_PLAY_D
+     53            PC_DDR_DDR5 = 1;
+   \   000080 721A 500C    BSET      L:0x500c, #0x5
+     54            PC_CR1_C15 = 0;
+   \   000084 721B 500D    BRES      L:0x500d, #0x5
+     55            PC_CR2_C25 = 0;
+   \   000088 721B 500E    BRES      L:0x500e, #0x5
+     56            PC_ODR_ODR5 = 0;
+   \   00008C 721B 500A    BRES      L:0x500a, #0x5
+     57          
+     58            // TEMP_STOP_D
+     59            PC_DDR_DDR6 = 1;
+   \   000090 721C 500C    BSET      L:0x500c, #0x6
+     60            PC_CR1_C16 = 0;
+   \   000094 721D 500D    BRES      L:0x500d, #0x6
+     61            PC_CR2_C26 = 0;
+   \   000098 721D 500E    BRES      L:0x500e, #0x6
+     62            PC_ODR_ODR6 = 0;
+   \   00009C 721D 500A    BRES      L:0x500a, #0x6
+     63          
+     64            // FAN_D
+     65            PD_DDR_DDR6 = 1;
+   \   0000A0 721C 5011    BSET      L:0x5011, #0x6
+     66            PD_CR1_C16 = 0;
+   \   0000A4 721D 5012    BRES      L:0x5012, #0x6
+     67            PD_CR2_C26 = 0;
+   \   0000A8 721D 5013    BRES      L:0x5013, #0x6
+     68            PD_ODR_ODR6 = 0;
+   \   0000AC 721D 500F    BRES      L:0x500f, #0x6
+     69          
+     70            // HF_FAN
+     71            PA_DDR_DDR2 = 1;
+   \   0000B0 7214 5002    BSET      L:0x5002, #0x2
+     72            PA_CR1_C12 = 0;
+   \   0000B4 7215 5003    BRES      L:0x5003, #0x2
+     73            PA_CR2_C22 = 0;
+   \   0000B8 7215 5004    BRES      L:0x5004, #0x2
+     74            PA_ODR_ODR2 = 0;
+   \   0000BC 7215 5000    BRES      L:0x5000, #0x2
+     75          
+     76            // MSD
+     77            PC_DDR_DDR4 = 1;
+   \   0000C0 7218 500C    BSET      L:0x500c, #0x4
+     78            PC_CR1_C14 = 0;
+   \   0000C4 7219 500D    BRES      L:0x500d, #0x4
+     79            PC_CR2_C24 = 0;
+   \   0000C8 7219 500E    BRES      L:0x500e, #0x4
+     80            PC_ODR_ODR4 = 1;
+   \   0000CC 7218 500A    BSET      L:0x500a, #0x4
+     81          
+     82            // GPIO_Init(LED_LED_PORT, LED_LED_PIN, GPIO_MODE_OUT_OD_HIZ_SLOW);             // LED_D
+     83            GPIO_Init(TM1650_SCL_PORT, TM1650_SCL_PIN, GPIO_MODE_OUT_OD_HIZ_FAST);       // TM1650_SCL
+   \   0000D0 35 B0 ....   MOV       S:?b0, #0xb0
+   \   0000D4 A6 10        LD        A, #0x10
+   \   0000D6 AE 5005      LDW       X, #0x5005
+   \   0000D9 8D ......    CALLF     GPIO_Init
+     84            GPIO_Init(TM1650_SDA_PORT, TM1650_SDA_PIN, GPIO_MODE_OUT_OD_HIZ_FAST);       // TM1650_SDA
+   \   0000DD 35 B0 ....   MOV       S:?b0, #0xb0
+   \   0000E1 A6 20        LD        A, #0x20
+   \   0000E3 AE 5005      LDW       X, #0x5005
+   \   0000E6 8D ......    CALLF     GPIO_Init
+     85            // GPIO_Init(SW_PORT, SW_PIN, GPIO_MODE_OUT_OD_LOW_SLOW);                       // SW
+     86            // GPIO_Init(FAN_PORT, FAN_PIN, GPIO_MODE_OUT_OD_LOW_SLOW); // FAN
+     87            // GPIO_Init(TEMP_PLAY_LED_PORT, TEMP_PLAY_LED_PIN, GPIO_MODE_OUT_OD_HIZ_SLOW); // TEMP_PLAY_D
+     88            // GPIO_Init(TEMP_STOP_LED_PORT, TEMP_STOP_LED_PIN, GPIO_MODE_OUT_OD_HIZ_SLOW); // TEMP_STOP_D
+     89            // GPIO_Init(DS18B20_SDA_PORT, DS18B20_SDA_PIN, GPIO_MODE_OUT_OD_HIZ_FAST);     // DS18B20_DATA
+     90            // GPIO_Init(LED_PORT, LED_PIN, GPIO_MODE_OUT_OD_LOW_FAST); // LED
+     91            // GPIO_Init(FAN_LED_PORT, FAN_LED_PIN, GPIO_MODE_OUT_OD_HIZ_SLOW); // FAN_D
+     92            // GPIO_Init(HF_PORT, HF_PIN, GPIO_MODE_OUT_OD_LOW_SLOW);           // HF_FAN
+     93            // GPIO_Init(MSD_PORT, MSD_PIN, GPIO_MODE_OUT_OD_HIZ_SLOW); // MSD
+     94          
+     95            // TIM2 初始化
+     96            TIM2_DeInit();
+   \   0000EA 8D ......    CALLF     TIM2_DeInit
+     97            TIM2_TimeBaseInit(TIM2_PRESCALER_128, 99);
+   \   0000EE AE 0063      LDW       X, #0x63
+   \   0000F1 A6 07        LD        A, #0x7
+   \   0000F3 8D ......    CALLF     TIM2_TimeBaseInit
+     98            // PWM, 百分比与后面装载的值有关， 例： 1000， 50%的PWM 就是 TIM2_SetCompare3(500)
+     99            TIM2_OC1Init(TIM2_OCMODE_PWM2,
+    100                         TIM1_OUTPUTSTATE_ENABLE,
+    101                         0,
+    102                         TIM2_OCPOLARITY_LOW);
+   \   0000F7 35 22 ....   MOV       S:?b1, #0x22
+   \   0000FB 5F           CLRW      X
+   \   0000FC 35 11 ....   MOV       S:?b0, #0x11
+   \   000100 A6 70        LD        A, #0x70
+   \   000102 8D ......    CALLF     TIM2_OC1Init
+    103            TIM2_OC3Init(TIM2_OCMODE_PWM2,
+    104                         TIM2_OUTPUTSTATE_ENABLE,
+    105                         0,
+    106                         TIM2_OCPOLARITY_LOW);
+   \   000106 35 22 ....   MOV       S:?b1, #0x22
+   \   00010A 5F           CLRW      X
+   \   00010B 35 11 ....   MOV       S:?b0, #0x11
+   \   00010F A6 70        LD        A, #0x70
+   \   000111 8D ......    CALLF     TIM2_OC3Init
+    107            TIM2_Cmd(DISABLE);
+   \   000115 4F           CLR       A
+   \   000116 8D ......    CALLF     TIM2_Cmd
+    108          
+    109            // TIM1 初始化
+    110            TIM1_DeInit();
+   \   00011A 8D ......    CALLF     TIM1_DeInit
+    111            TIM1_TimeBaseInit(16, TIM1_COUNTERMODE_UP, 999, 0);
+   \   00011E 3F ..        CLR       S:?b0
+   \   000120 90AE 03E7    LDW       Y, #0x3e7
+   \   000124 4F           CLR       A
+   \   000125 AE 0010      LDW       X, #0x10
+   \   000128 8D ......    CALLF     TIM1_TimeBaseInit
+    112            TIM1_ARRPreloadConfig(ENABLE);
+   \   00012C A6 01        LD        A, #0x1
+   \   00012E 8D ......    CALLF     TIM1_ARRPreloadConfig
+    113            TIM1_ITConfig(TIM1_IT_UPDATE, ENABLE);
+   \   000132 35 01 ....   MOV       S:?b0, #0x1
+   \   000136 A6 01        LD        A, #0x1
+   \   000138 8D ......    CALLF     TIM1_ITConfig
+    114            TIM1_Cmd(DISABLE);
+   \   00013C 4F           CLR       A
+   \   00013D 8D ......    CALLF     TIM1_Cmd
+    115          
+    116            FLASH_DeInit();
+   \   000141 8D ......    CALLF     FLASH_DeInit
+    117          }
+   \   000145 87           RETF
+   \   000146              REQUIRE _A_PC_DDR
+   \   000146              REQUIRE _A_PC_CR1
+   \   000146              REQUIRE _A_PC_CR2
+   \   000146              REQUIRE _A_PC_ODR
+   \   000146              REQUIRE _A_PA_DDR
+   \   000146              REQUIRE _A_PA_CR1
+   \   000146              REQUIRE _A_PA_CR2
+   \   000146              REQUIRE _A_PA_ODR
+   \   000146              REQUIRE _A_PB_DDR
+   \   000146              REQUIRE _A_PB_CR1
+   \   000146              REQUIRE _A_PB_CR2
+   \   000146              REQUIRE _A_PB_ODR
+   \   000146              REQUIRE _A_PD_DDR
+   \   000146              REQUIRE _A_PD_CR1
+   \   000146              REQUIRE _A_PD_CR2
+   \   000146              REQUIRE _A_PD_ODR
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       1  _A_PA_CR1
+       1  _A_PA_CR2
+       1  _A_PA_DDR
+       1  _A_PA_ODR
+       1  _A_PB_CR1
+       1  _A_PB_CR2
+       1  _A_PB_DDR
+       1  _A_PB_ODR
+       1  _A_PC_CR1
+       1  _A_PC_CR2
+       1  _A_PC_DDR
+       1  _A_PC_ODR
+       1  _A_PD_CR1
+       1  _A_PD_CR2
+       1  _A_PD_DDR
+       1  _A_PD_ODR
+     326  init
+
+ 
+ 326 bytes in section .far_func.text
+  16 bytes in section .near.noinit   (abs)
+ 
+ 326 bytes of CODE memory
+   0 bytes of DATA memory (+ 16 bytes shared)
+
+Errors: none
+Warnings: 260
